@@ -1,0 +1,9 @@
+<Files "accessToken.php"> 
+     Order Deny,Allow 
+     Allow from All 
+</Files>
+
+<Files "list.php"> 
+     Order Deny,Allow 
+     Allow from All 
+</Files>
