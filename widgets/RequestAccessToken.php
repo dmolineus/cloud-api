@@ -63,7 +63,7 @@ class RequestAccessToken extends Widget
         $arrAccountInfo = $objApi->getAccountInfo();
         
         return sprintf(
-            '<div class="tl_confirm"><input name="%sAccessToken" type="hidden" value="%s"><b>%s</b> %s (%s)</div>',
+            '<div class="tl_confirm" style="margin-bottom: 7px;"><input name="%sAccessToken" type="hidden" value="%s"><b>%s</b> %s (%s)</div>',
             $this->cloudApi,
             htmlspecialchars($GLOBALS['TL_CONFIG'][$this->cloudApi . 'AccessToken']),
             $GLOBALS['TL_LANG']['tl_settings']['cloudapi_connected'], 
