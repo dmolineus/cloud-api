@@ -29,7 +29,6 @@ class CloudApiManager
      */
 	public static function getApi($strName=null)
 	{
-	    self::registerApisFromConfig();
         // if no name is given try to get first one
 		if($strName == null) {
 			if(count(self::$arrApi) == 0) {
@@ -116,25 +115,4 @@ class CloudApiManager
         
 		self::$arrApi[$strName]['name'] = $mixed;
 	}
-    
-    
-    /**
-     * import registerd apis from config variable
-     * 
-     * @return void
-     */
-    protected static function registerApisFromConfig()
-    {
-        static $blnIsRegistered = false;
-        
-        if($blnIsRegistered) {
-            return;
-        }
-        
-        foreach ($GLOBALS['cloudApi']['apis'] as $strKey => $arrValue) {
-            self::registerApi($strKey, $arrValue);
-        }
-        
-        $blnIsRegistered = true;
-    }
 }
