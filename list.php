@@ -47,7 +47,7 @@ class AccessToken extends Backend
         $this->User->authenticate();
 
         $this->loadLanguageFile('default');
-        $this->loadLanguageFile('modules');
+        $this->loadLanguageFile('modules');        
     }
 
 
@@ -58,18 +58,31 @@ class AccessToken extends Backend
      */
     public function run()
     {
-        $this->import('Input');
+        $this->import('Input');        
         
         $objApi = CloudApiManager::getApi('dropbox');
         $objApi->authenticate();
-        $objNode = $objApi->getNode('Studium');
+        $objNode = $objApi->getNode('/Studium');
+                
         
-        echo sprintf('<h1>%s</h1>', $objNode->path);
-        $arrChildren = $objNode->getChildren();        
-        
+        echo sprintf('<h1>%s</h1>', $objNode->path);           
         echo '<ul>';
+        
+        $arrChildren = $objNode->getChildren();
+        
         foreach($arrChildren as $objChild) {
-            echo sprintf('<li>%s</li>', $objChild->path);
+            $strThumb = '';
+            
+            if($objChild->hasThumbnail) {
+                $strThumb = $objChild->getThumbnail();
+                $strImg = @\Image::get($strThumb, 80, 60, 'center_center');
+                
+                if ($strImg != '') {
+                    $strThumb = sprintf('<br><img src="http://localhost/dev/%s" alt="%s">', $strImg, basename($objChild->path));
+                }                 
+            }
+            
+            echo sprintf('<li>%s (%s) %s</li>', $objChild->path, $objChild->fileSize, $strThumb);
         }
         echo '</ul>';        
     }
