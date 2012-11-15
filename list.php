@@ -65,9 +65,7 @@ class AccessToken extends Backend
         $objNode = $objApi->getNode('Studium');
         
         echo sprintf('<h1>%s</h1>', $objNode->path);
-        $arrChildren = $objNode->getChildren();
-        
-        echo $objNode->hash;
+        $arrChildren = $objNode->getChildren();        
         
         echo '<ul>';
         foreach($arrChildren as $objChild) {
