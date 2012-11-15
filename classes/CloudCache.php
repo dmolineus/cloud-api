@@ -19,7 +19,7 @@ class CloudCache
      * 
      * @var string
      */
-    const CACHE_DIR = '/system/cache/cloud-api/';
+    const CACHE_DIR = 'system/cache/cloud-api/';
     
     /**
      * cache file paths
@@ -120,6 +120,6 @@ class CloudCache
      */
     public static function isCached($strKey)
     {
-        return file_exists(TL_ROOT . self::getPath($strKey));        
+        return file_exists(TL_ROOT . '/' . self::getPath($strKey));        
     }
 }
