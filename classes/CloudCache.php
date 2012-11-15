@@ -96,14 +96,8 @@ class CloudCache
      */
     public static function getPath($strKey)
     {
-        if(!isset(self::$arrFilePaths[$strKey])) {
-            $strExtension = pathinfo($strKey, PATHINFO_EXTENSION);
-            
-            self::$arrFilePaths[$strKey] = self::CACHE_DIR . md5($strKey);
-            
-            if($strExtension) {
-                self::$arrFilePaths[$strKey] .= '.' . $strExtension;    
-            }
+        if(!isset(self::$arrFilePaths[$strKey])) {            
+            self::$arrFilePaths[$strKey] = self::CACHE_DIR . $strKey;
         }
         
         return self::$arrFilePaths[$strKey];
