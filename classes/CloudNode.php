@@ -4,22 +4,7 @@ namespace Netzmacht\Cloud\Api;
 use System;
 
 abstract class CloudNode extends System
-{
-    /**
-     * 
-     */
-    const THUMBNAIL_SMALL = 'small';
-    
-    /**
-     * 
-     */
-    const THUMBNAIL_MEDIUM = 'medium';
-    
-    /**
-     * 
-     */
-    const THUMBNAIL_LARGE = 'large';
-    
+{   
     /**
      * 
      */
