@@ -23,7 +23,7 @@ abstract class CloudNode extends System
     /**
      * 
      */
-	protected $objConnection;
+	protected $objApi;
     
     /**
      * 
@@ -39,11 +39,11 @@ abstract class CloudNode extends System
     /**
      * 
      */
-	public function __construct($strPath, $objConnection)
+	public function __construct($strPath, $objApi)
 	{
 		$this->strPath = $strPath;
 
-		$this->objConnection = $objConnection;
+		$this->objApi = $objApi;
 	}
 
 	abstract public function delete();
