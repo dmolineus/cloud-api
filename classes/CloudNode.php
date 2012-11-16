@@ -16,6 +16,12 @@ abstract class CloudNode extends System
      * 
      */
     protected $arrChildren;
+    
+    /**
+     * Pathinfo
+     * @var array
+     */
+    protected $arrPathinfo = array();
        
     /**
      * 
@@ -54,7 +60,11 @@ abstract class CloudNode extends System
         switch ($strKey)
         {
             case 'extension':
-                $this->arrCache[$strKey] = pathinfo($this->strPath, PATHINFO_EXTENSION);
+                if (!isset($this->arrPathinfo[$strKey]))
+                {
+                    $this->arrPathinfo = pathinfo(TL_ROOT . '/' . $this->strFile);
+                }
+                $this->arrCache[$strKey] = $this->arrPathinfo['extension'];
                 break;
             
             case 'icon':
@@ -77,6 +87,15 @@ abstract class CloudNode extends System
             case 'mime':
                 $arrMimeInfo = $this->getMimeInfo();
                 $this->arrCache[$strKey] = $arrMimeInfo[0];
+                break;
+                
+            case 'name':
+            case 'basename':
+                if (!isset($this->arrPathinfo[$strKey]))
+                {
+                    $this->arrPathinfo = pathinfo(TL_ROOT . '/' . $this->strFile);
+                }
+                $this->arrCache[$strKey] = $this->arrPathinfo['basename'];
                 break;             
         }
         
