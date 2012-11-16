@@ -40,7 +40,7 @@ class CloudFileTree extends FileTree
 	 */
 	public function __construct($arrAttributes=null)
 	{
-	    parent::__construct($arrAttributes);               
+	    parent::__construct($arrAttributes);                     
         
         if ($this->cloudApi == null)   
         {
@@ -52,7 +52,8 @@ class CloudFileTree extends FileTree
             $this->objCloudApi->authenticate();        
         }
         catch(\Exception $e)
-        {         
+        {
+            $this->addErrorMessage(sprintf('Could not find Cloud Api "%s"', $this->cloudApi)); 
         }
 	}
 
@@ -205,7 +206,7 @@ class CloudFileTree extends FileTree
 		}
 
 		$return .= '</ul>
-    <p><a href="system/modules/cloud-api/file.php?do='.\Input::get('do').'&amp;table='.$this->strTable.'&amp;field='.$this->strField.'&amp;act=show&amp;api='.$this->cloudApi.'&amp;id='.\Input::get('id').'&amp;value='.$strValues.'&amp;rt='.REQUEST_TOKEN.'" class="tl_submit" onclick="Backend.getScrollOffset();Backend.openModalSelector({\'width\':765,\'title\':\''.specialchars(str_replace("'", "\\'", $GLOBALS['TL_LANG']['MOD']['files'][0])).'\',\'url\':this.href,\'id\':\''.$this->strId.'\'});return false">'.$GLOBALS['TL_LANG']['MSC']['changeSelection'].'</a></p>' . (($this->strOrderField != '') ? '
+    <p><a href="system/modules/cloud-api/file.php?do='.\Input::get('do').'&amp;table='.$this->strTable.'&amp;field='.$this->strField.'&amp;act=show&amp;api='.$this->cloudApi.'&amp;id='.\Input::get('id').'&amp;value='.$strValues.'&amp;rt='.REQUEST_TOKEN.'" class="tl_submit" onclick="Backend.getScrollOffset();Backend.openModalSelector({\'width\':765,\'title\':\''.specialchars(str_replace("'", "\\'", $GLOBALS['TL_LANG']['MOD']['files'][0] . ' (' . $this->cloudApi .')' )).'\',\'url\':this.href,\'id\':\''.$this->strId.'\'});return false">'.$GLOBALS['TL_LANG']['MSC']['changeSelection'].'</a></p>' . (($this->strOrderField != '') ? '
     <script>Backend.makeMultiSrcSortable("sort_'.$this->strId.'", "ctrl_'.$this->strOrderId.'");window.addEvent("sm_hide",function(){$("hint_'.$this->strId.'").destroy();$("sort_'.$this->strId.'").removeClass("sortable")})</script>' : '') . '
   </div>';
 

@@ -79,7 +79,7 @@ class CloudFileSelector extends FileSelector
 		// Store the keyword
 		if (\Input::post('FORM_SUBMIT') == 'item_selector')
 		{
-			$this->Session->set('cloudapi_file_selector_search', \Input::post('keyword'));
+			$this->Session->set('file_selector_search', \Input::post('keyword'));
 			$this->reload();
 		}
 
@@ -97,7 +97,7 @@ class CloudFileSelector extends FileSelector
 
 		$tree = '';
 		$this->getPathNodes();
-		$for = $this->Session->get('cloudapi_file_selector_search');
+		$for = $this->Session->get('file_selector_search');
 		$arrIds = array();
 
 		// Search for a specific file

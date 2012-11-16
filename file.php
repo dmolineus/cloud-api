@@ -106,7 +106,7 @@ class FilePicker extends Backend
 		$this->Template->base = Environment::get('base');
 		$this->Template->language = $GLOBALS['TL_LANGUAGE'];
 		$this->Template->title = specialchars($GLOBALS['TL_LANG']['MSC']['filepicker']);
-		$this->Template->headline = $GLOBALS['TL_LANG']['MSC']['ppHeadline'];
+		$this->Template->headline = $GLOBALS['TL_LANG']['MSC']['cloudapi_headline'];
 		$this->Template->charset = $GLOBALS['TL_CONFIG']['characterSet'];
 		$this->Template->options = $this->createPageList();
 		$this->Template->expandNode = $GLOBALS['TL_LANG']['MSC']['expandNode'];

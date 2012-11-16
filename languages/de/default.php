@@ -15,4 +15,6 @@
 /**
  * Miscellaneous
  */
-$GLOBALS['TL_LANG']['MSC'][''] = '';
+$GLOBALS['TL_LANG']['MSC']['cloudapi_title'] = 'Cloud Api';
+$GLOBALS['TL_LANG']['MSC']['cloudapi_apiselect'] = array('Cloud-Dienst', 'Wählen Sie den gewünschten Cloud-Dienst aus');
+$GLOBALS['TL_LANG']['MSC']['cloudapi_cloudfiletree'] = array('Quelldatei (Cloud Api)', 'Wählen Sie die Datei(en) aus');
