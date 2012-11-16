@@ -13,13 +13,17 @@
 namespace Netzmacht\Cloud\Api;
 use Ajax;
 use Backend;
+use BackendTemplate;
+use Environment;
+use Input;
+use DC_Table;
 
 
 /**
  * Initialize the system
  */
 define('TL_MODE', 'BE');
-require_once '../system/initialize.php';
+require_once '../../initialize.php';
 
 
 /**

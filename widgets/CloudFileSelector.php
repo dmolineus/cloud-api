@@ -48,21 +48,17 @@ class CloudFileSelector extends FileSelector
 	{
 		parent::__construct($arrAttributes);
         
-        if ($this->cloudApi != null) 
-        {
-            $strCloudApi = $this->cloudApi;
-        }
-        else
-        {
-            $strCloudApi = $this->activeRecord->cloudApi;            
-        }
-        
-        try {
-            $this->objCloudApi = CloudApiManager::getApi($strCloudApi);            
+        $this->cloudApi = \Input::get('api');   
+                
+        try {          
+            $this->objCloudApi = CloudApiManager::getApi($this->cloudApi);            
+            $this->objCloudApi->authenticate();
         }
         catch(\Exception $e)
-        {         
+        {
+            $this->addErrorMessage(sprintf('Could not load CloudApi "%s"', $this->cloudApi));         
         }
+                
 	}
 
 
@@ -77,13 +73,13 @@ class CloudFileSelector extends FileSelector
         // no instance found. error message has to be created
         if($this->objCloudApi === null)
         {
-            return;
+            return $this->getMessages();
         }
 
 		// Store the keyword
 		if (\Input::post('FORM_SUBMIT') == 'item_selector')
 		{
-			$this->Session->set('file_selector_search', \Input::post('keyword'));
+			$this->Session->set('cloudapi_file_selector_search', \Input::post('keyword'));
 			$this->reload();
 		}
 
@@ -101,13 +97,13 @@ class CloudFileSelector extends FileSelector
 
 		$tree = '';
 		$this->getPathNodes();
-		$for = $this->Session->get('file_selector_search');
+		$for = $this->Session->get('cloudapi_file_selector_search');
 		$arrIds = array();
 
 		// Search for a specific file
 		if ($for != '')
 		{          
-            $arrNodes = $this->objCloudApi->searchNodes($for);			
+            $arrNodes = $this->objCloudApi->searchNodes($for);	
 
 			if (!empty($arrNodes))
 			{
@@ -124,12 +120,12 @@ class CloudFileSelector extends FileSelector
 						}
 					}
 
-					$arrIds = $arrRootNodes;
+					$arrNodes = $arrRootNodes;
 				}
 			}
 
 			// Build the tree
-			foreach ($arrIds as $id)
+			foreach ($arrNodes as $id => $value)
 			{
 				$tree .= $this->renderFiletree($id, -20, false, true);
 			}
@@ -153,7 +149,7 @@ class CloudFileSelector extends FileSelector
 			{
 			    // fetch entrys in root directory
 			    $objRoot = $this->objCloudApi->getNode('/');
-			    $objNodes = $this->objCloudApi->getChildren();			
+			    $objNodes = $objRoot->getChildren();			
 
 				foreach($objNodes as $objNode)				
 				{
@@ -207,7 +203,7 @@ class CloudFileSelector extends FileSelector
 		$this->strField = $strField;
 		$this->loadDataContainer($this->strTable);
         
-        $objNode = $this->objCloudApi->getNode($this->strId);
+        $objNode = $this->objCloudApi->getNode($id);
         $this->varValue = $objNode->path;
         
         // Extension filter
@@ -251,8 +247,9 @@ class CloudFileSelector extends FileSelector
 	protected function renderFiletree($id, $intMargin, $protectedPage=false, $blnNoRecursion=false)
 	{
 		static $session;
-		$session = $this->Session->getData();
+		$session = $this->Session->getData();                
 
+        
 		$flag = substr($this->strField, 0, 2);
 		$node = 'tree_' . $this->strTable . '_' . $this->strField;
 		$xtnode = 'tree_' . $this->strTable . '_' . $this->strName;
@@ -287,17 +284,18 @@ class CloudFileSelector extends FileSelector
 
 		$return .= "\n    " . '<li class="'.(($objNode->type == 'folder') ? 'tl_folder' : 'tl_file').'" onmouseover="Theme.hoverDiv(this, 1)" onmouseout="Theme.hoverDiv(this, 0)"><div class="tl_left" style="padding-left:'.($intMargin + $intSpacing).'px">';
 
+        $tid = md5($id);
 		$folderAttribute = 'style="margin-left:20px"';
-		$session[$node][$id] = isset($session[$node][$id]) ? $session[$node][$id] : 0;
+		$session[$node][$id] = isset($session[$node][$tid]) ? $session[$node][$tid] : 0;
 		$level = ($intMargin / $intSpacing + 1);
-		$blnIsOpen = ($session[$node][$id] == 1 || in_array($id, $this->arrNodes));
+		$blnIsOpen = ($session[$node][$tid] == 1 || in_array($id, $this->arrNodes));
 
 		if (!empty($arrNodes))
 		{
 			$folderAttribute = '';
 			$img = $blnIsOpen ? 'folMinus.gif' : 'folPlus.gif';
 			$alt = $blnIsOpen ? $GLOBALS['TL_LANG']['MSC']['collapseNode'] : $GLOBALS['TL_LANG']['MSC']['expandNode'];
-			$return .= '<a href="'.$this->addToUrl($flag.'tg='.$id).'" title="'.specialchars($alt).'" onclick="Backend.getScrollOffset();return AjaxRequest.toggleFiletree(this,\''.$xtnode.'_'.$id.'\',\''.$this->strField.'\',\''.$this->strName.'\','.$level.')">'.$this->generateImage($img, '', 'style="margin-right:2px"').'</a>';
+			$return .= '<a href="'.$this->addToUrl($flag.'tg='.$tid).'" title="'.specialchars($alt).'" onclick="Backend.getScrollOffset();return AjaxRequest.toggleCloudFiletree(this,\''.$xtnode.'_'.$tid.'\',\''.$objNode->path.'\',\''.$this->strField.'\',\''.$this->strName.'\','.$level.')">'.$this->generateImage($img, '', 'style="margin-right:2px"').'</a>';
 		}
 
 		// Get the icon
@@ -307,7 +305,7 @@ class CloudFileSelector extends FileSelector
 			$image = !empty($objNodes) ? 'folderC.gif' : 'folderO.gif';
 		}
 		else
-		{			
+		{		    			
 			$image = $objNode->icon;
 		}
 
@@ -320,7 +318,7 @@ class CloudFileSelector extends FileSelector
 			{
 				$thumbnail = ' <span class="tl_gray">('.$this->getReadableSize($objNode->filesize). /*', '.$file->width.'x'.$file->height.' px*/ ')</span>';
 
-				if ($GLOBALS['TL_CONFIG']['thumbnails'] && $file->height <= $GLOBALS['TL_CONFIG']['gdMaxImgHeight'] && $file->width <= $GLOBALS['TL_CONFIG']['gdMaxImgWidth'])
+				if ($GLOBALS['TL_CONFIG']['thumbnails'] /*&& $file->height <= $GLOBALS['TL_CONFIG']['gdMaxImgHeight'] && $file->width <= $GLOBALS['TL_CONFIG']['gdMaxImgWidth'] */)
 				{
 					$_height = 50;
 					$thumbnail .= '<br><img src="' . TL_FILES_URL . \Image::get($objNode->getThumbnail(), $_width, $_height) . '" alt="" style="margin-bottom:2px">';
@@ -358,7 +356,7 @@ class CloudFileSelector extends FileSelector
 		// Begin a new submenu
 		if (!empty($arrNodes) && ($blnIsOpen || $this->Session->get('file_selector_search') != ''))
 		{
-			$return .= '<li class="parent" id="'.$node.'_'.$id.'"><ul class="level_'.$level.'">';
+			$return .= '<li class="parent" id="'.$node.'_'.$tid.'"><ul class="level_'.$level.'">';
 
 			foreach ($arrNodes as $strChild => $objChild)
 			{
@@ -421,22 +419,30 @@ class CloudFileSelector extends FileSelector
      * @return array
      * @param array
      */
-   protected function getParentNodes($arrNodes)
-   {
-       $arrResult = array();
-       
-       foreach ($arrNodes as $strDirName)
-       {
+    protected function getParentNodes($arrNodes)
+    {
+        $arrResult = array();
+               
+        foreach ($arrNodes as $mixed)
+        {           
             $arrPids = array();
             
-            while($strDirName = dirname($strDirName) && ($strDirName != '/' || $strDirName != ''));
+            if(is_object($mixed)) {
+                $strDirName = $mixed->path;
+            }
+            else {
+                $strDirName = $mixed;
+            }                           
+
+            for($strDirName = dirname($strDirName); ($strDirName != '/') && ($strDirName != '');  $strDirName = dirname($strDirName))
             {
-                $arrPids[] = $strDirName;                
-            }          
+                $arrPids[$strDirName] = $strDirName;
+                
+            }
             
             $arrResult = array_merge($arrResult, $arrPids);
         }
-       
+        
         return $arrResult;
    }
 

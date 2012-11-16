@@ -60,7 +60,7 @@ abstract class CloudNode extends System
             case 'extension':
                 if (!isset($this->arrPathinfo[$strKey]))
                 {
-                    $this->arrPathinfo = pathinfo(TL_ROOT . '/' . $this->strFile);
+                    $this->arrPathinfo = pathinfo($this->strPath);
                 }
                 $this->arrCache[$strKey] = $this->arrPathinfo['extension'];
                 break;
@@ -71,7 +71,7 @@ abstract class CloudNode extends System
                 break;
                 
             case 'isCached':
-                $this->arrCache[$strKey] = Api\CloudCache::isCached($this->cacheKey);
+                $this->arrCache[$strKey] = CloudCache::isCached($this->cacheKey);
                 break;
                 
             case 'isGdImage':
@@ -79,7 +79,7 @@ abstract class CloudNode extends System
                 break;
                 
             case 'isMetaCached':
-                $this->arrCache[$strKey] = Api\CloudCache::isCached($this->cacheMetaKey);
+                $this->arrCache[$strKey] = CloudCache::isCached($this->cacheMetaKey);
                 break;
                 
             case 'mime':
@@ -91,7 +91,7 @@ abstract class CloudNode extends System
             case 'basename':
                 if (!isset($this->arrPathinfo[$strKey]))
                 {
-                    $this->arrPathinfo = pathinfo(TL_ROOT . '/' . $this->strFile);
+                    $this->arrPathinfo = pathinfo($this->strPath);
                 }
                 $this->arrCache[$strKey] = $this->arrPathinfo['basename'];
                 break;             
@@ -101,7 +101,8 @@ abstract class CloudNode extends System
         if(!isset($this->arrCache[$strKey])) 
         {
             return null;
-        }        
+        }  
+              
         return $this->arrCache[$strKey];
         
     }
@@ -237,7 +238,7 @@ abstract class CloudNode extends System
             'rv'    => array('video/vnd.rn-realvideo', 'iconVIDEO.gif'),
             'avi'   => array('video/x-msvideo', 'iconVIDEO.gif'),
             'movie' => array('video/x-sgi-movie', 'iconVIDEO.gif')
-        );
+        );        
 
         // Extend the default lookup array
         if (is_array($GLOBALS['TL_MIME']) && !empty($GLOBALS['TL_MIME']))

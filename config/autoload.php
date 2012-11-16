@@ -26,6 +26,7 @@ ClassLoader::addNamespaces(array
 ClassLoader::addClasses(array
 (
 	// Classes
+	'Netzmacht\Cloud\Api\AjaxRequest'     => 'system/modules/cloud-api/classes/AjaxRequest.php',
 	'Netzmacht\Cloud\Api\CloudApiManager' => 'system/modules/cloud-api/classes/CloudApiManager.php',
 	'Netzmacht\Cloud\Api\CloudNode'       => 'system/modules/cloud-api/classes/CloudNode.php',
 	'Netzmacht\Cloud\Api\CloudCache'      => 'system/modules/cloud-api/classes/CloudCache.php',

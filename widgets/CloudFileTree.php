@@ -31,7 +31,7 @@ class CloudFileTree extends FileTree
     /**
      * 
      */
-    protected $cloudApi;
+    protected $objCloudApi;
 
 
 	/**
@@ -40,19 +40,16 @@ class CloudFileTree extends FileTree
 	 */
 	public function __construct($arrAttributes=null)
 	{
-	    parent::__construct($arrAttributes);
+	    parent::__construct($arrAttributes);               
         
-        if ($this->cloudApi != null) 
+        if ($this->cloudApi == null)   
         {
-            $strCloudApi = $this->cloudApi;
-        }
-        else
-        {
-            $strCloudApi = $this->activeRecord->cloudApi;            
+            $this->cloudApi = $this->activeRecord->cloudApi;            
         }
         
         try {
-            $this->cloudApi = CloudApiManager::getApi($strCloudApi);            
+            $this->objCloudApi = CloudApiManager::getApi($this->cloudApi); 
+            $this->objCloudApi->authenticate();        
         }
         catch(\Exception $e)
         {         
@@ -69,7 +66,7 @@ class CloudFileTree extends FileTree
 		$strValues = '';
 		$arrValues = array();        
 
-		if (!empty($this->varValue) && $this->cloudApi instanceof CloudApi) // Can be an array
+		if (!empty($this->varValue) && $this->objCloudApi instanceof CloudApi) // Can be an array
 		{
 			$arrFindValues = (array)$this->varValue;          
             			
@@ -79,7 +76,7 @@ class CloudFileTree extends FileTree
 			{
 			    try 
 			    {
-			        $objNode = $this->cloudApi->getNode($strPath);
+			        $objNode = $this->objCloudApi->getNode($strPath);
                 }
                 
                 // something went wrong. file does not exists anymore or connection failed
@@ -208,7 +205,7 @@ class CloudFileTree extends FileTree
 		}
 
 		$return .= '</ul>
-    <p><a href="system/modules/cloud-api/file.php?do='.\Input::get('do').'&amp;table='.$this->strTable.'&amp;field='.$this->strField.'&amp;act=show&amp;id='.\Input::get('id').'&amp;value='.$strValues.'&amp;rt='.REQUEST_TOKEN.'" class="tl_submit" onclick="Backend.getScrollOffset();Backend.openModalSelector({\'width\':765,\'title\':\''.specialchars(str_replace("'", "\\'", $GLOBALS['TL_LANG']['MOD']['files'][0])).'\',\'url\':this.href,\'id\':\''.$this->strId.'\'});return false">'.$GLOBALS['TL_LANG']['MSC']['changeSelection'].'</a></p>' . (($this->strOrderField != '') ? '
+    <p><a href="system/modules/cloud-api/file.php?do='.\Input::get('do').'&amp;table='.$this->strTable.'&amp;field='.$this->strField.'&amp;act=show&amp;api='.$this->cloudApi.'&amp;id='.\Input::get('id').'&amp;value='.$strValues.'&amp;rt='.REQUEST_TOKEN.'" class="tl_submit" onclick="Backend.getScrollOffset();Backend.openModalSelector({\'width\':765,\'title\':\''.specialchars(str_replace("'", "\\'", $GLOBALS['TL_LANG']['MOD']['files'][0])).'\',\'url\':this.href,\'id\':\''.$this->strId.'\'});return false">'.$GLOBALS['TL_LANG']['MSC']['changeSelection'].'</a></p>' . (($this->strOrderField != '') ? '
     <script>Backend.makeMultiSrcSortable("sort_'.$this->strId.'", "ctrl_'.$this->strOrderId.'");window.addEvent("sm_hide",function(){$("hint_'.$this->strId.'").destroy();$("sort_'.$this->strId.'").removeClass("sortable")})</script>' : '') . '
   </div>';
 

@@ -10,19 +10,12 @@
  * @license   GNU/LGPL 
  * @copyright Copyright 2012 David Molineus netzmacht creative 
  */
-
-/**
- * initiate cloudApi array for registring different cloud apis
- * 
- * following data are be stored
- * ['dropbox'] => array(
- *   'name' => \DropboxApi\DropboxApi,
- *   'enabled' => &$TL_CLONFIG['dropboxEnabled']
- * );
- * 
- * enabled referes to tl_config value to enabling the api 
- */
-$GLOBALS['cloudApi']['apis'] = array();
+ 
+// load assets
+if(TL_MODE == 'BE')
+{ 
+    $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/cloud-api/assets/AjaxRequest.js';
+}
 
 /**
  * enable cloud api caching should be enabled always
@@ -37,12 +30,20 @@ $GLOBALS['cloudApi']['apis'] = array();
  */
 $GLOBALS['cloudApi']['cacheLevel'] = 2;
 
+
 /**
  * Back end form fields
  */
 $GLOBALS['BE_FFL']['accesToken'] = 'Netzmacht\Cloud\Api\RequestAccessToken';
 $GLOBALS['BE_FFL']['cloudFileTree'] = 'Netzmacht\Cloud\Api\CloudFileTree';
 $GLOBALS['BE_FFL']['cloudFileSelector'] = 'Netzmacht\Cloud\Api\CloudFileSelector';
+
+
+/**
+ * Register Hooks
+ */
+$GLOBALS['TL_HOOKS']['executePreActions'][] = array('Netzmacht\Cloud\Api\AjaxRequest', 'executePreActions');
+$GLOBALS['TL_HOOKS']['executePostActions'][] = array('Netzmacht\Cloud\Api\AjaxRequest', 'executePostActions');
 
 /**
  * clear whole cache
