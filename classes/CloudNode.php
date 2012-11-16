@@ -42,9 +42,7 @@ abstract class CloudNode extends System
 		$this->strPath = $strPath;
 
 		$this->objApi = $objApi;
-	}
-
-	abstract public function delete();
+    }
     
     
     /**
@@ -106,7 +104,13 @@ abstract class CloudNode extends System
         }        
         return $this->arrCache[$strKey];
         
-    }    
+    }
+
+
+    /**
+     * 
+     */
+    abstract public function delete();
     
     /**
      * Return the mime type and icon of the file based on its extension
