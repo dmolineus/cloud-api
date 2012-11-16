@@ -54,7 +54,7 @@ class RequestAccessToken extends Widget
         }
         catch(\Exception $e) {            
             return sprintf(
-                '<div class="tl_info" style="margin-bottom: 7px;"><a href="system/modules/cloud-api/accessToken.php?api=%s" target="_blank">%s</a></div>', 
+                '<div class="tl_info" style="margin-bottom: 7px;"><a href="system/modules/cloud-api/token.php?api=%s" target="_blank">%s</a></div>', 
                 $this->cloudApi,
                 $GLOBALS['TL_LANG']['tl_settings']['cloudapi_accessTokenLink']
             );    
