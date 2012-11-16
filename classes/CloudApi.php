@@ -33,4 +33,15 @@ abstract class CloudApi extends System
      * @return void
      */    
     abstract public function getNode($strPath);  
+    
+    
+    /**
+     * search for nodes
+     * 
+     * @return array
+     * @param string search query
+     * @param string start point
+     */
+    abstract public function searchNodes($strQuery, $strPath='');
+    
 }
