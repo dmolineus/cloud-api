@@ -3,7 +3,6 @@
 namespace Netzmacht\Cloud\Api;
 use File;
 
-
 /**
  * CloudCache handles caching for the cloud api. It is a static class
  * 
@@ -121,5 +120,14 @@ class CloudCache
 	public static function isCached($strKey)
 	{
 		return file_exists(TL_ROOT . '/' . self::getPath($strKey));		
+	}
+	
+	/**
+	 * delete all cached files
+	 */
+	public function purgeCache()
+	{
+		$objFolder = new \Folder(self::CACHE_DIR);
+		$objFolder->purge();		
 	}
 }

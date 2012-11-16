@@ -46,6 +46,15 @@ $GLOBALS['BE_FFL']['cloudApiSelect'] = 'Netzmacht\Cloud\Api\CloudApiSelectMenu';
 $GLOBALS['TL_HOOKS']['executePreActions'][] = array('Netzmacht\Cloud\Api\AjaxRequest', 'executePreActions');
 $GLOBALS['TL_HOOKS']['executePostActions'][] = array('Netzmacht\Cloud\Api\AjaxRequest', 'executePostActions');
 
+
+/**
+ * purge data 
+ */
+$GLOBALS['TL_PURGE']['folders']['cloud-api'] = array (
+	'callback' => array('Netzmacht\Cloud\Api\CloudCache', 'purgeCache'),
+	'affected' => array('system/cache/cloud-api')
+);
+
 /**
  * clear whole cache
  */
