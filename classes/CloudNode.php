@@ -4,7 +4,19 @@ namespace Netzmacht\Cloud\Api;
 use System;
 
 abstract class CloudNode extends System
-{   
+{
+    
+    /**
+     * 
+     * @var array
+     */
+    protected $arrCache = array();
+    
+    /**
+     * 
+     */
+    protected $arrChildren;
+       
     /**
      * 
      */
@@ -13,12 +25,7 @@ abstract class CloudNode extends System
     /**
      * 
      */
-	protected $strPath;
-    
-    /**
-     * 
-     */
-    protected $arrChildren;
+	protected $strPath;    
 
 
     /**
@@ -33,6 +40,54 @@ abstract class CloudNode extends System
 
 	abstract public function delete();
     
+    
+    /**
+     * 
+     */
+    public function __get($strKey)
+    {
+        if(isset($this->arrCache[$strKey])) 
+        {
+            return $this->arrCache[$strKey];
+        }
+        
+        switch ($strKey)
+        {
+            case 'extension':
+                $this->arrCache[$strKey] = pathinfo($this->strPath, PATHINFO_EXTENSION);
+                break;
+            
+            case 'icon':
+                $arrMimeInfo = $this->getMimeInfo();
+                $this->arrCache[$strKey] = $arrMimeInfo[1];             
+                break;
+                
+            case 'isCached':
+                $this->arrCache[$strKey] = Api\CloudCache::isCached($this->cacheKey);
+                break;
+                
+            case 'isGdImage':
+                $this->arrCache[$strKey] = in_array($this->extension, array('gif', 'jpg', 'jpeg', 'png'));
+                break;
+                
+            case 'isMetaCached':
+                $this->arrCache[$strKey] = Api\CloudCache::isCached($this->cacheMetaKey);
+                break;
+                
+            case 'mime':
+                $arrMimeInfo = $this->getMimeInfo();
+                $this->arrCache[$strKey] = $arrMimeInfo[0];
+                break;             
+        }
+        
+        // some meta data aren't created always so check if cache exists
+        if(!isset($this->arrCache[$strKey])) 
+        {
+            return null;
+        }        
+        return $this->arrCache[$strKey];
+        
+    }    
     
     /**
      * Return the mime type and icon of the file based on its extension
