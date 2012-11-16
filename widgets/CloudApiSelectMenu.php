@@ -27,28 +27,27 @@ use SelectMenu;
  */
 class CloudApiSelectMenu extends SelectMenu
 {
-    
-    /**
-     * override options with registered cloud settings
-     */
-    public function __construct($arrAttributes=null)
-    {
-        parent::__construct($arrAttributes);
-        
-        // override options
-        $this->arrOptions = array();
-        
-        $arrApis = CloudApiManager::getregisteredApis();                
-        
-        foreach ($arrApis as $strKey => $arrValue) 
-        {
-            $this->arrOptions[] = array(
-                'value' => $strKey,
-                'label' => isset($GLOBALS['TL_LANG']['MOD']['cloudapi_' . $strKey][0]) 
-                    ? $GLOBALS['TL_LANG']['MOD']['cloudapi_' . $strKey][0]
-                    : $strKey                    
-            );                        
-        }        
-    }
+	
+	/**
+	 * override options with registered cloud settings
+	 */
+	public function __construct($arrAttributes=null)
+	{
+		parent::__construct($arrAttributes);
+		
+		// override options
+		$this->arrOptions = array();
 
+		$arrApis = CloudApiManager::getregisteredApis();                
+
+		foreach ($arrApis as $strKey => $arrValue) 
+		{
+			$this->arrOptions[] = array(
+				'value' => $strKey,
+				'label' => isset($GLOBALS['TL_LANG']['MOD']['cloudapi_' . $strKey][0]) 
+					? $GLOBALS['TL_LANG']['MOD']['cloudapi_' . $strKey][0]
+					: $strKey                    
+			);
+		}
+	}
 }

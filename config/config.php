@@ -14,7 +14,7 @@
 // load assets
 if(TL_MODE == 'BE')
 { 
-    $GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/cloud-api/assets/AjaxRequest.js';
+	$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/cloud-api/assets/AjaxRequest.js';
 }
 
 /**
@@ -51,8 +51,8 @@ $GLOBALS['TL_HOOKS']['executePostActions'][] = array('Netzmacht\Cloud\Api\AjaxRe
  */
 /*
 $GLOBALS['TL_MAINTENANCE'] = array (
-    'CloudCache',
-    'clearCache'
+	'CloudCache',
+	'clearCache'
 );*/
 
 /**

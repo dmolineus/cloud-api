@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2012 Leo Feyer
  * 
  * @package Core
- * @link    http://contao.org
+ * @link	http://contao.org
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
 
@@ -22,16 +22,16 @@ use FileTree;
  * Class FileTree
  *
  * Provide methods to handle input field "page tree".
- * @copyright  Leo Feyer 2005-2012
- * @author     Leo Feyer <http://contao.org>
- * @package    Core
+ * @copyright	Leo Feyer 2005-2012
+ * @author	 Leo Feyer <http://contao.org>
+ * @package	Core
  */
 class CloudFileTree extends FileTree
 {
-    /**
-     * 
-     */
-    protected $objCloudApi;
+	/**
+	 * 
+	 */
+	protected $objCloudApi;
 
 
 	/**
@@ -40,21 +40,21 @@ class CloudFileTree extends FileTree
 	 */
 	public function __construct($arrAttributes=null)
 	{
-	    parent::__construct($arrAttributes);                     
-        
-        if ($this->cloudApi == null)   
-        {
-            $this->cloudApi = $this->activeRecord->cloudApi;            
-        }
-        
-        try {
-            $this->objCloudApi = CloudApiManager::getApi($this->cloudApi); 
-            $this->objCloudApi->authenticate();        
-        }
-        catch(\Exception $e)
-        {
-            $this->addErrorMessage(sprintf('Could not find Cloud Api "%s"', $this->cloudApi)); 
-        }
+		parent::__construct($arrAttributes);					 
+		
+		if ($this->cloudApi == null)	
+		{
+			$this->cloudApi = $this->activeRecord->cloudApi;			
+		}
+		
+		try {
+			$this->objCloudApi = CloudApiManager::getApi($this->cloudApi); 
+			$this->objCloudApi->authenticate();		
+		}
+		catch(\Exception $e)
+		{
+			$this->addErrorMessage(sprintf('Could not find Cloud Api "%s"', $this->cloudApi)); 
+		}
 	}
 
 
@@ -65,27 +65,27 @@ class CloudFileTree extends FileTree
 	public function generate()
 	{
 		$strValues = '';
-		$arrValues = array();        
+		$arrValues = array();		
 
 		if (!empty($this->varValue) && $this->objCloudApi instanceof CloudApi) // Can be an array
 		{
-			$arrFindValues = (array)$this->varValue;          
-            			
+			$arrFindValues = (array)$this->varValue;			
+						
 			$allowedDownload = trimsplit(',', strtolower($GLOBALS['TL_CONFIG']['allowedDownload']));
 				
 			foreach ($arrFindValues as $strPath)
 			{
-			    try 
-			    {
-			        $objNode = $this->objCloudApi->getNode($strPath);
-                }
-                
-                // something went wrong. file does not exists anymore or connection failed
-                catch(\Exception $e) 
-                {                    
-                    continue;
-                }
-                                
+				try 
+				{
+					$objNode = $this->objCloudApi->getNode($strPath);
+				}
+				
+				// something went wrong. file does not exists anymore or connection failed
+				catch(\Exception $e) 
+				{					
+					continue;
+				}
+								
 
 				// Show files and folders
 				if (!$this->blnIsGallery && !$this->blnIsDownloads)
@@ -119,8 +119,8 @@ class CloudFileTree extends FileTree
 							{
 								continue;
 							}
-                            
-                            // cloudApi do not show image dimensions at the moment. maybe the feature will be added later
+							
+							// cloudApi do not show image dimensions at the moment. maybe the feature will be added later
 							$strInfo = $strSubPath . ' <span class="tl_gray">(' . $this->getReadableSize($objSubNode->size) /*. ($objSubNode->isGdImage ? ', ' . $objSubNode->width . 'x' . $objSubNode->height . ' px' : '') */ . ')</span>';
 
 							if ($this->blnIsGallery)
@@ -147,7 +147,7 @@ class CloudFileTree extends FileTree
 						{
 							// Only show images
 							if ($objNode->isGdImage)
-							{							    
+							{								
 								$arrValues[$strPath] = $this->generateImage(\Image::get($objNode->getThumbnail(), 80, 60, 'center_center'), '', 'class="gimage"');
 							}
 						}
@@ -195,10 +195,10 @@ class CloudFileTree extends FileTree
 		$GLOBALS['TL_CONFIG']['loadGoogleFonts'] = true;
 
 		$return = '<input type="hidden" name="'.$this->strName.'" id="ctrl_'.$this->strId.'" value="'.$strValues.'">' . (($this->strOrderField != '') ? '
-  <input type="hidden" name="'.$this->strOrderName.'" id="ctrl_'.$this->strOrderId.'" value="'.$this->{$this->strOrderField}.'">' : '') . '
-  <div class="selector_container" id="target_'.$this->strId.'">' . (($this->strOrderField != '' && count($arrValues)) ? '
-    <p id="hint_'.$this->strId.'" class="sort_hint">' . $GLOBALS['TL_LANG']['MSC']['dragItemsHint'] . '</p>' : '') . '
-    <ul id="sort_'.$this->strId.'" class="'.trim((($this->strOrderField != '') ? 'sortable ' : '').($this->blnIsGallery ? 'sgallery' : '')).'">';
+	<input type="hidden" name="'.$this->strOrderName.'" id="ctrl_'.$this->strOrderId.'" value="'.$this->{$this->strOrderField}.'">' : '') . '
+	<div class="selector_container" id="target_'.$this->strId.'">' . (($this->strOrderField != '' && count($arrValues)) ? '
+	<p id="hint_'.$this->strId.'" class="sort_hint">' . $GLOBALS['TL_LANG']['MSC']['dragItemsHint'] . '</p>' : '') . '
+	<ul id="sort_'.$this->strId.'" class="'.trim((($this->strOrderField != '') ? 'sortable ' : '').($this->blnIsGallery ? 'sgallery' : '')).'">';
 
 		foreach ($arrValues as $k=>$v)
 		{
@@ -206,9 +206,9 @@ class CloudFileTree extends FileTree
 		}
 
 		$return .= '</ul>
-    <p><a href="system/modules/cloud-api/file.php?do='.\Input::get('do').'&amp;table='.$this->strTable.'&amp;field='.$this->strField.'&amp;act=show&amp;api='.$this->cloudApi.'&amp;id='.\Input::get('id').'&amp;value='.$strValues.'&amp;rt='.REQUEST_TOKEN.'" class="tl_submit" onclick="Backend.getScrollOffset();Backend.openModalSelector({\'width\':765,\'title\':\''.specialchars(str_replace("'", "\\'", $GLOBALS['TL_LANG']['MOD']['files'][0] . ' (' . $this->cloudApi .')' )).'\',\'url\':this.href,\'id\':\''.$this->strId.'\'});return false">'.$GLOBALS['TL_LANG']['MSC']['changeSelection'].'</a></p>' . (($this->strOrderField != '') ? '
-    <script>Backend.makeMultiSrcSortable("sort_'.$this->strId.'", "ctrl_'.$this->strOrderId.'");window.addEvent("sm_hide",function(){$("hint_'.$this->strId.'").destroy();$("sort_'.$this->strId.'").removeClass("sortable")})</script>' : '') . '
-  </div>';
+	<p><a href="system/modules/cloud-api/file.php?do='.\Input::get('do').'&amp;table='.$this->strTable.'&amp;field='.$this->strField.'&amp;act=show&amp;api='.$this->cloudApi.'&amp;id='.\Input::get('id').'&amp;value='.$strValues.'&amp;rt='.REQUEST_TOKEN.'" class="tl_submit" onclick="Backend.getScrollOffset();Backend.openModalSelector({\'width\':765,\'title\':\''.specialchars(str_replace("'", "\\'", $GLOBALS['TL_LANG']['MOD']['files'][0] . ' (' . $this->cloudApi .')' )).'\',\'url\':this.href,\'id\':\''.$this->strId.'\'});return false">'.$GLOBALS['TL_LANG']['MSC']['changeSelection'].'</a></p>' . (($this->strOrderField != '') ? '
+	<script>Backend.makeMultiSrcSortable("sort_'.$this->strId.'", "ctrl_'.$this->strOrderId.'");window.addEvent("sm_hide",function(){$("hint_'.$this->strId.'").destroy();$("sort_'.$this->strId.'").removeClass("sortable")})</script>' : '') . '
+	</div>';
 
 		return $return;
 	}

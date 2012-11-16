@@ -6,7 +6,7 @@
  * Copyright (C) 2005-2012 Leo Feyer
  * 
  * @package Core
- * @link    http://contao.org
+ * @link	http://contao.org
  * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
  */
 
@@ -30,9 +30,9 @@ require_once '../../initialize.php';
  * Class FilePicker
  *
  * Back end page picker.
- * @copyright  Leo Feyer 2005-2012
- * @author     Leo Feyer <http://contao.org>
- * @package    Core
+ * @copyright	Leo Feyer 2005-2012
+ * @author	 Leo Feyer <http://contao.org>
+ * @package	Core
  */
 class FilePicker extends Backend
 {
@@ -94,11 +94,11 @@ class FilePicker extends Backend
 		}
 
 		$objFileTree = new $GLOBALS['BE_FFL']['cloudFileSelector'](array(
-			'strId'    => $strField,
-			'strTable' => $strTable,
-			'strField' => $strField,
-			'strName'  => $strField,
-			'varValue' => explode(',', Input::get('value'))
+			'strId'		=> $strField,
+			'strTable' 	=> $strTable,
+			'strField' 	=> $strField,
+			'strName'	=> $strField,
+			'varValue'	=> explode(',', Input::get('value'))
 		), $objDca);
 
 		$this->Template->main = $objFileTree->generate();
