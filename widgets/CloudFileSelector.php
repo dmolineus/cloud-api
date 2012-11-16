@@ -32,7 +32,7 @@ class CloudFileSelector extends FileSelector
     /**
      * 
      */
-    protected $cloudApi;
+    protected $objCloudApi = null;
     
     /**
      * 
@@ -58,7 +58,7 @@ class CloudFileSelector extends FileSelector
         }
         
         try {
-            $this->cloudApi = CloudApiManager::getApi($strCloudApi);            
+            $this->objCloudApi = CloudApiManager::getApi($strCloudApi);            
         }
         catch(\Exception $e)
         {         
@@ -73,6 +73,12 @@ class CloudFileSelector extends FileSelector
 	public function generate()
 	{
 		$this->import('BackendUser', 'User');
+        
+        // no instance found. error message has to be created
+        if($this->objCloudApi === null)
+        {
+            return;
+        }
 
 		// Store the keyword
 		if (\Input::post('FORM_SUBMIT') == 'item_selector')
@@ -90,7 +96,7 @@ class CloudFileSelector extends FileSelector
 		// Sort descending
 		if (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['flag']) && ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['flag'] % 2) == 0)
 		{
-			$this->strSortFlag = ' DESC';
+			$this->strSortFlag = 'DESC';
 		}
 
 		$tree = '';
@@ -100,36 +106,25 @@ class CloudFileSelector extends FileSelector
 
 		// Search for a specific file
 		if ($for != '')
-		{
-			// The keyword must not start with a wildcard (see #4910)
-			if (strncmp($for, '*', 1) === 0)
-			{
-				$for = substr($for, 1);
-			}
+		{          
+            $arrNodes = $this->objCloudApi->searchNodes($for);			
 
-			$objRoot = $this->Database->prepare("SELECT id FROM tl_files WHERE CAST(name AS CHAR) REGEXP ?{$this->strExtensions} ORDER BY type='file', name{$this->strSortFlag}")
-									  ->execute($for);
-
-			if ($objRoot->numRows > 0)
+			if (!empty($arrNodes))
 			{
 				// Respect existing limitations
-				if ($this->User->isAdmin)
-				{
-					$arrIds = $objRoot->fetchEach('id');
-				}
-				else
-				{
-					$arrRoot = array();
-
-					while ($objRoot->next())
-					{
-						if (count(array_intersect($this->User->filemounts, $this->Database->getParentRecords($objRoot->id, 'tl_files'))) > 0)
+				if (!$this->User->isAdmin)
+				{	
+					$arrRootNodes = array();
+                    
+                    foreach ($arrNodes as $objNode) 
+                    {
+						if (count(array_intersect($this->User->cloudFilemounts, $this->getParentNodes($arrNodes))) > 0)
 						{
-							$arrRoot[] = $objRoot->id;
+							$arrRootNodes[] = $objNode->path;
 						}
 					}
 
-					$arrIds = $arrRoot;
+					$arrIds = $arrRootNodes;
 				}
 			}
 
@@ -145,30 +140,32 @@ class CloudFileSelector extends FileSelector
 			// Show a custom path (see #4926)
 			if ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['path'] != '')
 			{
-				$objFolder = \FilesModel::findByPath($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['path']);
+				$objFolder = $this->objCloudApi->getNode($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['path']);
 
 				if ($objFolder !== null)
 				{
-					$tree .= $this->renderFiletree($objFolder->id, -20);
+					$tree .= $this->renderFiletree($objFolder->path, -20);
 				}
 			}
 
 			// Show all files to admins
 			elseif ($this->User->isAdmin)
 			{
-				$objFile = $this->Database->prepare("SELECT id FROM tl_files WHERE pid=?{$this->strExtensions} ORDER BY type='file', name{$this->strSortFlag}")
-										  ->execute(0);
+			    // fetch entrys in root directory
+			    $objRoot = $this->objCloudApi->getNode('/');
+			    $objNodes = $this->objCloudApi->getChildren();			
 
-				while ($objFile->next())
+				foreach($objNodes as $objNode)				
 				{
-					$tree .= $this->renderFiletree($objFile->id, -20);
+					$tree .= $this->renderFiletree($objNode->path, -20);
 				}
 			}
 
 			// Show mounted files to regular users
 			else
 			{
-				foreach ($this->eliminateNestedPages($this->User->filemountIds, 'tl_files') as $node)
+			    // cloudApi: we have file paths fo use the eliminateNestedPaths instead of the nested paged on
+				foreach ($this->eliminateNestedPaths($this->User->cloudFilemountPaths) as $node)
 				{
 					$tree .= $this->renderFiletree($node, -20);
 				}
@@ -209,58 +206,34 @@ class CloudFileSelector extends FileSelector
 
 		$this->strField = $strField;
 		$this->loadDataContainer($this->strTable);
+        
+        $objNode = $this->objCloudApi->getNode($this->strId);
+        $this->varValue = $objNode->path;
+        
+        // Extension filter
+        if ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['extensions'] != '')
+        {
+            $this->arrExtensions = trimsplit(',', $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['extensions']);            
+        }
 
-		// Load the current values
-		switch ($GLOBALS['TL_DCA'][$this->strTable]['config']['dataContainer'])
-		{
-			case 'File':
-				if ($GLOBALS['TL_CONFIG'][$this->strField] != '')
-				{
-					$this->varValue = $GLOBALS['TL_CONFIG'][$this->strField];
-				}
-				break;
-
-			case 'Table':
-				if (!$this->Database->fieldExists($this->strField, $this->strTable))
-				{
-					break;
-				}
-
-				$objField = $this->Database->prepare("SELECT " . $this->strField . " FROM " . $this->strTable . " WHERE id=?")
-										   ->limit(1)
-										   ->execute($this->strId);
-
-				if ($objField->numRows)
-				{
-					$this->varValue = deserialize($objField->{$this->strField});
-				}
-				break;
-		}
-
-		// Extension filter
-		if ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['extensions'] != '')
-		{
-			$this->strExtensions = " AND (type='folder' OR extension IN('" . implode("','", trimsplit(',', $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['extensions'])) . "'))";
-		}
-
-		// Sort descending
-		if (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['flag']) && ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['flag'] % 2) == 0)
-		{
-			$this->strSortFlag = ' DESC';
-		}
+        // Sort descending
+        if (isset($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['flag']) && ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['flag'] % 2) == 0)
+        {
+            $this->strSortFlag = 'DESC';
+        }		
 
 		$this->getPathNodes();
 
 		// Load the requested nodes
 		$tree = '';
 		$level = $level * 20;
+        
+        
+        $arrNodes = $objNode->getChildren();		
 
-		$objFile = $this->Database->prepare("SELECT id FROM tl_files WHERE pid=?{$this->strExtensions} ORDER BY type='file', name{$this->strSortFlag}")
-								  ->execute($id);
-
-		while ($objFile->next())
+        foreach($arrNodes as $strChild => $objChild)
 		{
-			$tree .= $this->renderFiletree($objFile->id, $level);
+			$tree .= $this->renderFiletree($strChild, $level);
 		}
 
 		return $tree;
@@ -291,44 +264,35 @@ class CloudFileSelector extends FileSelector
 			$this->Session->setData($session);
 			$this->redirect(preg_replace('/(&(amp;)?|\?)'.$flag.'tg=[^& ]*/i', '', \Environment::get('request')));
 		}
-
-		$strWhere = (($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['files'] || $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['filesOnly']) ? "" : " AND type='folder'") . $this->strExtensions;
-
-		// Get the current element
-		$objFile = $this->Database->prepare("SELECT id, type, name, path FROM tl_files WHERE id=?$strWhere")
-								  ->limit(1)
-								  ->execute($id);
+        
+        $objNode = $this->objCloudApi->getNode($id);
+   
+        $blnFilesOnly = ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['files'] || $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['filesOnly']);        
+        $arrResult = $this->applyFilter($objNode, $blnFilesOnly);
 
 		// Return if there is no result
-		if ($objFile->numRows < 1)
-		{
-			return '';
-		}
+		if(empty($arrResult)) 
+        {
+            return '';
+        }
 
 		$return = '';
 		$intSpacing = 20;
-		$childs = array();
 
 		// Check whether there are child records
 		if (!$blnNoRecursion)
 		{
-			$objNodes = $this->Database->prepare("SELECT id FROM tl_files WHERE pid=?$strWhere ORDER BY type='file', name{$this->strSortFlag}")
-									   ->execute($id);
-
-			if ($objNodes->numRows)
-			{
-				$childs = $objNodes->fetchEach('id');
-			}
+			$arrNodes = $objNode->getChildren(); 			
 		}
 
-		$return .= "\n    " . '<li class="'.(($objFile->type == 'folder') ? 'tl_folder' : 'tl_file').'" onmouseover="Theme.hoverDiv(this, 1)" onmouseout="Theme.hoverDiv(this, 0)"><div class="tl_left" style="padding-left:'.($intMargin + $intSpacing).'px">';
+		$return .= "\n    " . '<li class="'.(($objNode->type == 'folder') ? 'tl_folder' : 'tl_file').'" onmouseover="Theme.hoverDiv(this, 1)" onmouseout="Theme.hoverDiv(this, 0)"><div class="tl_left" style="padding-left:'.($intMargin + $intSpacing).'px">';
 
 		$folderAttribute = 'style="margin-left:20px"';
-		$session[$node][$id] = is_numeric($session[$node][$id]) ? $session[$node][$id] : 0;
+		$session[$node][$id] = isset($session[$node][$id]) ? $session[$node][$id] : 0;
 		$level = ($intMargin / $intSpacing + 1);
 		$blnIsOpen = ($session[$node][$id] == 1 || in_array($id, $this->arrNodes));
 
-		if (!empty($childs))
+		if (!empty($arrNodes))
 		{
 			$folderAttribute = '';
 			$img = $blnIsOpen ? 'folMinus.gif' : 'folPlus.gif';
@@ -337,46 +301,44 @@ class CloudFileSelector extends FileSelector
 		}
 
 		// Get the icon
-		if ($objFile->type == 'folder')
+		if ($objNode->type == 'folder')
 		{
 			$file = null;
-			$image = !empty($childs) ? 'folderC.gif' : 'folderO.gif';
+			$image = !empty($objNodes) ? 'folderC.gif' : 'folderO.gif';
 		}
 		else
-		{
-			$file = new \File($objFile->path);
-			$image = $file->icon;
+		{			
+			$image = $objNode->icon;
 		}
 
 		$thumbnail = '';
 
 		// Generate the thumbnail
-		if ($objFile->type == 'file')
+		if ($objNode->type == 'file')
 		{
-			if ($file->isGdImage && $file->height > 0)
+			if ($objNode->isGdImage && $objNode->hasThumbnail)
 			{
-				$thumbnail = ' <span class="tl_gray">('.$this->getReadableSize($file->filesize).', '.$file->width.'x'.$file->height.' px)</span>';
+				$thumbnail = ' <span class="tl_gray">('.$this->getReadableSize($objNode->filesize). /*', '.$file->width.'x'.$file->height.' px*/ ')</span>';
 
 				if ($GLOBALS['TL_CONFIG']['thumbnails'] && $file->height <= $GLOBALS['TL_CONFIG']['gdMaxImgHeight'] && $file->width <= $GLOBALS['TL_CONFIG']['gdMaxImgWidth'])
 				{
-					$_height = ($file->height < 50) ? $file->height : 50;
-					$_width = (($file->width * $_height / $file->height) > 400) ? 90 : '';
-					$thumbnail .= '<br><img src="' . TL_FILES_URL . \Image::get($objFile->path, $_width, $_height) . '" alt="" style="margin-bottom:2px">';
+					$_height = 50;
+					$thumbnail .= '<br><img src="' . TL_FILES_URL . \Image::get($objNode->getThumbnail(), $_width, $_height) . '" alt="" style="margin-bottom:2px">';
 				}
 			}
 			else
 			{
-				$thumbnail = ' <span class="tl_gray">('.$this->getReadableSize($file->filesize).')</span>';
+				$thumbnail = ' <span class="tl_gray">('.$this->getReadableSize($objNode->filesize).')</span>';
 			}
 		}
 
 		// Add the file name
-		$return .= $this->generateImage($image, '', $folderAttribute).' <label title="'.specialchars($objFile->path).'" for="'.$this->strName.'_'.$id.'">'.(($objFile->type == 'folder') ? '<strong>' : '').$objFile->name.(($objFile->type == 'folder') ? '</strong>' : '').'</label>'.$thumbnail.'</div> <div class="tl_right">';
+		$return .= $this->generateImage($image, '', $folderAttribute).' <label title="'.specialchars($objNode->path).'" for="'.$this->strName.'_'.$id.'">'.(($objNode->type == 'folder') ? '<strong>' : '').$objNode->name.(($objNode->type == 'folder') ? '</strong>' : '').'</label>'.$thumbnail.'</div> <div class="tl_right">';
 
 		// Add a checkbox or radio button
-		if ($objFile->type == 'file' || !$GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['filesOnly'])
+		if ($objNode->type == 'file' || !$GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['filesOnly'])
 		{
-			$value = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['paths'] ? $objFile->path : $id;
+			$value = $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['paths'] ? $objNode->path : $id;
 
 			switch ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['fieldType'])
 			{
@@ -394,13 +356,14 @@ class CloudFileSelector extends FileSelector
 		$return .= '</div><div style="clear:both"></div></li>';
 
 		// Begin a new submenu
-		if (!empty($childs) && ($blnIsOpen || $this->Session->get('file_selector_search') != ''))
+		if (!empty($arrNodes) && ($blnIsOpen || $this->Session->get('file_selector_search') != ''))
 		{
 			$return .= '<li class="parent" id="'.$node.'_'.$id.'"><ul class="level_'.$level.'">';
 
-			for ($k=0; $k<count($childs); $k++)
+			foreach ($arrNodes as $strChild => $objChild)
 			{
-				$return .= $this->renderFiletree($childs[$k], ($intMargin + $intSpacing), $objFile->protected);
+			    // cloudApi: we do not have an protected option
+				$return .= $this->renderFiletree($strChild, ($intMargin + $intSpacing) /*, $objNode->protected*/);
 			}
 
 			$return .= '</ul></li>';
@@ -408,6 +371,74 @@ class CloudFileSelector extends FileSelector
 
 		return $return;
 	}
+	
+	/**
+     * apply sorting, filesOnly and extension filter to result set
+     * 
+     * @return array
+     * @param mixed array or object
+     * @param bool set filesonly flag
+     */
+    protected function applyFilter($mixed, $blnFilesOnly=null)
+    {
+        if(!is_array($mixed)) 
+        {
+            $mixed = (array) $mixed;            
+        }
+        
+        $arrResult = array();
+        
+        foreach ($mixed as $strKey => $objValue) 
+        {
+            // filesOnly filter
+            if($blnFilesOnly && $objValue->type == 'folder')
+            {
+                continue;
+            }
+            
+            // extension filter
+            if($objValue->type == 'file' && !in_array($objValue->extension, $this->arrExtensions))
+            {
+                continue;                
+            }            
+            
+            $arrResult[$strKey] = $objValue;
+        }
+
+        // sorting filter
+        if($this->strSortFlag == 'DESC') 
+        {
+            return array_flip($arrResult);
+        }        
+        
+        return $arrResult;        
+    }
+
+
+    /**
+     * get parent nodes of a path
+     * 
+     * @return array
+     * @param array
+     */
+   protected function getParentNodes($arrNodes)
+   {
+       $arrResult = array();
+       
+       foreach ($arrNodes as $strDirName)
+       {
+            $arrPids = array();
+            
+            while($strDirName = dirname($strDirName) && ($strDirName != '/' || $strDirName != ''));
+            {
+                $arrPids[] = $strDirName;                
+            }          
+            
+            $arrResult = array_merge($arrResult, $arrPids);
+        }
+       
+        return $arrResult;
+   }
 
 
 	/**
@@ -424,18 +455,12 @@ class CloudFileSelector extends FileSelector
 		{
 			$this->varValue = array($this->varValue);
 		}
-
-		foreach ($this->varValue as $id)
-		{
-		    $strDirName = $id;
-            $arrPids = array();
-            
-		    while($strDirName = dirname($strDirName) && ($strDirName != '/' || $strDirName != ''));
-		    {
-		        $arrPids[] = $strDirName;		         
-		    }		   
-			
-			$this->arrNodes = array_merge($this->arrNodes, $arrPids);
-		}
+        
+        // create seperate method so we can use it on different places to 
+        // get cloud parent nodes
+        $arrNodes = $this->getParentNodes($this->varValue);
+        $this->arrNodes = array_merge($this->arrNodes, $arrNodes);
+		
 	}
+   
 }
