@@ -42,6 +42,7 @@ $GLOBALS['cloudApi']['cacheLevel'] = 2;
  */
 $GLOBALS['BE_FFL']['accesToken'] = 'Netzmacht\Cloud\Api\RequestAccessToken';
 $GLOBALS['BE_FFL']['cloudFileTree'] = 'Netzmacht\Cloud\Api\CloudFileTree';
+$GLOBALS['BE_FFL']['cloudFileSelector'] = 'Netzmacht\Cloud\Api\CloudFileSelector';
 
 /**
  * clear whole cache
