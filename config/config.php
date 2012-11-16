@@ -41,6 +41,7 @@ $GLOBALS['cloudApi']['cacheLevel'] = 2;
  * Back end form fields
  */
 $GLOBALS['BE_FFL']['accesToken'] = 'Netzmacht\Cloud\Api\RequestAccessToken';
+$GLOBALS['BE_FFL']['cloudFileTree'] = 'Netzmacht\Cloud\Api\CloudFileTree';
 
 /**
  * clear whole cache

@@ -33,4 +33,5 @@ ClassLoader::addClasses(array
 	
     // widgets
     'Netzmacht\Cloud\Api\RequestAccessToken' => 'system/modules/cloud-api/widgets/RequestAccessToken.php',
+    'Netzmacht\Cloud\Api\CloudFileTree' => 'system/modules/cloud-api/widgets/CloudFileTree.php',
 ));
