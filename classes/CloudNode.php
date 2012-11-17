@@ -68,6 +68,7 @@ abstract class CloudNode extends System
 	 * support following keys:
 	 *  - string basename
 	 *  - string extension
+	 *  - string dirname
 	 *  - string icon
 	 *  - bool isCached
 	 *  - bool isGdImage
@@ -97,6 +98,14 @@ abstract class CloudNode extends System
 		
 		switch ($strKey)
 		{
+			case 'dirname':
+				if (!isset($this->arrPathinfo[$strKey]))
+				{
+					$this->arrPathinfo = pathinfo($this->strPath);
+				}
+				$this->arrCache[$strKey] = $this->arrPathinfo['dirname'];
+				break;
+				
 			case 'extension':
 				if (!isset($this->arrPathinfo[$strKey]))
 				{
