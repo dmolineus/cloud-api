@@ -1,11 +1,27 @@
 /**
- * Toggle the file tree input field
+ * Contao Open Source CMS
+ * 
+ * Copyright (C) 2005-2012 Leo Feyer
+ * 
+ * @package   cloud-api 
+ * @author    David Molineus <http://www.netzmacht.de>
+ * @license   GNU/LGPL 
+ * @copyright Copyright 2012 David Molineus netzmacht creative 
+ **/
+
+/**
+ * Toggle the cloud api file tree input field
+ * modified contao function
+ * 
+ * @author Leo Feyer <http://contao.org>
+ * @author    David Molineus <http://www.netzmacht.de>
  * @param object
  * @param string
  * @param string
  * @param string
  * @param integer
  * @return boolean
+ * 
  */
 AjaxRequest.toggleCloudFiletree = function (el, id, folder, field, name, level)
 {

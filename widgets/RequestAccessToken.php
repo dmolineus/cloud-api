@@ -1,8 +1,24 @@
 <?php
 
+/**
+ * Contao Open Source CMS
+ * 
+ * Copyright (C) 2005-2012 Leo Feyer
+ * 
+ * @package   cloud-api 
+ * @author    David Molineus <http://www.netzmacht.de>
+ * @license   GNU/LGPL 
+ * @copyright Copyright 2012 David Molineus netzmacht creative 
+ *  
+ **/
+
 namespace Netzmacht\Cloud\Api;
 use Widget;
 
+/**
+ * create an widget for loading the access token in the settings
+ * 
+ */
 class RequestAccessToken extends Widget
 {
     /**
@@ -23,6 +39,7 @@ class RequestAccessToken extends Widget
      */
     protected $strTemplate = 'be_widget';
     
+	
     /**
      * Add specific attributes
      * @param string
@@ -42,24 +59,32 @@ class RequestAccessToken extends Widget
         }
     }
     
+	
     /**
-     * 
+     * generate widget
+	 * 
+	 * @return string
      */
     public function generate()
     {       
         $objApi = CloudApiManager::getApi($this->cloudApi);
         
-        try {                      
+        try 
+        {                      
             $objApi->authenticate();
         }
-        catch(\Exception $e) {            
+		
+		// could not authenticate so provide access link
+        catch(\Exception $e) 
+        {            
             return sprintf(
                 '<div class="tl_info" style="margin-bottom: 7px;"><a href="system/modules/cloud-api/token.php?api=%s" target="_blank">%s</a></div>', 
                 $this->cloudApi,
                 $GLOBALS['TL_LANG']['tl_settings']['cloudapi_accessTokenLink']
             );    
         }
-       
+		
+		// load account info and display connected info       
         $arrAccountInfo = $objApi->getAccountInfo();
         
         return sprintf(

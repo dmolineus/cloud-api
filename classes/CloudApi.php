@@ -1,10 +1,22 @@
 <?php
 
+/**
+ * Contao Open Source CMS
+ * 
+ * Copyright (C) 2005-2012 Leo Feyer
+ * 
+ * @package   cloud-api 
+ * @author    David Molineus <http://www.netzmacht.de>
+ * @license   GNU/LGPL 
+ * @copyright Copyright 2012 David Molineus netzmacht creative 
+ **/
+
 namespace Netzmacht\Cloud\Api;
 use System;
 
 /**
- * define abstract CloudApi class
+ * Abstract class for defining the API for CloudApi classes
+ * 
  */
 abstract class CloudApi extends System
 {
@@ -24,6 +36,14 @@ abstract class CloudApi extends System
 	 * @return array
 	 */	
 	abstract public function getAccountInfo();
+	
+	
+	/**
+	 * get name of the cloud service
+	 * 
+	 * @return string
+	 */
+	abstract public function getName();
 	
 	
 	/**

@@ -5,10 +5,12 @@
  * 
  * Copyright (C) 2005-2012 Leo Feyer
  * 
- * @package Core
- * @link    http://contao.org
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
- */
+ * @package   cloud-api 
+ * @author    David Molineus <http://www.netzmacht.de>
+ * @license   GNU/LGPL 
+ * @copyright Copyright 2012 David Molineus netzmacht creative 
+ *  
+ **/
 
 
 /**
@@ -30,13 +32,16 @@ class CloudApiSelectMenu extends SelectMenu
 	
 	/**
 	 * override options with registered cloud settings
+	 * 
+	 * @param array
+	 * @return void
 	 */
 	public function __construct($arrAttributes=null)
 	{
 		parent::__construct($arrAttributes);
 		
 		// override options
-		$this->arrOptions = array();
+		$this->arrOptions = array(array('value' => '', 'label' => '-'));
 
 		$arrApis = CloudApiManager::getregisteredApis();                
 

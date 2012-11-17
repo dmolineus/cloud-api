@@ -1,4 +1,4 @@
-<FilesMatch "(file|token|list).php$">
+<FilesMatch "(file|token).php$">
      Order Deny,Allow 
      Allow from All 
 </FilesMatch>

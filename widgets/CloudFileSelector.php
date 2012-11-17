@@ -5,43 +5,53 @@
  * 
  * Copyright (C) 2005-2012 Leo Feyer
  * 
- * @package Core
- * @link	http://contao.org
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
- */
+ * @package   cloud-api 
+ * @author    David Molineus <http://www.netzmacht.de>
+ * @license   GNU/LGPL 
+ * @copyright Copyright 2012 David Molineus netzmacht creative 
+ *  
+ **/
 
 
 /**
- * Run in a custom namespace, so the class can be replaced
+ * Run in a custom namespace, so the class can be replacedchanges
  */
 namespace Netzmacht\Cloud\Api;
 use FileSelector;
 
 
 /**
- * Class FileSelector
- *
- * Provide methods to handle input field "file tree".
+ * CloudFileSelector extends the FileSelector of Contao
+ * and adjusts it to work with the cloud file structure 
+ * changes
+ * Provide methods to handle input field "cloud file tree".
+ * 
  * @copyright	Leo Feyer 2005-2012
- * @author	 Leo Feyer <http://contao.org>
- * @package	Core
+ * @author		Leo Feyer <http://contao.org>
+ * @author		David Molineus <http://www.netzmacht.de>
+ * @package		cloud-api
  */
 class CloudFileSelector extends FileSelector
 {
 	
 	/**
-	 * 
+	 * reference to cloud api 
+	 *
+	 * @var protected
 	 */
 	protected $objCloudApi = null;
 	
 	/**
+	 * allowed extensions
 	 * 
+	 * @var array
 	 */
 	protected $arrExtensions;
 
 
 	/**
-	 * Load the database object
+	 * Load Cloud Api
+	 * 
 	 * @param array
 	 */
 	public function __construct($arrAttributes=null)
@@ -114,7 +124,8 @@ class CloudFileSelector extends FileSelector
 					
 					foreach ($arrNodes as $objNode) 
 					{
-						if (count(array_intersect($this->User->cloudFilemounts, $this->getParentNodes($arrNodes))) > 0)
+						$strFilemounts = $this->objCloudApi->getName() . 'Filemounts';
+						if (count(array_intersect($this->User->$strFilemounts, $this->getParentNodes($arrNodes))) > 0)
 						{
 							$arrRootNodes[] = $objNode->path;
 						}
@@ -161,8 +172,8 @@ class CloudFileSelector extends FileSelector
 			else
 			{
 				// cloudApi: we have file paths fo use the eliminateNestedPaths instead of the nested paged on
-				$var = $this->objCloudApi->getName() . 'Filemounts';
-				foreach ($this->eliminateNestedPaths($this->User->$var) as $node)
+				$strFilemounts = $this->objCloudApi->getName() . 'Filemounts';
+				foreach ($this->eliminateNestedPaths($this->User->$strFilemounts) as $node)
 				{
 					$tree .= $this->renderFiletree($node, -20);
 				}

@@ -5,10 +5,12 @@
  * 
  * Copyright (C) 2005-2012 Leo Feyer
  * 
- * @package Core
- * @link	http://contao.org
- * @license http://www.gnu.org/licenses/lgpl-3.0.html LGPL
- */
+ * @package   cloud-api 
+ * @author    David Molineus <http://www.netzmacht.de>
+ * @license   GNU/LGPL 
+ * @copyright Copyright 2012 David Molineus netzmacht creative 
+ *  
+ **/
 
 
 /**
@@ -29,13 +31,16 @@ use FileTree;
 class CloudFileTree extends FileTree
 {
 	/**
+	 * reference to cloud api object
 	 * 
+	 * @var Netzmacht\Cloud\Api\CloudApi
 	 */
 	protected $objCloudApi;
 
 
 	/**
 	 * Load the database object
+	 * 
 	 * @param array
 	 */
 	public function __construct($arrAttributes=null)

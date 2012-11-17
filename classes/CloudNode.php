@@ -1,19 +1,30 @@
 <?php
 
+/**
+ * Contao Open Source CMS
+ * 
+ * Copyright (C) 2005-2012 Leo Feyer
+ * 
+ * @package   cloud-api 
+ * @author    David Molineus <http://www.netzmacht.de>
+ * @license   GNU/LGPL 
+ * @copyright Copyright 2012 David Molineus netzmacht creative 
+ *  
+ **/
+
 namespace Netzmacht\Cloud\Api;
 use System;
 
+/**
+ * Abstract class for defining interface of cloud node and provide
+ * common features
+ */
 abstract class CloudNode extends System
 {
 	
 	/**
-	 * 
+	 * children noded
 	 * @var array
-	 */
-	protected $arrCache = array();
-	
-	/**
-	 * 
 	 */
 	protected $arrChildren;
 	
@@ -24,18 +35,24 @@ abstract class CloudNode extends System
 	protected $arrPathinfo = array();
 		
 	/**
-	 * 
+	 * cloud api instance
+	 * @var Netzmacht\Cloud\Api\CloudApi
 	 */
 	protected $objApi;
 	
 	/**
-	 * 
+	 * path of current object
+	 * @var
 	 */
 	protected $strPath;	
 
 
 	/**
+	 * initialize object and set reference to the cloud api
 	 * 
+	 * @return void
+	 * @param string path
+	 * @param string Netzmacht\Cloud\Api\CloudApi
 	 */
 	public function __construct($strPath, $objApi)
 	{
@@ -46,6 +63,29 @@ abstract class CloudNode extends System
 	
 	
 	/**
+	 * provide access for attributes
+	 * 
+	 * support following keys:
+	 *  - string basename
+	 *  - string extension
+	 *  - string icon
+	 *  - bool isCached
+	 *  - bool isGdImage
+	 *  - bool isMetaCached
+	 *  - string mime
+	 *  - string name
+	 * 
+	 * following keys has to be created of the implementation of this class
+	 *  - string cacheKey
+	 *  - string cacheMetaKey
+	 *  - string downloadUrl	 
+	 *  - string type 'file' or 'folder'
+	 *  - bool hasThumbnail
+	 *  - string path	 
+	 *  - int filesize
+	 * 
+	 * @param string name of attribute
+	 * @return mixed
 	 * 
 	 */
 	public function __get($strKey)
@@ -96,11 +136,10 @@ abstract class CloudNode extends System
 				$this->arrCache[$strKey] = $this->arrPathinfo['basename'];
 				break;			 
 		}
-		
-		// some meta data aren't created always so check if cache exists
+				
 		if(!isset($this->arrCache[$strKey])) 
 		{
-			return null;
+			return parent::__get($strKey);
 		}	
 				
 		return $this->arrCache[$strKey];
@@ -109,14 +148,17 @@ abstract class CloudNode extends System
 
 
 	/**
+	 * delete current node
 	 * 
+	 * @return bool
 	 */
 	abstract public function delete();
+	
 	
 	/**
 	 * Return the mime type and icon of the file based on its extension
 	 * 
-	 * @author Leo Feyer
+	 * @author Leo Feyer <http://contao.org>
 	 * @link \Contao\File
 	 * @return array An array with mime type and icon name
 	 */
@@ -255,16 +297,45 @@ abstract class CloudNode extends System
 		return $arrMimeTypes[$this->extension];
 	}
 
-	abstract protected function getMetaData();
-	
+
+	/**
+	 * get content of a file
+	 * 
+	 * @return string
+	 */	
 	abstract public function getFile();
 	
-	abstract public function putFile($mxdPathOrFile);
+	
+	/**
+	 * upload file
+	 * 
+	 * @param string file path for uploading
+	 */
+	abstract public function putFile($strPath);
 
+
+	/**
+	 * get path to thumbnail
+	 * 
+	 * @return string
+	 */
 	abstract public function getThumbnail();
 
+
+	/**
+	 * move file to a new place
+	 * 
+	 * @param string new path
+	 */
 	abstract public function move($strNewPath);
 
-	abstract public function copy($strNewPath);
+	/**
+	 * copy file to a new place
+	 * 
+	 * @param string new path
+	 * @param bool set bool if you want to get a node of the new file
+	 * @return mixed
+	 */
+	abstract public function copy($strNewPath, $blnReturnNode=false);
 
 }
