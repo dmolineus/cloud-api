@@ -62,15 +62,15 @@ class AccessToken extends Backend
 		
 		$objApi = CloudApiManager::getApi('dropbox');
 		$objApi->authenticate();
-		//$objNode = $objApi->getNode('/Studium');
+		$objNode = $objApi->getNode('0');
 				
 		
-		//echo sprintf('<h1>%s</h1>', $objNode->path);			
-		//echo '<ul>';
+		echo sprintf('<h1>%s</h1>', $objNode->path);			
+		echo '<ul>';
 		
 		//$arrChildren = $objNode->getChildren();
 		
-		$arrChildren = $objApi->searchNodes('mind', '/Studium');
+		//$arrChildren = $objApi->searchNodes('mind', '/Studium');
 		
 		foreach($arrChildren as $objChild) {
 			$strThumb = '';

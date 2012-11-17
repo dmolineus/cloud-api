@@ -2,6 +2,7 @@
 
 namespace Netzmacht\Cloud\Api;
 use File;
+use Folder;
 
 /**
  * CloudCache handles caching for the cloud api. It is a static class
@@ -127,7 +128,7 @@ class CloudCache
 	 */
 	public function purgeCache()
 	{
-		$objFolder = new \Folder(self::CACHE_DIR);
+		$objFolder = new Folder(self::CACHE_DIR);
 		$objFolder->purge();		
 	}
 }

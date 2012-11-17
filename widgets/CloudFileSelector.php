@@ -161,7 +161,8 @@ class CloudFileSelector extends FileSelector
 			else
 			{
 				// cloudApi: we have file paths fo use the eliminateNestedPaths instead of the nested paged on
-				foreach ($this->eliminateNestedPaths($this->User->cloudFilemountPaths) as $node)
+				$var = $this->objCloudApi->getName() . 'Filemounts';
+				foreach ($this->eliminateNestedPaths($this->User->$var) as $node)
 				{
 					$tree .= $this->renderFiletree($node, -20);
 				}
@@ -262,7 +263,14 @@ class CloudFileSelector extends FileSelector
 			$this->redirect(preg_replace('/(&(amp;)?|\?)'.$flag.'tg=[^& ]*/i', '', \Environment::get('request')));
 		}
 		
-		$objNode = $this->objCloudApi->getNode($id);
+		try 
+		{
+			$objNode = $this->objCloudApi->getNode($id);	
+		}
+		catch(\Exception $e) 
+		{
+			return '';
+		}		
 	
 		$blnFilesOnly = ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['files'] || $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['filesOnly']);		
 		$arrResult = $this->applyFilter($objNode, $blnFilesOnly);
@@ -434,7 +442,7 @@ class CloudFileSelector extends FileSelector
 				$strDirName = $mixed;
 			}							
 
-			for($strDirName = dirname($strDirName); ($strDirName != '/') && ($strDirName != '');	$strDirName = dirname($strDirName))
+			for($strDirName = dirname($strDirName); $strDirName != '/' && $strDirName != '' && $strDirName != '.'; $strDirName = dirname($strDirName))
 			{
 				$arrPids[$strDirName] = $strDirName;
 				

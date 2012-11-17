@@ -64,11 +64,17 @@ class CloudFileTree extends FileTree
 	 */
 	public function generate()
 	{
-		$strValues = '';
-		$arrValues = array();		
-
-		if (!empty($this->varValue) && $this->objCloudApi instanceof CloudApi) // Can be an array
+		if($this->objCloudApi === null) 
 		{
+			return $this->getMessages();			
+		}
+		
+		$strValues = '';
+		$arrValues = array();
+
+		if (!empty($this->varValue)) // Can be an array
+		{
+			$strValues = implode(',', (array)$this->varValue);
 			$arrFindValues = (array)$this->varValue;			
 						
 			$allowedDownload = trimsplit(',', strtolower($GLOBALS['TL_CONFIG']['allowedDownload']));
@@ -82,7 +88,8 @@ class CloudFileTree extends FileTree
 				
 				// something went wrong. file does not exists anymore or connection failed
 				catch(\Exception $e) 
-				{					
+				{
+					echo 'oha';					
 					continue;
 				}
 								
@@ -193,7 +200,7 @@ class CloudFileTree extends FileTree
 
 		// Load the fonts for the drag hint (see #4838)
 		$GLOBALS['TL_CONFIG']['loadGoogleFonts'] = true;
-
+		//$strValues = htmlspecialchars(serialize($arrValues));
 		$return = '<input type="hidden" name="'.$this->strName.'" id="ctrl_'.$this->strId.'" value="'.$strValues.'">' . (($this->strOrderField != '') ? '
 	<input type="hidden" name="'.$this->strOrderName.'" id="ctrl_'.$this->strOrderId.'" value="'.$this->{$this->strOrderField}.'">' : '') . '
 	<div class="selector_container" id="target_'.$this->strId.'">' . (($this->strOrderField != '' && count($arrValues)) ? '
@@ -211,5 +218,32 @@ class CloudFileTree extends FileTree
 	</div>';
 
 		return $return;
+	}
+
+
+	/**
+	 * Return an array if the "multiple" attribute is set
+	 * @param mixed
+	 * @return mixed
+	 */
+	protected function validator($varInput)
+	{
+		// Store the order value
+		if ($this->strOrderField != '')
+		{
+			$this->Database->prepare("UPDATE {$this->strTable} SET {$this->strOrderField}=? WHERE id=?")
+						   ->execute(\Input::post($this->strOrderName), \Input::get('id'));
+		}
+
+		// Return the value as usual
+		if (strpos($varInput, ',') === false)
+		{
+			return $this->blnIsMultiple ? array($varInput) : $varInput;
+		}
+		else
+		{
+			$arrValue = array_filter(explode(',', $varInput));
+			return $this->blnIsMultiple ? $arrValue : $arrValue[0];
+		}
 	}
 }

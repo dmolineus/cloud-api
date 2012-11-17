@@ -20,8 +20,8 @@
  *
  * @copyright  David Molineus 2012
  * @author     David Molineus <mail@netzmacht.de>
- * @package    CloudApi
+ * @package    cloud-api
  * @license    GNU/LGPL
  */
 
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{cloudapi_legend}';
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{cloudapi_legend},cloudapi_hook';

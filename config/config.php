@@ -50,10 +50,11 @@ $GLOBALS['TL_HOOKS']['executePostActions'][] = array('Netzmacht\Cloud\Api\AjaxRe
 /**
  * purge data 
  */
+ /*
 $GLOBALS['TL_PURGE']['folders']['cloud-api'] = array (
 	'callback' => array('Netzmacht\Cloud\Api\CloudCache', 'purgeCache'),
 	'affected' => array('system/cache/cloud-api')
-);
+);*/
 
 /**
  * clear whole cache
