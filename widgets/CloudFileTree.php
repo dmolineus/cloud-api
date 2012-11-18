@@ -46,10 +46,9 @@ class CloudFileTree extends FileTree
 	public function __construct($arrAttributes=null)
 	{
 		parent::__construct($arrAttributes);					 
-		
-		if ($this->cloudApi == null)	
+		if ($this->cloudApi == null && $this->cloudApiField != '')	
 		{
-			$this->cloudApi = $this->activeRecord->cloudApi;			
+			$this->cloudApi = $this->activeRecord->{$this->cloudApiField};
 		}
 		
 		try {
@@ -58,7 +57,7 @@ class CloudFileTree extends FileTree
 		}
 		catch(\Exception $e)
 		{
-			$this->addErrorMessage(sprintf('Could not find Cloud Api "%s"', $this->cloudApi)); 
+			//$this->addErrorMessage(sprintf('Could not find Cloud Api "%s"', $this->cloudApi)); 
 		}
 	}
 
@@ -69,9 +68,10 @@ class CloudFileTree extends FileTree
 	 */
 	public function generate()
 	{
+		
 		if($this->objCloudApi === null) 
 		{
-			return $this->getMessages();			
+			return ''; //$this->getMessages();			
 		}
 		
 		$strValues = '';
