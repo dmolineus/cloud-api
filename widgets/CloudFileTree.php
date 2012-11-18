@@ -78,7 +78,7 @@ class CloudFileTree extends FileTree
 		$arrValues = array();
 
 		if (!empty($this->varValue)) // Can be an array
-		{
+		{			
 			$strValues = implode(',', (array)$this->varValue);
 			$arrFindValues = (array)$this->varValue;			
 						
@@ -93,8 +93,7 @@ class CloudFileTree extends FileTree
 				
 				// something went wrong. file does not exists anymore or connection failed
 				catch(\Exception $e) 
-				{
-					echo 'oha';					
+				{				
 					continue;
 				}
 								
@@ -108,7 +107,7 @@ class CloudFileTree extends FileTree
 					}
 					else
 					{
-						$arrValues[$objFiles->id] = $this->generateImage($objNode->icon) . ' ' . $strPath;
+						$arrValues[$strPath] = $this->generateImage($objNode->icon) . ' ' . $strPath;
 					}
 				}
 
