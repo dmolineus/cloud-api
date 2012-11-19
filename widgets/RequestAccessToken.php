@@ -66,8 +66,13 @@ class RequestAccessToken extends Widget
 	 * @return string
      */
     public function generate()
-    {       
-        $objApi = CloudApiManager::getApi($this->cloudApi);
+    {
+    	try {
+    		$objApi = CloudApiManager::getApi($this->cloudApi);	
+    	}        
+		catch(\Exception $e) {
+			return sprintf('<div class"tl_error">%s</div>', $e->getMessage());
+		}
         
         try 
         {                      
