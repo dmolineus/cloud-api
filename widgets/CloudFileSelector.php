@@ -60,14 +60,7 @@ class CloudFileSelector extends FileSelector
 		
 		$this->cloudApi = \Input::get('api');	
 				
-		try {			
-			$this->objCloudApi = CloudApiManager::getApi($this->cloudApi);			
-			$this->objCloudApi->authenticate();
-		}
-		catch(\Exception $e)
-		{
-			$this->addErrorMessage(sprintf('Could not load CloudApi "%s"', $this->cloudApi));		 
-		}
+
 				
 	}
 
@@ -80,10 +73,14 @@ class CloudFileSelector extends FileSelector
 	{
 		$this->import('BackendUser', 'User');
 		
-		// no instance found. error message has to be created
-		if($this->objCloudApi === null)
+		try {			
+			$this->objCloudApi = CloudApiManager::getApi($this->cloudApi);			
+			$this->objCloudApi->authenticate();
+		}
+		catch(\Exception $e)
 		{
-			return;
+			$this->addErrorMessage(sprintf('Could not load CloudApi "%s"', $this->cloudApi));
+			return;		 
 		}
 
 		// Store the keyword

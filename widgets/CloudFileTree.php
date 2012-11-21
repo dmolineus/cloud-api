@@ -51,14 +51,7 @@ class CloudFileTree extends FileTree
 			$this->cloudApi = $this->activeRecord->{$this->cloudApiField};
 		}
 		
-		try {
-			$this->objCloudApi = CloudApiManager::getApi($this->cloudApi); 
-			$this->objCloudApi->authenticate();		
-		}
-		catch(\Exception $e)
-		{
-			//$this->addErrorMessage(sprintf('Could not find Cloud Api "%s"', $this->cloudApi)); 
-		}
+
 	}
 
 
@@ -69,9 +62,14 @@ class CloudFileTree extends FileTree
 	public function generate()
 	{
 		
-		if($this->objCloudApi === null) 
+		try {
+			$this->objCloudApi = CloudApiManager::getApi($this->cloudApi); 
+			$this->objCloudApi->authenticate();		
+		}
+		catch(\Exception $e)
 		{
-			return ''; //$this->getMessages();			
+			//$this->addErrorMessage(sprintf('Could not find Cloud Api "%s"', $this->cloudApi));
+			return; 
 		}
 		
 		$strValues = '';
