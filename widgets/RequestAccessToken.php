@@ -77,6 +77,9 @@ class RequestAccessToken extends Widget
         try 
         {                      
             $objApi->authenticate();
+					
+			// load account info and display connected info       
+	        $arrAccountInfo = $objApi->getAccountInfo();
         }
 		
 		// could not authenticate so provide access link
@@ -88,9 +91,6 @@ class RequestAccessToken extends Widget
                 $GLOBALS['TL_LANG']['tl_settings']['cloudapi_accessTokenLink']
             );    
         }
-		
-		// load account info and display connected info       
-        $arrAccountInfo = $objApi->getAccountInfo();
         
         return sprintf(
             '<div class="tl_confirm" style="margin-bottom: 7px;"><input name="%sAccessToken" type="hidden" value="%s"><b>%s</b> %s (%s)</div>',
