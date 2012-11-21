@@ -83,7 +83,7 @@ class CloudFileSelector extends FileSelector
 		// no instance found. error message has to be created
 		if($this->objCloudApi === null)
 		{
-			return $this->getMessages();
+			return;
 		}
 
 		// Store the keyword
@@ -172,7 +172,7 @@ class CloudFileSelector extends FileSelector
 			else
 			{
 				// cloudApi: we have file paths fo use the eliminateNestedPaths instead of the nested paged on
-				$strFilemounts = $this->objCloudApi->getName() . 'Filemounts';
+				$strFilemounts = $this->objCloudApi->getName() . 'Filemounts';			
 				foreach ($this->eliminateNestedPaths($this->User->$strFilemounts) as $node)
 				{
 					$tree .= $this->renderFiletree($node, -20);
