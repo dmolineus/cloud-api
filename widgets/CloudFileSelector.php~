@@ -209,28 +209,10 @@ class CloudFileSelector extends FileSelector
 			return '';
 		}
 
-		try {			
-			$this->objCloudApi = CloudApiManager::getApi($this->cloudApi);			
-			$this->objCloudApi->authenticate();
-		}
-		catch(\Exception $e)
-		{
-			$this->addErrorMessage(sprintf('Could not load CloudApi "%s"', $this->cloudApi));
-			return;		 
-		}
-
-
 		$this->strField = $strField;
 		$this->loadDataContainer($this->strTable);
 		
-		try {
-			$objNode = $this->objCloudApi->getNode($id);	
-		}
-		catch(\Exception $e)
-		{
-			return '';			
-		}
-		
+		$objNode = $this->objCloudApi->getNode($id);
 		$this->varValue = $objNode->path;
 		
 		// Extension filter
@@ -504,4 +486,3 @@ class CloudFileSelector extends FileSelector
 	}
 	
 }
-
