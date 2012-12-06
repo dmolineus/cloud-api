@@ -29,6 +29,12 @@ abstract class CloudNode extends System
 	protected $arrChildren;
 	
 	/**
+	 * instance of correspondending mdel
+	 * @var Netzmacht\Cloud\Api\CloudNodesModel
+	 */
+	protected $arrRow;
+	
+	/**
 	 * Pathinfo
 	 * @var array
 	 */
@@ -57,7 +63,6 @@ abstract class CloudNode extends System
 	public function __construct($strPath, $objApi)
 	{
 		$this->strPath = $strPath;
-
 		$this->objApi = $objApi;
 	}
 	
@@ -72,14 +77,11 @@ abstract class CloudNode extends System
 	 *  - string icon
 	 *  - bool isCached
 	 *  - bool isGdImage
-	 *  - bool isMetaCached
 	 *  - string mime
 	 *  - string name
-	 * 
-	 * following keys has to be created of the implementation of this class
 	 *  - string cacheKey
-	 *  - string cacheMetaKey
-	 *  - string downloadUrl	 
+	 *  - string downloadUrl
+	 *  - string downloadUrlExpires	 
 	 *  - string type 'file' or 'folder'
 	 *  - bool hasThumbnail
 	 *  - string path	 
@@ -91,27 +93,65 @@ abstract class CloudNode extends System
 	 */
 	public function __get($strKey)
 	{
-		if(isset($this->arrCache[$strKey])) 
+		switch ($strKey)
+		{
+			// delegete to result row
+			case 'cachedFileVersion':
+			case 'downloadUrl':
+			case 'downloadUrlExpires':			
+			case 'extension':
+			case 'filesize':
+			case 'found':
+			case 'hash':
+			case 'hasThumbnail':
+			case 'id':
+			case 'meta':
+			case 'modified':
+			case 'name':
+			case 'path':
+			case 'pid':
+			case 'tstamp':
+			case 'thumbnailVersion':
+			case 'type':
+			case 'version':
+				return isset($this->arrRow[$strKey]) ? $this->arrRow[$strKey] : null;
+				break;
+		}
+		
+		// value is cached
+		if(isset($this->arrCache[$strKey]))
 		{
 			return $this->arrCache[$strKey];
 		}
 		
+		// generate value
 		switch ($strKey)
 		{
+			case 'cacheKey':
+				$this->arrCache[$strKey] = sprintf('/%s%s',
+					$this->objApi->name,
+					$this->strPath
+				);				 
+				break;
+				
+			case 'cacheThumbnailKey':
+				$arrPathInfo = pathinfo($this->strPath);
+				
+				$this->arrCache[$strKey] = sprintf(
+					'%s/%s/%s_thumb.%s.jpg', 
+					$this->objApi->name, 
+					$arrPathInfo['dirname'], 
+					$arrPathInfo['filename'], 
+					$arrPathInfo['extension']
+				); 
+				break;
+		
 			case 'dirname':
 				if (!isset($this->arrPathinfo[$strKey]))
 				{
 					$this->arrPathinfo = pathinfo($this->strPath);
 				}
-				$this->arrCache[$strKey] = $this->arrPathinfo['dirname'];
-				break;
-				
-			case 'extension':
-				if (!isset($this->arrPathinfo[$strKey]))
-				{
-					$this->arrPathinfo = pathinfo($this->strPath);
-				}
-				$this->arrCache[$strKey] = $this->arrPathinfo['extension'];
+				$this->arrCache[$strKey] = $this->arrPathinfo[$strKey];
 				break;
 			
 			case 'icon':
@@ -127,32 +167,58 @@ abstract class CloudNode extends System
 				$this->arrCache[$strKey] = in_array($this->extension, array('gif', 'jpg', 'jpeg', 'png'));
 				break;
 				
-			case 'isMetaCached':
-				$this->arrCache[$strKey] = CloudCache::isCached($this->cacheMetaKey);
-				break;
-				
 			case 'mime':
 				$arrMimeInfo = $this->getMimeInfo();
 				$this->arrCache[$strKey] = $arrMimeInfo[0];
 				break;
 				
-			case 'name':
 			case 'basename':
-				if (!isset($this->arrPathinfo[$strKey]))
-				{
-					$this->arrPathinfo = pathinfo($this->strPath);
-				}
-				$this->arrCache[$strKey] = $this->arrPathinfo['basename'];
-				break;			 
+				return $this->name;
+				break;				
+				
+			default:
+				return null; 
 		}
 				
-		if(!isset($this->arrCache[$strKey])) 
-		{
-			return parent::__get($strKey);
-		}	
-				
 		return $this->arrCache[$strKey];
+	}
+
+	/**
+	 * save attributes
+	 * 
+	 * @param string
+	 * @param mixed
+	 */
+	protected function __set($strKey, $mxdValue)
+	{
+		switch ($strKey) 
+		{
+			case 'cachedFileVersion':
+			case 'downloadUrlExpires':
+			case 'downloadUrl':
+			case 'extension':
+			case 'filesize':
+			case 'found':
+			case 'hash':
+			case 'hasThumbnail':
+			case 'id':
+			case 'meta':
+			case 'name':
+			case 'path':
+			case 'pid':
+			case 'tstamp':
+			case 'thumbnailVersion':
+			case 'type':
+			case 'version':
+				$this->arrRow[$strKey] = $mxdValue;
+				break; 
+				
+			case 'default':
+				return;
+				break;
+		}
 		
+		$this->blnMetaDataChanged = true;
 	}
 
 
@@ -161,7 +227,7 @@ abstract class CloudNode extends System
 	 * 
 	 * @return bool
 	 */
-	abstract public function delete();
+	public function delete();
 	
 	
 	/**
@@ -337,6 +403,7 @@ abstract class CloudNode extends System
 	 * @param string new path
 	 */
 	abstract public function move($strNewPath);
+
 
 	/**
 	 * copy file to a new place

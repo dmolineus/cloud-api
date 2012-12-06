@@ -50,8 +50,6 @@ class CloudFileTree extends FileTree
 		{
 			$this->cloudApi = $this->activeRecord->{$this->cloudApiField};
 		}
-		
-
 	}
 
 
@@ -68,7 +66,6 @@ class CloudFileTree extends FileTree
 		}
 		catch(\Exception $e)
 		{
-			//$this->addErrorMessage(sprintf('Could not find Cloud Api "%s"', $this->cloudApi));
 			return; 
 		}
 		
@@ -94,7 +91,7 @@ class CloudFileTree extends FileTree
 				{				
 					continue;
 				}
-								
+
 
 				// Show files and folders
 				if (!$this->blnIsGallery && !$this->blnIsDownloads)

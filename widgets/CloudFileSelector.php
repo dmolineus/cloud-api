@@ -121,7 +121,7 @@ class CloudFileSelector extends FileSelector
 					
 					foreach ($arrNodes as $objNode) 
 					{
-						$strFilemounts = $this->objCloudApi->getName() . 'Filemounts';						
+						$strFilemounts = $this->objCloudApi->name . 'Filemounts';						
 
 						if (count(array_intersect($this->User->{$strFilemounts}, $this->getParentNodes((array)$objNode->path))) > 0)
 						{
@@ -171,7 +171,7 @@ class CloudFileSelector extends FileSelector
 			else
 			{
 				// cloudApi: we have file paths fo use the eliminateNestedPaths instead of the nested paged on
-				$strFilemounts = $this->objCloudApi->getName() . 'Filemounts';			
+				$strFilemounts = $this->objCloudApi->name() . 'Filemounts';			
 				foreach ($this->eliminateNestedPaths($this->User->{$strFilemounts}) as $node)
 				{
 					$tree .= $this->renderFiletree($node, -20);

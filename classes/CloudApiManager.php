@@ -19,7 +19,7 @@ namespace Netzmacht\Cloud\Api;
  * 
  * Its a static class so do not create an instance of it
  */
-class CloudApiManager
+class CloudApiManager extends System
 {
 	/**
 	 * registerd apis
@@ -27,42 +27,81 @@ class CloudApiManager
 	 * @var array
 	 */
 	protected static $arrApi = array();
+	
+	/**
+	 * registerd apis
+	 * 
+	 * @var array
+	 */
+	protected static $arrConfig = array();
+	
+	/**
+	 * 
+	 */
+	protected static $objInstance = null;
+	
+	
+	/**
+	 * 
+	 */
+	protected function __construct()
+	{
+		parent::__construct();
+	}
+	
+	
+	/**
+	 * 
+	 */
+	protected function getInstance()
+	{
+		if(static::$objInstance === null)
+		{
+			static::$objInstance = new static();
+		}
+		
+		return static::$objInstance;
+	}
 
 
 	/**
 	 * get cloud api singleton
 	 * 
+	 * @param string name of api
 	 * @throws Exception if api can not be found
 	 * @return CloudApi
 	 */
-	public static function getApi($strName=null)
-	{
-		// if no name is given try to get first one
-		if($strName == null) {
-			if(count(static::$arrApi) == 0) {
-				throw new \Exception('Can not find any registered Cloud Apis');
-			}
-
-			$arrCurrent = current(static::$arrApi);
-			$strName = $arrcurrent['name'];
+	public static function getApi($strName)
+	{	
+		if(isset(static::$arrApi[$strName]))
+		{
+			return static::$arrApi[$strName];
+		}
+		
+		if(!isset(static::$arrConfig[$strName])) 
+		{
+			$objInstance = static::getInstance();
+			$objRow = $objInstance->Database->query('SELECT * FROM tl_cloudapi WHERE name = "' . $this->name .'"');
+			
+			if($objRow !== null)
+			{
+				static::$arrConfig[$strName] = $objRow->row();	
+			}			
 		}
 
 		// try to find api singleton
-		if(isset(static::$arrApi[$strName])) {
+		if(isset(static::$arrConfig[$strName])) {
 			if(!static::isEnabled($strName)) {
-				throw new \Exception(sprintf('Cloud Api %s exists but is not enabled. Please change settings', $strName));
+				throw new \Exception(sprintf('Cloud Service %s is not enabled.', $strName));
 			}
 			
-			if(!isset(static::$arrApi[$strName]['instance'])) {
-				$strClass = static::$arrApi[$strName]['name'];
-				
-				static::$arrApi[$strName]['instance'] = new $strClass();
-			}
+			$strClass = static::$arrConfig[$strName]['class'];
+			static::$arrApi[$strName] = new $strClass(static::$arrConfig[$strName]);
 
-			return static::$arrApi[$strName]['instance'];
+			return static::$arrApi[$strName];
 		}
 
-		throw new \Exception(sprintf('Cloud Api %s is not registered', $strName));
+		throw new \Exception(sprintf('Cloud Api %s is not installed', $strName));
 	}
 	
 	
@@ -72,21 +111,24 @@ class CloudApiManager
 	 * @param bool false is all registered apis shall be returned
 	 * @return array
 	 */
-	public static function getregisteredApis($blnOnlyEnabled = true)
+	public static function getApis($blnOnlyEnabled = true)
 	{
-		if(!$blnOnlyEnabled) {
-			return static::$arrApi;
+		$strWhere = '';
+		
+		if($blnOnlyEnabled)
+		{
+			$strWhere = ' WHERE enabled=1';
 		}
 		
-		$arrEnabled = array();
+		$objInstance = static::getInstance();
+		$objResult = $objInstance->Database->query('SELECT * FROM tl_cloudapi' . $strWhere);
 		
-		foreach(static::$arrApi as $strKey => $arrValue) {			
-			if(static::isEnabled($strKey)) {
-				$arrEnabled[$strKey] = $arrValue;
-			}
+		while($objResult->next())
+		{
+			static::$arrConfig[$objResult->name] = $objResult->row();
 		}
 		
-		return $arrEnabled;
+		return static::$arrApi;
 	}
 
 
@@ -97,11 +139,12 @@ class CloudApiManager
 	 * @return bool
 	 */
 	protected static function isEnabled($strName) {
-		if(!isset(static::$arrApi[$strName]['enabled'])) {
-			return false;
+		if(!isset(static::$arrConfig[$strName]['enabled'])) 
+		{
+			static::getApi($strName);
 		}
 				
-		return static::$arrApi[$strName]['enabled'];
+		return static::$arrConfig[$strName]['enabled'];
 	}
 
 
@@ -112,16 +155,19 @@ class CloudApiManager
 	 * @param string name of api
 	 * @param strClassPath path to api class
 	 */
-	public static function registerApi($strName, $mixed)
+	public static function installApi($strName, $strClass, $arrProvidedModes)
 	{
-		if(is_array($mixed)) {
-			static::$arrApi[$strName]['name'] = $mixed['name'];
-			static::$arrApi[$strName]['enabled'] = $mixed['enabled'];
-			
-			return;
-		}
+		$objInstance = static::getInstance();
+		$objStmt = $objInstance->Database->prepare('INSERT INTO tl_cloudapi %s');
 		
-		static::$arrApi[$strName]['name'] = $mixed;
+		$objStmt->set(array
+		(
+			'name' => $strName,
+			'class' => $strClass,
+			'modes' => $arrProvidedModes
+		));
+		
+		$objStmt->execute();		
 	}
 	
 }

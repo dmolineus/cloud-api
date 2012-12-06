@@ -24,7 +24,6 @@ $GLOBALS['TL_DCA']['tl_cloudapi_node'] = array
 		'dataContainer'               => 'Memory',
 		'onload_callback' => array
 		(
-			array('CloudNodeDataContainer', 'loadData'),
 			array('CloudNodeDataContainer', 'checkPermission'),
 			array('CloudNodeDataContainer', 'addBreadcrumb'),
 			
@@ -200,7 +199,7 @@ $GLOBALS['TL_DCA']['tl_cloudapi_node'] = array
 		(
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),
-		'downloadUrlExpire' => array
+		'downloadUrlExpires' => array
 		(
 			'sql'                     => "varchar(255) NOT NULL default ''"
 		),

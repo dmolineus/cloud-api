@@ -20,6 +20,65 @@ use System;
  */
 abstract class CloudApi extends System
 {
+	
+	/**
+	 * api config
+	 * 
+	 * @var array
+	 */
+	protected $arrConfig;
+	
+	/**
+	 * store all created nodes
+	 * 
+	 * @var array
+	 */
+	protected $arrNodes = array();
+	
+	
+	/**
+	 * constructor will load database config
+	 * 
+	 * @return void
+	 */
+	public function __construct($arrRow)
+	{			
+		if($arrRow === null)
+		{
+			throw new \Exception(sprintf('Cloud Service "%s" config is not found. Please install the Cloud service.', $this->name));
+		}
+		
+		$this->arrConfig = $arrRow;
+				
+		// initiate cloud nodes model for limiting statements to current cloud service 
+		Api\CloudNodesModel::setApi($this->id);
+	}
+	
+	
+	/**
+	 * getter implements following keys
+	 * 
+	 * @param string name
+	 * 	- mode
+	 *  - name
+	 * @return mixed
+	 */
+	public function __get($strKey)
+	{
+		switch($strKey)
+		{
+			case 'mode':
+			{
+				return 'sync';
+			}
+			
+			case 'name':
+			{
+				return get_class($this);
+			}
+		}
+	}
+	
 
 	/**
 	 * authenticate cloud api
@@ -36,14 +95,6 @@ abstract class CloudApi extends System
 	 * @return array
 	 */	
 	abstract public function getAccountInfo();
-	
-	
-	/**
-	 * get name of the cloud service
-	 * 
-	 * @return string
-	 */
-	abstract public function getName();
 	
 	
 	/**
@@ -118,4 +169,67 @@ abstract class CloudApi extends System
 		// Stop the script
 		exit;
 	}
+
+
+	/**
+	 * update sync state in the cloud api table
+	 * 
+	 * @param bool true
+	 * @param string sync cursor
+	 * @param bool true if tstamp should be saved by finishing
+	 * @return void
+	 */
+	public function setSyncState($blnActive, $strCursor=null,  $blnStoreTstamp=true)
+	{
+		$arrParams = array
+		(
+			'tstamp' => time(),
+			'syncInProgress' => ($blnActive) ? '1' : '0',			
+		);
+		
+		if($strCursor !== null)
+		{
+			$arrParams['deltaCursor'] = $strCursor;
+		}
+		
+		if($blnActive === false && $blnStoreTstamp)
+		{
+			$arrParams['syncTstamp'] = time();
+		}
+		
+		$objStatement= $this->Database->prepare('UPDATE tl_cloudapi SET %s WHERE name=?');
+		$objStatement->set($arrParams);
+		$objStatement->execute($this->getName());
+	}
+	
+	
+	/**
+	 * implements syncing of file system and database
+	 * We use the delta sync method. If the cloud api does not 
+	 * support this you have to override this method
+	 *
+	 * @param bool force syncing no matter when last sync was 
+	 * @return void
+	 */
+	public function sync($blnForce = false)
+	{	
+		// only sync after 10 minutes and make sure that not other clients are also syncing the database
+		if(!$blnForce && ((time() - $objRow->syncTstamp < 60000) || $objRow->syncInProgress == '1'))
+		{
+			return;
+		}		
+		
+		$this->setSyncState(true);		
+		$strCursor = $this->execSync($objRow->deltaCursor);		
+		$this->setSyncState(false, $strCursor);
+	}
+	
+	
+	/**
+	 * execute syncing
+	 * 
+	 * @param string cursor
+	 * @return string new cursor
+	 */	
+	abstract protected function syncExec($strCursor);	
 }

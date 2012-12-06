@@ -21,6 +21,25 @@ class AjaxRequest extends Backend
 {
 	
 	/**
+	 * Initialize the controller
+	 *
+	 * 1. Import the user
+	 * 2. Call the parent constructor
+	 * 3. Authenticate the user
+	 * 4. Load the language files
+	 * DO NOT CHANGE THIS ORDER!
+	 */
+	public function __construct()
+	{
+		$this->import('BackendUser', 'User');
+		parent::__construct();
+
+		$this->User->authenticate();
+		$this->loadLanguageFile('default');
+	}
+	
+	
+	/**
 	 * calls by contao hook executePreActions
 	 * 
 	 * @param string 'toggleCloudFiletree' or 'loadCloudFiletree' are matched
