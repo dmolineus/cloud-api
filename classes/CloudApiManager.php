@@ -12,6 +12,7 @@
  **/
 
 namespace Netzmacht\Cloud\Api;
+use System;
 
 /**
  * CloudApiManager handles registration of different cloud api types
@@ -53,7 +54,7 @@ class CloudApiManager extends System
 	/**
 	 * 
 	 */
-	protected function getInstance()
+	protected static function getInstance()
 	{
 		if(static::$objInstance === null)
 		{
@@ -78,14 +79,15 @@ class CloudApiManager extends System
 			return static::$arrApi[$strName];
 		}
 		
-		if(!isset(static::$arrConfig[$strName])) 
+		if(!isset(static::$arrConfig[$strName]['enabled'])) 
 		{
 			$objInstance = static::getInstance();
-			$objRow = $objInstance->Database->query('SELECT * FROM tl_cloudapi WHERE name = "' . $this->name .'"');
+			$objInstance->import('Database');
+			$objRow = $objInstance->Database->query('SELECT * FROM tl_cloud_api WHERE name = "' . $strName .'"');
 			
 			if($objRow !== null)
 			{
-				static::$arrConfig[$strName] = $objRow->row();	
+				static::$arrConfig[$strName] = $objRow->row();
 			}			
 		}
 
@@ -111,7 +113,7 @@ class CloudApiManager extends System
 	 * @param bool false is all registered apis shall be returned
 	 * @return array
 	 */
-	public static function getApis($blnOnlyEnabled = true)
+	public static function getApis($blnOnlyInstalled=true, $blnOnlyEnabled = true)
 	{
 		$strWhere = '';
 		
@@ -121,14 +123,19 @@ class CloudApiManager extends System
 		}
 		
 		$objInstance = static::getInstance();
-		$objResult = $objInstance->Database->query('SELECT * FROM tl_cloudapi' . $strWhere);
+		$objInstance->import('Database');
+		
+		$objResult = $objInstance->Database->query('SELECT * FROM tl_cloud_api' . $strWhere);
+		$arrReturn = array();
 		
 		while($objResult->next())
 		{
 			static::$arrConfig[$objResult->name] = $objResult->row();
+			static::$arrConfig[$objResult->name]['installed'] = true;
+			$arrReturn[$objResult->name] = static::$arrConfig[$objResult->name];
 		}
 		
-		return static::$arrApi;
+		return $blnOnlyInstalled ? $arrReturn : static::$arrConfig;
 	}
 
 
@@ -138,13 +145,64 @@ class CloudApiManager extends System
 	 * @param string
 	 * @return bool
 	 */
-	protected static function isEnabled($strName) {
+	public static function isEnabled($strName) {
 		if(!isset(static::$arrConfig[$strName]['enabled'])) 
 		{
-			static::getApi($strName);
+			return false;
 		}
 				
 		return static::$arrConfig[$strName]['enabled'];
+	}
+	
+	
+	/**
+	 * check if api is installed
+	 * 
+	 * @param string
+	 * @return bool
+	 */
+	public static function isInstaled($strName) {
+		if(!isset(static::$arrConfig[$strName]['installed'])) 
+		{
+			return false;
+		}
+				
+		return static::$arrConfig[$strName]['installed'];
+	}
+	
+	
+	/**
+	 * install a registered api in the database
+	 * 
+	 */
+	public static function installApi($strName)
+	{
+		if(!isset(static::$arrConfig[$strName]))
+		{
+			return false;
+		}		
+		
+		$objInstance = static::getInstance();
+		$objInstance->import('Database');
+		
+		$objStmt = $objInstance->Database->prepare('SELECT count(name) AS total FROM tl_cloud_api WHERE name=%s');
+		$objCount = $objStmt->execute($strName);
+		
+		if($objCount->total > 0)
+		{
+			return;
+		}
+		
+		$objStmt = $objInstance->Database->prepare('INSERT INTO tl_cloud_api %s');
+		
+		$objStmt->set(array
+		(
+			'name' => $strName,
+			'tstamp' => time(),
+			'class' => static::$arrConfig[$strName]['class'],
+		));
+		
+		return $objStmt->execute();
 	}
 
 
@@ -153,21 +211,15 @@ class CloudApiManager extends System
 	 * 
 	 * @return void
 	 * @param string name of api
-	 * @param strClassPath path to api class
 	 */
-	public static function installApi($strName, $strClass, $arrProvidedModes)
+	public static function registerApi($strName, $strClass)
 	{
-		$objInstance = static::getInstance();
-		$objStmt = $objInstance->Database->prepare('INSERT INTO tl_cloudapi %s');
+		// fetch apis from database
+		if(!isset(static::$arrConfig[$strName])) 
+		{
+			static::$arrConfig[$strName] = array();		
+		}
 		
-		$objStmt->set(array
-		(
-			'name' => $strName,
-			'class' => $strClass,
-			'modes' => $arrProvidedModes
-		));
-		
-		$objStmt->execute();		
+		static::$arrConfig[$strName]['class'] = $strClass;	
 	}
-	
 }

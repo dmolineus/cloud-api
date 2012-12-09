@@ -33,6 +33,9 @@ ClassLoader::addClasses(array
 	'Netzmacht\Cloud\Api\CloudCache' => 'system/modules/cloud-api/classes/CloudCache.php',
 	'Netzmacht\Cloud\Api\CloudApi' => 'system/modules/cloud-api/classes/CloudApi.php',
 	
+	// Models
+	'CloudapiNodeModel' => 'system/modules/cloud-api/models/CloudapiNodeModel.php',
+	
 	// widgets
 	'Netzmacht\Cloud\Api\CloudApiSelectMenu' => 'system/modules/cloud-api/widgets/CloudApiSelectMenu.php',	
 	'Netzmacht\Cloud\Api\CloudFileTree' => 'system/modules/cloud-api/widgets/CloudFileTree.php',

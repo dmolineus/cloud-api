@@ -23,7 +23,7 @@
  * @return boolean
  * 
  */
-AjaxRequest.toggleCloudFiletree = function (el, id, folder, field, name, level)
+AjaxRequest.toggleCloudFiletree = function (el, id, field, name, level)
 {
 	el.blur();
 	var item = $(id);
@@ -70,7 +70,7 @@ AjaxRequest.toggleCloudFiletree = function (el, id, folder, field, name, level)
 			// HOOK
 			window.fireEvent('ajax_change');
 		}
-	}).post({'action':'loadCloudFiletree', 'id':id, 'folder': folder, 'level':level, 'field':field, 'name':name, 'state':1, 'REQUEST_TOKEN':Contao.request_token});
+	}).post({'action':'loadCloudFiletree', 'id':id, 'level':level, 'field':field, 'name':name, 'state':1, 'REQUEST_TOKEN':Contao.request_token});
 
 	return false;
 }

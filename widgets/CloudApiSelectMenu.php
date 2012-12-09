@@ -43,7 +43,7 @@ class CloudApiSelectMenu extends SelectMenu
 		// override options
 		$this->arrOptions = array(array('value' => '', 'label' => '-'));
 
-		$arrApis = CloudApiManager::getregisteredApis();                
+		$arrApis = CloudApiManager::getApis();                
 
 		foreach ($arrApis as $strKey => $arrValue) 
 		{

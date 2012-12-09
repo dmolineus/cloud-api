@@ -32,7 +32,7 @@ abstract class CloudNode extends System
 	 * instance of correspondending mdel
 	 * @var Netzmacht\Cloud\Api\CloudNodesModel
 	 */
-	protected $arrRow;
+	protected $objModel;
 	
 	/**
 	 * Pathinfo
@@ -114,7 +114,7 @@ abstract class CloudNode extends System
 			case 'thumbnailVersion':
 			case 'type':
 			case 'version':
-				return isset($this->arrRow[$strKey]) ? $this->arrRow[$strKey] : null;
+				return isset($this->objModel->$strKey) ? $this->objModel->$strKey : null;
 				break;
 		}
 		
@@ -189,7 +189,7 @@ abstract class CloudNode extends System
 	 * @param string
 	 * @param mixed
 	 */
-	protected function __set($strKey, $mxdValue)
+	public function __set($strKey, $mxdValue)
 	{
 		switch ($strKey) 
 		{
@@ -203,6 +203,7 @@ abstract class CloudNode extends System
 			case 'hasThumbnail':
 			case 'id':
 			case 'meta':
+			case 'modified':
 			case 'name':
 			case 'path':
 			case 'pid':
@@ -210,7 +211,7 @@ abstract class CloudNode extends System
 			case 'thumbnailVersion':
 			case 'type':
 			case 'version':
-				$this->arrRow[$strKey] = $mxdValue;
+				$this->objModel->$strKey = $mxdValue;
 				break; 
 				
 			case 'default':
@@ -227,7 +228,7 @@ abstract class CloudNode extends System
 	 * 
 	 * @return bool
 	 */
-	public function delete();
+	abstract public function delete();
 	
 	
 	/**

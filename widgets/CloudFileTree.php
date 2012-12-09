@@ -61,8 +61,7 @@ class CloudFileTree extends FileTree
 	{
 		
 		try {
-			$this->objCloudApi = CloudApiManager::getApi($this->cloudApi); 
-			$this->objCloudApi->authenticate();		
+			$this->objCloudApi = CloudApiManager::getApi($this->cloudApi);
 		}
 		catch(\Exception $e)
 		{
@@ -79,11 +78,11 @@ class CloudFileTree extends FileTree
 						
 			$allowedDownload = trimsplit(',', strtolower($GLOBALS['TL_CONFIG']['allowedDownload']));
 				
-			foreach ($arrFindValues as $strPath)
+			foreach ($arrFindValues as $intId)
 			{
 				try 
 				{
-					$objNode = $this->objCloudApi->getNode($strPath);
+					$objNode = $this->objCloudApi->getNode(intval($intId));
 				}
 				
 				// something went wrong. file does not exists anymore or connection failed
@@ -98,11 +97,11 @@ class CloudFileTree extends FileTree
 				{
 					if ($objNode->type == 'folder')
 					{
-						$arrValues[$strPath] = $this->generateImage('folderC.gif') . ' ' . $strPath;
+						$arrValues[$intId] = $this->generateImage('folderC.gif') . ' ' . $objNode->path;
 					}
 					else
 					{
-						$arrValues[$strPath] = $this->generateImage($objNode->icon) . ' ' . $strPath;
+						$arrValues[$intId] = $this->generateImage($objNode->icon) . ' ' . $objNode->path;
 					}
 				}
 
@@ -154,7 +153,7 @@ class CloudFileTree extends FileTree
 							// Only show images
 							if ($objNode->isGdImage)
 							{								
-								$arrValues[$strPath] = $this->generateImage(\Image::get($objNode->getThumbnail(), 80, 60, 'center_center'), '', 'class="gimage"');
+								$arrValues[$intId] = $this->generateImage(\Image::get($objNode->getThumbnail(), 80, 60, 'center_center'), '', 'class="gimage"');
 							}
 						}
 						else
@@ -162,7 +161,7 @@ class CloudFileTree extends FileTree
 							// Only show allowed download types
 							if (in_array($objNode->extension, $allowedDownload) && !preg_match('/^meta(_[a-z]{2})?\.txt$/', $objNode->basename))
 							{
-								$arrValues[$strPath] = $this->generateImage($objNode->icon) . ' ' . $strPath;
+								$arrValues[$intId] = $this->generateImage($objNode->icon) . ' ' . $objNode->path;
 							}
 						}
 					}

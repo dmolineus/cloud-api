@@ -70,7 +70,7 @@ class AjaxRequest extends Backend
 		
 		// pre ation for loading part of the cloud file tree
 		elseif($strAction == 'loadCloudFiletree')
-		{
+		{		
 			$this->strAjaxId = preg_replace('/.*_([0-9a-zA-Z]+)$/', '$1', \Input::post('id'));
 			$this->strAjaxKey = str_replace('_' . $this->strAjaxId, '', \Input::post('id'));
 
@@ -93,7 +93,7 @@ class AjaxRequest extends Backend
 	 * @param string 'loadCloudFiletree' are matched
 	 * @return void 
 	 */
-	public function executePostActions($strAction)
+	public function executePostActions($strAction, $dc)
 	{
 		// generate part of the cloud file selector
 		if($strAction == 'loadCloudFiletree')
@@ -101,10 +101,9 @@ class AjaxRequest extends Backend
 			$arrData['strTable'] = $dc->table;
 			$arrData['id'] = $this->strAjaxName ?: $dc->id;
 			$arrData['name'] = \Input::post('name');
-			$strFolder = \Input::post('folder');
 
 			$objWidget = new $GLOBALS['BE_FFL']['cloudFileSelector']($arrData, $dc);
-			echo $objWidget->generateAjax($strFolder, \Input::post('field'), intval(\Input::post('level')));
+			echo $objWidget->generateAjax(intval($this->strAjaxId), \Input::post('field'), intval(\Input::post('level')));
 			exit;
 		}		
 	}
