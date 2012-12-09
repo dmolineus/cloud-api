@@ -29,12 +29,13 @@ ClassLoader::addClasses(array
 	// Classes
 	'Netzmacht\Cloud\Api\AjaxRequest' => 'system/modules/cloud-api/classes/AjaxRequest.php',
 	'Netzmacht\Cloud\Api\CloudApiManager' => 'system/modules/cloud-api/classes/CloudApiManager.php',
-	'Netzmacht\Cloud\Api\CloudNode' => 'system/modules/cloud-api/classes/CloudNode.php',
+	#'Netzmacht\Cloud\Api\CloudNode' => 'system/modules/cloud-api/classes/CloudNode.php',
 	'Netzmacht\Cloud\Api\CloudCache' => 'system/modules/cloud-api/classes/CloudCache.php',
 	'Netzmacht\Cloud\Api\CloudApi' => 'system/modules/cloud-api/classes/CloudApi.php',
 	
 	// Models
-	'CloudapiNodeModel' => 'system/modules/cloud-api/models/CloudapiNodeModel.php',
+	'CloudNodeModel' => 'system/modules/cloud-api/models/CloudNodeModel.php',
+	'Netzmacht\Cloud\Api\CloudNodeModelCollection' => 'system/modules/cloud-api/models/CloudNodeModelCollection.php',
 	
 	// widgets
 	'Netzmacht\Cloud\Api\CloudApiSelectMenu' => 'system/modules/cloud-api/widgets/CloudApiSelectMenu.php',	

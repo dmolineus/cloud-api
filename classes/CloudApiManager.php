@@ -68,11 +68,12 @@ class CloudApiManager extends System
 	/**
 	 * get cloud api singleton
 	 * 
-	 * @param string name of api
+	 * @param string name or id of api
+	 * @param string field name or id
 	 * @throws Exception if api can not be found
 	 * @return CloudApi
 	 */
-	public static function getApi($strName)
+	public static function getApi($strName, $strField='name')
 	{	
 		if(isset(static::$arrApi[$strName]))
 		{
@@ -83,7 +84,7 @@ class CloudApiManager extends System
 		{
 			$objInstance = static::getInstance();
 			$objInstance->import('Database');
-			$objRow = $objInstance->Database->query('SELECT * FROM tl_cloud_api WHERE name = "' . $strName .'"');
+			$objRow = $objInstance->Database->query('SELECT * FROM tl_cloud_api WHERE ' . ($strField == 'id' ? 'id' : 'name') . ' = "' . $strName .'"');
 			
 			if($objRow !== null)
 			{

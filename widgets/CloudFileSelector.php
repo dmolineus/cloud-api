@@ -142,7 +142,7 @@ class CloudFileSelector extends FileSelector
 			// Show a custom path (see #4926)
 			if ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['path'] != '')
 			{
-				$objFolder = $this->objCloudApi->getNode($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['path']);
+				$objFolder = \CloudNodeModel::findOneByPath($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['path']);
 
 				if ($objFolder !== null)
 				{
@@ -154,13 +154,12 @@ class CloudFileSelector extends FileSelector
 			elseif ($this->User->isAdmin)
 			{
 				// fetch entrys in root directory
-				$objRoot = $this->objCloudApi->getNode('/');
+				$objRoot = \CloudNodeModel::findOneByPath('/');
 				$objNodes = $objRoot->getChildren();
-							
 
-				foreach($objNodes as $objNode)				
+				while($objNodes->next())				
 				{
-					$tree .= $this->renderFiletree($objNode->id, -20);
+					$tree .= $this->renderFiletree($objNodes->id, -20);
 				}
 			}
 
@@ -222,7 +221,7 @@ class CloudFileSelector extends FileSelector
 		
 		try 
 		{
-			$objNode = $this->objCloudApi->getNode(intval($id));	
+			$objNode = \CloudNodeModel::OneById($id);
 		}
 		catch(\Exception $e)
 		{
@@ -298,11 +297,9 @@ class CloudFileSelector extends FileSelector
 			$this->redirect(preg_replace('/(&(amp;)?|\?)'.$flag.'tg=[^& ]*/i', '', \Environment::get('request')));
 		}
 		
-		try 
-		{
-			$objNode = $this->objCloudApi->getNode(intval($id));
-		}
-		catch(\Exception $e) 
+		$objNode = \CloudNodeModel::findOneById($id);
+		
+		if($objNode === null) 
 		{
 			return '';
 		}	
@@ -322,7 +319,7 @@ class CloudFileSelector extends FileSelector
 		// Check whether there are child records
 		if (!$blnNoRecursion)
 		{
-			$arrNodes = $objNode->getChildren(); 			
+			$objChildren = $objNode->getChildren();	
 		}
 
 		$return .= "\n	" . '<li class="'.(($objNode->type == 'folder') ? 'tl_folder' : 'tl_file').'" onmouseover="Theme.hoverDiv(this, 1)" onmouseout="Theme.hoverDiv(this, 0)"><div class="tl_left" style="padding-left:'.($intMargin + $intSpacing).'px">';
@@ -332,7 +329,7 @@ class CloudFileSelector extends FileSelector
 		$level = ($intMargin / $intSpacing + 1);
 		$blnIsOpen = ($session[$node][$id] == 1 || in_array($id, $this->arrNodes));
 
-		if (!empty($arrNodes))
+		if (isset($objChildren) && $objChildren->count() > 0)
 		{
 			$folderAttribute = '';
 			$img = $blnIsOpen ? 'folMinus.gif' : 'folPlus.gif';
@@ -396,14 +393,14 @@ class CloudFileSelector extends FileSelector
 		$return .= '</div><div style="clear:both"></div></li>';
 
 		// Begin a new submenu
-		if (!empty($arrNodes) && ($blnIsOpen || $this->Session->get('file_selector_search') != ''))
+		if (isset($objChildren) && $objChildren->count() > 0 && ($blnIsOpen || $this->Session->get('file_selector_search') != ''))
 		{
 			$return .= '<li class="parent" id="'.$node.'_'.$id.'"><ul class="level_'.$level.'">';
 
-			foreach ($arrNodes as $strChild => $objChild)
+			while($objChildren->next())
 			{
 				// cloudApi: we do not have an protected option
-				$return .= $this->renderFiletree($objChild->id, ($intMargin + $intSpacing) /*, $objNode->protected*/);
+				$return .= $this->renderFiletree($objChildren->id, ($intMargin + $intSpacing) /*, $objNode->protected*/);
 			}
 
 			$return .= '</ul></li>';

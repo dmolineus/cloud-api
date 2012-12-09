@@ -82,7 +82,7 @@ class CloudFileTree extends FileTree
 			{
 				try 
 				{
-					$objNode = $this->objCloudApi->getNode(intval($intId));
+					$objNode = \CloudNodeModel::findOneById($intId);
 				}
 				
 				// something went wrong. file does not exists anymore or connection failed
