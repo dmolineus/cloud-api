@@ -200,8 +200,6 @@ abstract class CloudApi extends System
 			$arrParams['syncTstamp'] = time();
 		}
 		
-		$this->syncLog($GLOBALS['TL_LANG']['tl_cloud_api'][$blnActive ? 'syncStart' : 'syncStop' ], $this->name);
-		
 		$objStatement= $this->Database->prepare('UPDATE tl_cloud_api %s WHERE name=?');
 		$objStatement->set($arrParams);
 		$objStatement->execute($this->name);
