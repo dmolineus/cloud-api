@@ -105,7 +105,8 @@ class CloudFileSelector extends FileSelector
 
 		// Search for a specific file
 		if ($for != '')
-		{			
+		{
+			/*			
 			$arrNodes = $this->objCloudApi->searchNodes($for);	
 
 			if (!empty($arrNodes))
@@ -135,6 +136,9 @@ class CloudFileSelector extends FileSelector
 			{
 				$tree .= $this->renderFiletree($id, -20, false, true);
 			}
+			
+			 * */
+			 return 'search not implemented yet';
 		}
 		else
 		{
@@ -155,6 +159,7 @@ class CloudFileSelector extends FileSelector
 			{
 				// fetch entrys in root directory
 				$objRoot = \CloudNodeModel::findOneByPath('/');
+				
 				$objNodes = $objRoot->getChildren();
 
 				while($objNodes->next())				
