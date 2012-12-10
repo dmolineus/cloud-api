@@ -63,3 +63,10 @@ $GLOBALS['TL_PURGE']['folders']['cloud-api'] = array (
 	'callback' => array('Netzmacht\Cloud\Api\CloudCache', 'purgeCache'),
 	'affected' => array('system/cache/cloud-api')
 );
+
+
+/**
+ * font awesome icons
+ */
+$GLOBALS['ICON_REPLACER']['navigation']['styleIcons'][] = array('cloud', 'cloudapi');
+$GLOBALS['ICON_REPLACER']['context']['imageIcons'][] = array('refresh', 'sync.gif');
