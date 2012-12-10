@@ -12,6 +12,5 @@
  *  
  **/
 
-$GLOBALS['TL_LANG']['tl_settings']['cloudapi_legend'] = 'cloud api';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapi_accessTokenLink'] = 'Request access token and reload this page';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapi_connected'] = 'connected:';
+$GLOBALS['TL_LANG']['MOD']['cloudapi'][0] = 'Cloud API';
+$GLOBALS['TL_LANG']['MOD']['cloudapi'][1] = 'Cloud Services verwalten und integrieren';

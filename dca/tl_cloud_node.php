@@ -21,11 +21,11 @@ $GLOBALS['TL_DCA']['tl_cloud_node'] = array
 	// Config
 	'config' => array
 	(
-		'dataContainer'               => 'Memory',
+		'dataContainer'               => 'CloudNode',
 		'onload_callback' => array
 		(
-			array('CloudNodeDataContainer', 'checkPermission'),
-			array('CloudNodeDataContainer', 'addBreadcrumb'),
+			//array('tl_cloud_node', 'checkPermission'),
+			//array('tl_cloud_node', 'addBreadcrumb'),
 			
 		),		
 		'sql' => array
@@ -40,26 +40,6 @@ $GLOBALS['TL_DCA']['tl_cloud_node'] = array
 				'extension' => 'index'
 			)
 		),
-		
-		'dcMemory_showAll_callback' => array
-		(
-			array('CloudNodeDataContainer', 'showAll')
-		),
-		
-		'dcMemory_show_callback'    => array
-		(
-			array('CloudNodeDataContainer', 'show')
-		),
-		
-		'dcMemory_delete_callback'  => array
-		( 
-			array('CloudNodeDataContainer', 'delete')
-		),
-		
-		'dcMemory_undo_callback'    => array
-		( 
-			array('CloudNodeDataContainer', 'undo')
-		)
 	),
 
 	// List

@@ -16,4 +16,4 @@
 /**
  * Miscellaneous
  */
-$GLOBALS['TL_LANG']['MSC']['cloudapi_headline'] = 'cloud api file management';
+$GLOBALS['TL_LANG']['MSC']['cloudapi_headline'] = 'Cloud API file management';

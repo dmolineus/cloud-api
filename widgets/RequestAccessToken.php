@@ -40,24 +40,19 @@ class RequestAccessToken extends Widget
     protected $strTemplate = 'be_widget';
     
 	
-    /**
-     * Add specific attributes
-     * @param string
-     * @param mixed
-     */
-    public function __set($strKey, $varValue)
-    {
-        switch ($strKey)
-        {
-            case 'cloudApi':
-                $this->arrAttributes['cloudApi'] = $varValue;
-                break;
-
-            default:
-                parent::__set($strKey, $varValue);
-                break;
-        }
-    }
+	/**
+	 * Load the database object
+	 * 
+	 * @param array
+	 */
+	public function __construct($arrAttributes=null)
+	{
+		parent::__construct($arrAttributes);					 
+		if ($this->cloudApi == null && $this->cloudApiField != '')	
+		{
+			$this->cloudApi = $this->activeRecord->{$this->cloudApiField};
+		}
+	}
     
 	
     /**
@@ -67,10 +62,12 @@ class RequestAccessToken extends Widget
      */
     public function generate()
     {
-    	try {
+    	try 
+    	{
     		$objApi = CloudApiManager::getApi($this->cloudApi);	
     	}        
-		catch(\Exception $e) {
+		catch(\Exception $e) 
+		{
 			return sprintf('<div class"tl_error">%s</div>', $e->getMessage());
 		}
         
@@ -88,15 +85,15 @@ class RequestAccessToken extends Widget
             return sprintf(
                 '<div class="tl_info" style="margin-bottom: 7px;"><a href="system/modules/cloud-api/token.php?api=%s" target="_blank">%s</a></div>', 
                 $this->cloudApi,
-                $GLOBALS['TL_LANG']['tl_settings']['cloudapi_accessTokenLink']
+                $GLOBALS['TL_LANG'][$this->strTable]['accessTokenLink']
             );    
         }
-        
+
         return sprintf(
-            '<div class="tl_confirm" style="margin-bottom: 7px;"><input name="%sAccessToken" type="hidden" value="%s"><b>%s</b> %s (%s)</div>',
-            $this->cloudApi,
-            htmlspecialchars($GLOBALS['TL_CONFIG'][$this->cloudApi . 'AccessToken']),
-            $GLOBALS['TL_LANG']['tl_settings']['cloudapi_connected'], 
+            '<div class="tl_confirm" style="margin-bottom: 7px;"><input name="%s" type="hidden" value="%s"><b>%s</b> %s (%s)</div>',
+            $this->strField,
+            htmlspecialchars($this->activeRecord->{$this->strField}),
+            $GLOBALS['TL_LANG'][$this->strTable]['accessTokenConnected'], 
             $arrAccountInfo['display_name'],
             $arrAccountInfo['email']
         );     

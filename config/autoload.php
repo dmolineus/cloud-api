@@ -29,7 +29,6 @@ ClassLoader::addClasses(array
 	// Classes
 	'Netzmacht\Cloud\Api\AjaxRequest' => 'system/modules/cloud-api/classes/AjaxRequest.php',
 	'Netzmacht\Cloud\Api\CloudApiManager' => 'system/modules/cloud-api/classes/CloudApiManager.php',
-	#'Netzmacht\Cloud\Api\CloudNode' => 'system/modules/cloud-api/classes/CloudNode.php',
 	'Netzmacht\Cloud\Api\CloudCache' => 'system/modules/cloud-api/classes/CloudCache.php',
 	'Netzmacht\Cloud\Api\CloudApi' => 'system/modules/cloud-api/classes/CloudApi.php',
 	
@@ -37,9 +36,21 @@ ClassLoader::addClasses(array
 	'CloudNodeModel' => 'system/modules/cloud-api/models/CloudNodeModel.php',
 	'Netzmacht\Cloud\Api\CloudNodeModelCollection' => 'system/modules/cloud-api/models/CloudNodeModelCollection.php',
 	
+	// modules
+	'Netzmacht\Cloud\Api\ModuleCloudApi' => 'system/modules/cloud-api/modules/ModuleCloudApi.php',
+	
 	// widgets
 	'Netzmacht\Cloud\Api\CloudApiSelectMenu' => 'system/modules/cloud-api/widgets/CloudApiSelectMenu.php',	
 	'Netzmacht\Cloud\Api\CloudFileTree' => 'system/modules/cloud-api/widgets/CloudFileTree.php',
 	'Netzmacht\Cloud\Api\CloudFileSelector' => 'system/modules/cloud-api/widgets/CloudFileSelector.php',
-	'Netzmacht\Cloud\Api\RequestAccessToken' => 'system/modules/cloud-api/widgets/RequestAccessToken.php',	
+	'Netzmacht\Cloud\Api\RequestAccessToken' => 'system/modules/cloud-api/widgets/RequestAccessToken.php',
+	
+	// drivers
+	'DC_CloudNode' => 'system/modules/cloud-api/drivers/DC_CloudNode.php',
 ));
+
+
+/**
+ * Register the templates
+ */
+TemplateLoader::addFile('be_cloudapi_install', 'system/modules/cloud-api/templates');

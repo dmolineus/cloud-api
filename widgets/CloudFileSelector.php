@@ -219,11 +219,9 @@ class CloudFileSelector extends FileSelector
 		$this->strField = $strField;
 		$this->loadDataContainer($this->strTable);
 		
-		try 
-		{
-			$objNode = \CloudNodeModel::OneById($id);
-		}
-		catch(\Exception $e)
+		$objNode = \CloudNodeModel::findOneById($id);
+		
+		if($objNode === null)
 		{
 			return '';			
 		}
@@ -234,7 +232,6 @@ class CloudFileSelector extends FileSelector
 			$objField = $this->Database->prepare("SELECT " . $this->strField . " FROM " . $this->strTable . " WHERE id=?")
 									   ->limit(1)
 									   ->execute($this->strId);
-
 
 			if ($objField->numRows)
 			{
@@ -260,11 +257,11 @@ class CloudFileSelector extends FileSelector
 		$tree = '';
 		$level = $level * 20;
 				
-		$arrNodes = $objNode->getChildren();		
+		$objChildren = $objNode->getChildren();		
 
-		foreach($arrNodes as $objChild)
+		while($objChildren->next())
 		{
-			$tree .= $this->renderFiletree($objChild->id, $level);
+			$tree .= $this->renderFiletree($objChildren->id, $level);
 		}
 
 		return $tree;
@@ -319,7 +316,7 @@ class CloudFileSelector extends FileSelector
 		// Check whether there are child records
 		if (!$blnNoRecursion)
 		{
-			$objChildren = $objNode->getChildren();	
+			$count = \CloudNodeModel::countBy('pid', $objNode->id);
 		}
 
 		$return .= "\n	" . '<li class="'.(($objNode->type == 'folder') ? 'tl_folder' : 'tl_file').'" onmouseover="Theme.hoverDiv(this, 1)" onmouseout="Theme.hoverDiv(this, 0)"><div class="tl_left" style="padding-left:'.($intMargin + $intSpacing).'px">';
@@ -329,7 +326,7 @@ class CloudFileSelector extends FileSelector
 		$level = ($intMargin / $intSpacing + 1);
 		$blnIsOpen = ($session[$node][$id] == 1 || in_array($id, $this->arrNodes));
 
-		if (isset($objChildren) && $objChildren->count() > 0)
+		if ($count > 0)
 		{
 			$folderAttribute = '';
 			$img = $blnIsOpen ? 'folMinus.gif' : 'folPlus.gif';
@@ -393,9 +390,10 @@ class CloudFileSelector extends FileSelector
 		$return .= '</div><div style="clear:both"></div></li>';
 
 		// Begin a new submenu
-		if (isset($objChildren) && $objChildren->count() > 0 && ($blnIsOpen || $this->Session->get('file_selector_search') != ''))
+		if ($count > 0 && ($blnIsOpen || $this->Session->get('file_selector_search') != ''))
 		{
 			$return .= '<li class="parent" id="'.$node.'_'.$id.'"><ul class="level_'.$level.'">';
+			$objChildren = $objNode->getChildren();
 
 			while($objChildren->next())
 			{

@@ -11,14 +11,11 @@
  * @copyright Copyright 2012 David Molineus netzmacht creative 
  *  
  **/
-
-namespace \Netzmacht\Cloud\Api;
-use DC_CloudNode;
  
 /**
- * CloudNodeDataContainer provides callbacks for the DC_Memory DCA driver 
+ * DC_CloudNode provides callbacks for the DC_Memory DCA driver 
  */
-class CloudNodeDataContainer extends DC_CloudNode
+class DC_CloudNode extends DC_Table
 {
 	
 	/**
@@ -37,7 +34,7 @@ class CloudNodeDataContainer extends DC_CloudNode
 		parent::__construct($strTable);
 		
 		// Check whether the table is defined
-		if ($strTable == '' || !isset($GLOBALS['TL_DCA'][$strTable]['config']['cloudapi']))
+		if ($strTable == '' || !isset($GLOBALS['TL_DCA'][$strTable]))
 		{
 			$this->log('Could not find CloudAPI for "' . $strTable . '"', 'DC_CloudNode __construct()', TL_ERROR);
 			trigger_error('Could not find CloudAPI', E_USER_ERROR);
@@ -45,16 +42,14 @@ class CloudNodeDataContainer extends DC_CloudNode
 		
 		try 
 		{
-			$this->objCloudApi = CloudApiManager::getApi($GLOBALS['TL_DCA'][$strTable]['config']['cloudapi']);			
+			$intId = \Input::get('id');
+			$this->objCloudApi = Netzmacht\Cloud\Api\CloudApiManager::getApi($intId, 'id');			
 		}
 		catch(\Exception $e)
 		{
 			$this->log('Could not initiate CloudAPI for "' . $strTable . '"', 'DC_CloudNode __construct()', TL_ERROR);
 			trigger_error('Could not initiate CloudAPI', E_USER_ERROR);			
 		}
-		
-		// set api for the CloudNodesModel
-		CloudNodesModel::setApi($this->objCloudApi->getName());
 	}
 
 
@@ -64,6 +59,8 @@ class CloudNodeDataContainer extends DC_CloudNode
 	 */
 	public function showAll()
 	{
+		// TODO: implement it
+		return;
 		$return = '';
 
 		// Add to clipboard
@@ -222,6 +219,9 @@ class CloudNodeDataContainer extends DC_CloudNode
 	 */
 	public function create()
 	{
+		// TODO: implement it
+		return;
+		
 		$strFolder = \Input::get('pid', true);
 
 		if ($strFolder == '' || !$this->objCloudApi->nodeExists($strFolder) || !$this->isMounted($strFolder))
@@ -248,6 +248,9 @@ class CloudNodeDataContainer extends DC_CloudNode
 	 */
 	public function cut($blnDoNotRedirect=false)
 	{
+		// TODO: implement it
+		return;
+		
 		$this->isValid($this->intId);
 		$strFolder = \Input::get('pid', true);
 
@@ -349,6 +352,9 @@ class CloudNodeDataContainer extends DC_CloudNode
 	 */
 	public function copy($source=null, $destination=null)
 	{
+		// TODO: implement it
+		return;
+		
 		$noReload = ($source != '');
 		$strFolder = \Input::get('pid', true);
 
@@ -538,6 +544,9 @@ class CloudNodeDataContainer extends DC_CloudNode
 	 */
 	public function delete($source=null)
 	{
+		// TODO: implement it
+		return;
+		
 		if ($GLOBALS['TL_DCA'][$this->strTable]['config']['notDeletable'])
 		{
 			$this->log('Table "'.$this->strTable.'" is not deletable', 'DC_CloudNode deleteAll()', TL_ERROR);
@@ -679,6 +688,9 @@ class CloudNodeDataContainer extends DC_CloudNode
 	// TODO: make it work for cloud files
 	public function move($blnIsAjax=false)
 	{
+		// TODO: implement it
+		return;
+		
 		$strFolder = \Input::get('pid', true);
 
 		if (!file_exists(TL_ROOT . '/' . $strFolder) || !$this->isMounted($strFolder))
@@ -837,6 +849,9 @@ class CloudNodeDataContainer extends DC_CloudNode
 	 */
 	public function edit()
 	{
+		// TODO: implement it
+		return;
+		
 		$return = '';
 		$this->noReload = false;
 		$this->isValid($this->intId);
@@ -1153,8 +1168,10 @@ window.addEvent(\'domready\', function() {
 	 * Auto-generate a form to edit all records that are currently shown
 	 * @return string
 	 */
-	public function editAll()
+	public function editAll($intId = NULL, $ajaxId = NULL)
 	{
+		// TODO: implement it
+		return;
 		$return = '';
 
 		if ($GLOBALS['TL_DCA'][$this->strTable]['config']['notEditable'])
@@ -1422,6 +1439,9 @@ window.addEvent(\'domready\', function() {
 	 */
 	public function source()
 	{
+		// TODO: implement it
+		return;
+		
 		$this->isValid($this->intId);
 
 		if (is_dir(TL_ROOT .'/'. $this->intId))
@@ -1583,6 +1603,9 @@ window.addEvent(\'domready\', function() {
 	 */
 	public function protect()
 	{
+		// TODO: implement it
+		return;
+		
 		if (!is_dir(TL_ROOT . '/' . $this->intId))
 		{
 			$this->log('Resource "'.$this->intId.'" is not a directory', 'DC_CloudNode protect()', TL_ERROR);
@@ -1830,11 +1853,6 @@ window.addEvent(\'domready\', function() {
 	 */
 	public function sync()
 	{
-		if (!$this->blnIsDbAssisted)
-		{
-			return '';
-		}
-
 		$this->import('BackendUser', 'User');
 
 		// Stop if a regular user manually triggers the file synchronisation
@@ -1842,123 +1860,18 @@ window.addEvent(\'domready\', function() {
 		{
 			return '<p class="tl_error">You have to be an administrator to run the file synchronisation.</p>';
 		}
-
+		
 		$arrExempt = array();
 		$this->arrMessages = array();
-
-		// Reset the "found" flag
-		$this->Database->query("UPDATE tl_files SET found=''");
-
-		// Exempt folders from the synchronisation (see #4522)
-		if ($GLOBALS['TL_CONFIG']['fileSyncExclude'] != '')
-		{
-			$arrExempt = array_map(function($e) {
-				return $GLOBALS['TL_CONFIG']['uploadPath'] . '/' . $e;
-			}, trimsplit(',', $GLOBALS['TL_CONFIG']['fileSyncExclude']));
-		}
-
-		// Traverse the file system
-		$this->execSync($GLOBALS['TL_CONFIG']['uploadPath'], 0, $arrExempt);
-
-		// Check for left-over entries in the DB
-		$objFiles = CloudNodesModel::findByFound('');
-
-		if ($objFiles !== null)
-		{
-			$arrFiles = array();
-			$arrFolders = array();
-
-			while ($objFiles->next())
-			{
-				if ($objFiles->type == 'file')
-				{
-					$arrFiles[] = $objFiles->current();
-				}
-				else
-				{
-					$arrFolders[] = $objFiles->current();
-				}
-			}
-
-			// Check whether a folder has moved
-			foreach ($arrFolders as $objFolder)
-			{
-				$objFound = CloudNodesModel::findBy(array('hash=?', 'found=1'), $objFolder->hash);
-
-				if ($objFound !== null)
-				{
-					$this->arrMessages[] = '<p class="tl_info">' . sprintf($GLOBALS['TL_LANG']['tl_files']['syncFound'], $objFolder->path, $objFound->path) . '</p>';
-
-					// Update the original entry
-					$objFolder->pid    = $objFound->pid;
-					$objFolder->tstamp = $objFound->tstamp;
-					$objFolder->name   = $objFound->name;
-					$objFolder->type   = $objFound->type;
-					$objFolder->path   = $objFound->path;
-
-					// Update the PID of the child records
-					$objChildren = CloudNodesModel::findByPid($objFound->id);
-
-					if ($objChildren !== null)
-					{
-						while ($objChildren->next())
-						{
-							$objChildren->pid = $objFolder->id;
-							$objChildren->save();
-						}
-					}
-
-					// Delete the newer (duplicate) entry
-					$objFound->delete();
-
-					// Then save the modified original entry (prevents duplicate key errors)
-					$objFolder->save();
-				}
-				else
-				{
-					// Delete the entry if the folder has gone
-					$objFolder->delete();
-					$this->arrMessages[] = '<p class="tl_error">' . sprintf($GLOBALS['TL_LANG']['tl_files']['syncRemoved'], $objFolder->path) . '</p>';
-				}
-			}
-
-			// Check whether a file has moved
-			foreach ($arrFiles as $objFile)
-			{
-				$objFound = CloudNodesModel::findBy(array('hash=?', 'found=1'), $objFile->hash);
-
-				if ($objFound !== null)
-				{
-					$this->arrMessages[] = '<p class="tl_info">' . sprintf($GLOBALS['TL_LANG']['tl_files']['syncFound'], $objFile->path, $objFound->path) . '</p>';
-
-					// Update the original entry
-					$objFile->pid    = $objFound->pid;
-					$objFile->tstamp = $objFound->tstamp;
-					$objFile->name   = $objFound->name;
-					$objFile->type   = $objFound->type;
-					$objFile->path   = $objFound->path;
-
-					// Delete the newer (duplicate) entry
-					$objFound->delete();
-
-					// Then save the modified original entry (prevents duplicate key errors)
-					$objFile->save();
-				}
-				else
-				{
-					// Delete the entry if the file has gone
-					$objFile->delete();
-					$this->arrMessages[] = '<p class="tl_error">' . sprintf($GLOBALS['TL_LANG']['tl_files']['syncRemoved'], $objFile->path) . '</p>';
-				}
-			}
-		}
+		
+		$this->objCloudApi->sync(true, array($this, 'syncListener'));
 
 		$return = '
 <div id="tl_buttons">
 <a href="'.$this->getReferer(true).'" class="header_back" title="'.specialchars($GLOBALS['TL_LANG']['MSC']['backBTTitle']).'" accesskey="b" onclick="Backend.getScrollOffset()">'.$GLOBALS['TL_LANG']['MSC']['backBT'].'</a>
 </div>
 
-<h2 class="sub_headline">'.$GLOBALS['TL_LANG']['tl_files']['sync'][1].'</h2>
+<h2 class="sub_headline">'.$GLOBALS['TL_LANG']['tl_cloud_api']['sync'][1].'</h2>
 '.\Message::generate().'
 <div class="tl_message nobg" style="margin-bottom:2em">';
 
@@ -1981,138 +1894,17 @@ window.addEvent(\'domready\', function() {
 
 
 	/**
-	 * Recursively synchronize the file system
-	 * @param string
-	 * @param integer
-	 * @param array
+	 * log sync messages for the sync listener
+	 * 
+	 * @param string message
+	 * @param string path
+	 * @param string type
+	 * @param bool create system log
 	 */
-	protected function execSync($strPath, $intPid=0, $arrExempt=array())
+	public function syncListener($strMessage, $strPath=null, $strType='info', $blnLog=true)
 	{
-		if (!$this->blnIsDbAssisted)
-		{
-			return;
-		}
-
-		// Exempt folders (see #4522)
-		if (in_array($strPath, $arrExempt))
-		{
-			return;
-		}
-
-		$arrFiles = array();
-		$arrFolders = array();
-		$arrScan = scan(TL_ROOT . '/' . $strPath);
-
-		// Separate files from folders
-		foreach ($arrScan as $strFile)
-		{
-			if ($strFile == '.svn' || $strFile == '.DS_Store')
-			{
-				continue;
-			}
-
-			if (is_dir(TL_ROOT . '/' . $strPath . '/' . $strFile))
-			{
-				$arrFolders[] = $strPath . '/' . $strFile;
-			}
-			else
-			{
-				$arrFiles[] = $strPath . '/' . $strFile;
-			}
-		}
-
-		// Folders
-		foreach ($arrFolders as $strFolder)
-		{
-			// Exempt folders (see #4522)
-			if (in_array($strFolder, $arrExempt))
-			{
-				continue;
-			}
-
-			$objFolder = new \Folder($strFolder);
-			$objModel = CloudNodesModel::findByPath($strFolder);
-
-			// Create the entry if it does not yet exist
-			if ($objModel === null)
-			{
-				$objModel = new CloudNodesModel();
-				$objModel->pid    = $intPid;
-				$objModel->tstamp = time();
-				$objModel->name   = basename($strFolder);
-				$objModel->type   = 'folder';
-				$objModel->path   = $strFolder;
-				$objModel->hash   = $objFolder->hash;
-				$objModel->found  = 1;
-				$objModel->save();
-
-				$this->arrMessages[] = '<p class="tl_new">' . sprintf($GLOBALS['TL_LANG']['tl_files']['syncFolderC'], $strFolder) . '</p>';
-			}
-			else
-			{
-				// Update the hash if the folder has changed
-				if ($objModel->hash != $objFolder->hash)
-				{
-					$objModel->hash = $objFolder->hash;
-					$this->arrMessages[] = '<p class="tl_info">' . sprintf($GLOBALS['TL_LANG']['tl_files']['syncHash'], $strFolder) . '</p>';
-				}
-
-				$objModel->found = 1;
-				$objModel->save();
-
-				$this->arrMessages[] = '<p class="tl_confirm">' . sprintf($GLOBALS['TL_LANG']['tl_files']['syncFolderF'], $strFolder) . '</p>';
-			}
-
-			$this->execSync($strFolder, $objModel->id, $arrExempt);
-		}
-
-		// Files
-		foreach ($arrFiles as $strFile)
-		{
-			$objFile = new \File($strFile);
-			$objModel = CloudNodesModel::findByPath($strFile);
-
-			// Create the entry if it does not yet exist
-			if ($objModel === null)
-			{
-				$objModel = new CloudNodesModel();
-				$objModel->pid       = $intPid;
-				$objModel->tstamp    = time();
-				$objModel->name      = basename($strFile);
-				$objModel->type      = 'file';
-				$objModel->path      = $strFile;
-				$objModel->extension = $objFile->extension;
-				$objModel->hash      = $objFile->hash;
-				$objModel->found     = 1;
-				$objModel->save();
-
-				$this->arrMessages[] = '<p class="tl_new">' . sprintf($GLOBALS['TL_LANG']['tl_files']['syncFileC'], $strFile) . '</p>';
-			}
-			else
-			{
-				// Update the hash if the file has changed
-				if ($objModel->hash != $objFile->hash)
-				{
-					$objModel->hash = $objFile->hash;
-					$this->arrMessages[] = '<p class="tl_info">' . sprintf($GLOBALS['TL_LANG']['tl_files']['syncHash'], $strFile) . '</p>';
-				}
-
-				$objModel->found = 1;
-				$objModel->save();
-
-				$this->arrMessages[] = '<p class="tl_confirm">' . sprintf($GLOBALS['TL_LANG']['tl_files']['syncFileF'], $strFile) . '</p>';
-			}
-		}
-	}
-
-
-	/**
-	 * Return the name of the current palette
-	 * @return string
-	 */
-	public function getPalette()
-	{
-		return $GLOBALS['TL_DCA'][$this->strTable]['palettes']['default'];
+		$strClass = 'tl_' . $strType;
+		$this->arrMessages[] = sprintf('<p class="%s">%s</p>', $strClass, ($strPath === null ? $strMessage : sprintf($strMessage, $strPath)));
 	}
 
 
@@ -2124,6 +1916,9 @@ window.addEvent(\'domready\', function() {
 	 */
 	public function ajaxTreeView($strFolder, $level)
 	{
+		// TODO: implement it
+		return;
+		
 		if (!\Environment::get('isAjaxRequest'))
 		{
 			return '';
@@ -2153,8 +1948,11 @@ window.addEvent(\'domready\', function() {
 	 * @param array
 	 * @return string
 	 */
-	protected function generateTree($path, $intMargin, $mount=false, $blnProtected=false, $arrClipboard=null)
+	protected function generateTree($table, $id, $arrPrevNext, $blnHasSorting, $intMargin = 0, $arrClipboard = NULL, $blnCircularReference = false, $protectedPage = false, $blnNoRecursion = false)
 	{
+		// TODO: implement it
+		return;
+		
 		static $session;
 		$session = $this->Session->getData();
 
@@ -2357,6 +2155,9 @@ window.addEvent(\'domready\', function() {
 	 */
 	protected function isMounted($strFolder)
 	{
+		// TODO: implement it
+		return;
+		
 		if ($strFolder == '')
 		{
 			return false;
@@ -2390,6 +2191,9 @@ window.addEvent(\'domready\', function() {
 	 */
 	protected function isValid($strFile)
 	{
+		// TODO: implement it
+		return;
+		
 		$strFolder = \Input::get('pid', true);
 
 		// Check the path
@@ -2451,6 +2255,9 @@ window.addEvent(\'domready\', function() {
 	 */
 	protected function getMD5Folders($strPath)
 	{
+		// TODO: implement it
+		return;
+		
 		$arrFiles = array();
 
 		foreach (scan(TL_ROOT . '/' . $strPath) as $strFile)

@@ -75,50 +75,49 @@ class CloudApiManager extends System
 	 */
 	public static function getApi($strName, $strField='name')
 	{	
+		if($strField == 'name' && !isset(static::$arrConfig[$strName])) 
+		{
+			throw new \Exception(sprintf('Cloud Api %s is not registered', $strName));
+		}
+		
 		if(isset(static::$arrApi[$strName]))
 		{
 			return static::$arrApi[$strName];
 		}
 		
-		if(!isset(static::$arrConfig[$strName]['enabled'])) 
+		$objInstance = static::getInstance();
+		$objInstance->import('Database');
+		
+		$objRow = $objInstance->Database->query('SELECT * FROM tl_cloud_api WHERE enabled=1 AND ' . ($strField == 'id' ? 'id' : 'name') . ' = "' . $strName .'"');
+			
+		if($objRow->numRows > 0)
 		{
-			$objInstance = static::getInstance();
-			$objInstance->import('Database');
-			$objRow = $objInstance->Database->query('SELECT * FROM tl_cloud_api WHERE ' . ($strField == 'id' ? 'id' : 'name') . ' = "' . $strName .'"');
-			
-			if($objRow !== null)
-			{
-				static::$arrConfig[$strName] = $objRow->row();
-			}			
+			$strName = $objRow->name;
+			$arrConfig = array_merge((array)static::$arrConfig[$strName], $objRow->row());			
 		}
-
-		// try to find api singleton
-		if(isset(static::$arrConfig[$strName])) {
-			if(!static::isEnabled($strName)) {
-				throw new \Exception(sprintf('Cloud Service %s is not enabled.', $strName));
-			}
-			
-			$strClass = static::$arrConfig[$strName]['class'];
-			static::$arrApi[$strName] = new $strClass(static::$arrConfig[$strName]);
-
-			return static::$arrApi[$strName];
+		else
+		{
+			throw new \Exception(sprintf('Cloud Api %s is not enabled or installed', $strName));
 		}
+			
+		$strClass = static::$arrConfig[$strName]['class'];
+		static::$arrApi[$strName] = new $strClass($arrConfig);
 
-		throw new \Exception(sprintf('Cloud Api %s is not installed', $strName));
+		return static::$arrApi[$strName];
 	}
 	
 	
 	/**
 	 * return registered Connections array
 	 * 
-	 * @param bool false is all registered apis shall be returned
+	 * @param int which apis to get: 0 uninstalled, 1 installed, 2 installed and enabled
 	 * @return array
 	 */
-	public static function getApis($blnOnlyInstalled=true, $blnOnlyEnabled = true)
-	{
+	public static function getApis($intState = 2)
+	{	
 		$strWhere = '';
 		
-		if($blnOnlyEnabled)
+		if($intState == 2)
 		{
 			$strWhere = ' WHERE enabled=1';
 		}
@@ -127,16 +126,21 @@ class CloudApiManager extends System
 		$objInstance->import('Database');
 		
 		$objResult = $objInstance->Database->query('SELECT * FROM tl_cloud_api' . $strWhere);
-		$arrReturn = array();
+		$arrReturn = static::$arrConfig;
 		
 		while($objResult->next())
 		{
-			static::$arrConfig[$objResult->name] = $objResult->row();
-			static::$arrConfig[$objResult->name]['installed'] = true;
-			$arrReturn[$objResult->name] = static::$arrConfig[$objResult->name];
+			if($intState == 0)
+			{
+				unset($arrReturn[$objResult->name]);
+			}
+			else
+			{
+				$arrReturn[$objResult->name] = array_merge(static::$arrConfig[$objResult->name], $objResult->row());	
+			}
 		}
 		
-		return $blnOnlyInstalled ? $arrReturn : static::$arrConfig;
+		return $arrReturn;
 	}
 
 
@@ -146,13 +150,15 @@ class CloudApiManager extends System
 	 * @param string
 	 * @return bool
 	 */
-	public static function isEnabled($strName) {
-		if(!isset(static::$arrConfig[$strName]['enabled'])) 
+	public static function isEnabled($strName) 
+	{
+		if(!isset(static::$arrApi[$strName])) 
 		{
+			$this->getApi($strName);
 			return false;
 		}
 				
-		return static::$arrConfig[$strName]['enabled'];
+		return static::$arrApi[$strName]->enabled;
 	}
 	
 	
@@ -200,7 +206,6 @@ class CloudApiManager extends System
 		(
 			'name' => $strName,
 			'tstamp' => time(),
-			'class' => static::$arrConfig[$strName]['class'],
 		));
 		
 		return $objStmt->execute();

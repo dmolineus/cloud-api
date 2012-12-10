@@ -12,4 +12,4 @@
  *  
  **/
 
-$GLOBALS['TL_LANG']['tl_user']['cloudapi_legend'] = 'Cloud Api Filemounts';
+$GLOBALS['TL_LANG']['tl_user']['cloudapi_legend'] = 'Cloud API Filemounts';

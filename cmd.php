@@ -103,6 +103,11 @@ class CloudCMD extends Backend
 			case 'sync':
 				$objAPI->sync();
 				break;
+				
+			case 'delta':
+				$arrDelta = $objAPI->getConnection()->delta('');
+				var_dump($arrDelta['entries']);
+				break;
 			
 			case 'token':
 				$this->redirect('system/modules/cloud-api/token.php?api=dropbox');
@@ -147,9 +152,10 @@ class CloudCMD extends Backend
 /**
  * Instantiate the controller
  */
-//$objCMD = new CloudCMD();
-//$objCMD->run();
+$objCMD = new CloudCMD();
+$objCMD->run();
 
+/*
 $objAPI = CloudApiManager::getApi('dropbox');
 try 
 {
@@ -165,3 +171,4 @@ catch(\Exception $e)
 
 
 $objAPI->sync();
+*/

@@ -27,10 +27,23 @@ if(TL_MODE == 'BE')
 	$GLOBALS['TL_JAVASCRIPT'][] = 'system/modules/cloud-api/assets/AjaxRequest.js';
 }
 
+
+/**
+ * backend module
+ */
+
+$GLOBALS['BE_MOD']['system']['cloudapi'] = array
+(
+	'callback' => 'Netzmacht\Cloud\Api\ModuleCloudApi',
+	'tables' => array('tl_cloud_api', 'tl_cloud_node'),
+	'icon'       => 'system/modules/cloud-api/assets/drive_web.gif' 
+);
+
+
 /**
  * Back end form fields
  */
-$GLOBALS['BE_FFL']['accesToken'] = 'Netzmacht\Cloud\Api\RequestAccessToken';
+$GLOBALS['BE_FFL']['accessToken'] = 'Netzmacht\Cloud\Api\RequestAccessToken';
 $GLOBALS['BE_FFL']['cloudFileTree'] = 'Netzmacht\Cloud\Api\CloudFileTree';
 $GLOBALS['BE_FFL']['cloudFileSelector'] = 'Netzmacht\Cloud\Api\CloudFileSelector';
 $GLOBALS['BE_FFL']['cloudApiSelect'] = 'Netzmacht\Cloud\Api\CloudApiSelectMenu';

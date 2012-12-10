@@ -60,7 +60,7 @@ class CloudNodeModel extends FilesModel
 			$this->path = $strPath;	
 		}
 		
-		if($objApi === null && $objResult !== null)
+		if($objApi === null && static::$objApi === null && $objResult !== null)
 		{
 			static::$objApi = Netzmacht\Cloud\Api\CloudApiManager::getApi($objResult->cloudapi, 'id');			
 		}
@@ -182,6 +182,32 @@ class CloudNodeModel extends FilesModel
 	
 	
 	/**
+	 * Return the number of records matching certain criteria
+	 * 
+	 * @param mixed $strColumn An optional property name
+	 * @param mixed $varValue  An optional property value
+	 * 
+	 * @return integer The number of matching rows
+	 */
+	public static function countBy($strColumn=null, $varValue=null)
+	{
+		if (static::$strTable == '')
+		{
+			return 0;
+		}
+
+		$strQuery = \Model\QueryBuilder::count(array
+		(
+			'table'  => static::$strTable,
+			'column' => $strColumn,
+			'value'  => $varValue
+		));
+
+		return \Database::getInstance()->prepare($strQuery)->execute($varValue)->count;
+	}
+	
+	
+	/**
 	 * get content of a file
 	 * 
 	 * @return string
@@ -190,6 +216,23 @@ class CloudNodeModel extends FilesModel
 	{
 		// actually this method should be abstract but we cannot declare class abstract
 		return;
+	}
+	
+	
+	/**
+	 * get children nodes
+	 * 
+	 * @return array
+	 */
+	public function getChildren()
+	{
+		if($this->objChildren instanceof \Netzmacht\Cloud\Api\CloudNodeModelCollection) 
+		{
+			return $this->objChildren;
+		}
+		
+		$this->objChildren = static::findByPid($this->id === null ? 0 : $this->id);
+		return $this->objChildren;
 	}
 	
 	
@@ -285,7 +328,16 @@ class CloudNodeModel extends FilesModel
 		}
 
 		$objStatement = static::preFind($objStatement);
-		$objResult = $objStatement->execute($arrOptions['value']);
+
+		// cached or uncached
+		if(isset($arrOptions['uncached']))
+		{
+			$objResult = $objStatement->executeUncached($arrOptions['value']);	
+		}
+		else
+		{
+			$objResult = $objStatement->execute($arrOptions['value']);
+		}
 
 		if ($objResult->numRows < 1)
 		{
@@ -311,15 +363,21 @@ class CloudNodeModel extends FilesModel
 	 * find model by path. if it does not exists in the database we try to fetch it from the cloud service by calling the getMetaData
 	 * 
 	 * @param string path
+	 * @param search in cloud service if node was not found in database
 	 * @return \CloudNodeModel
 	 */
-	public static function findOneByPath($strPath)
+	public static function findOneByPath($strPath, $blnSearchCloudService=true)
 	{
-		$objNode = static::finyOne('path', $strPath);
+		$objNode = parent::findOneByPath($strPath);
 		
 		if($objNode !== null)
 		{
 			return $objNode;
+		}
+		
+		if(!$blnSearchCloudService)
+		{
+			return null;
 		}
 		
 		if(static::$objApi !== null)
@@ -333,7 +391,11 @@ class CloudNodeModel extends FilesModel
 		
 		$objNode = new $strClass(null, null, static::$objApi);
 		$objNode->path = $strPath;
-		$objNode->getMetaData();
+		
+		if($strPath != '/' && $strPath != '')
+		{
+			$objNode->getMetaData();	
+		}
 		
 		return $objNode;
 	}
@@ -479,6 +541,22 @@ class CloudNodeModel extends FilesModel
 		}
 
 		return $arrMimeTypes[$this->extension];
+	}
+
+
+	/**
+	 * save node, make sure that cloudapi is saved
+	 * 
+	 * @bool forceinsert
+	 */
+	public function save($blnForceInsert=false)
+	{
+		if(!isset($this->cloudapi) || $this->cloudapi == '')
+		{
+			$this->cloudapi = static::$objApi->id;
+		}
+		
+		parent::save($blnForceInsert);
 	}
 
 

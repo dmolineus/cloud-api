@@ -37,6 +37,12 @@ abstract class CloudApi extends System
 	
 	
 	/**
+	 * called at the sync process
+	 */
+	protected $arrSyncListener = null;
+	
+	
+	/**
 	 * constructor will load database config
 	 * 
 	 * @return void
@@ -55,6 +61,7 @@ abstract class CloudApi extends System
 		CloudNodeModelCollection::setApi($this);
 		
 		$this->import('Database');
+		$this->loadLanguageFile('tl_cloud_api');
 	}
 	
 	
@@ -72,6 +79,7 @@ abstract class CloudApi extends System
 		{
 			case 'id':
 			case 'class':
+			case 'enabled':
 			{
 				return $this->arrConfig[$strKey];
 				break;
@@ -117,6 +125,7 @@ abstract class CloudApi extends System
 	 */
 	public function sendFileToBrowser($objNode)
 	{
+		var_dump($objNode->downloadUrl);
 		// Make sure there are no attempts to hack the file system
 		if ($objNode === null || $objNode->downloadUrl == null)
 		{
@@ -191,6 +200,8 @@ abstract class CloudApi extends System
 			$arrParams['syncTstamp'] = time();
 		}
 		
+		$this->syncLog($GLOBALS['TL_LANG']['tl_cloud_api'][$blnActive ? 'syncStart' : 'syncStop' ], $this->name);
+		
 		$objStatement= $this->Database->prepare('UPDATE tl_cloud_api %s WHERE name=?');
 		$objStatement->set($arrParams);
 		$objStatement->execute($this->name);
@@ -205,12 +216,17 @@ abstract class CloudApi extends System
 	 * @param bool force syncing no matter when last sync was 
 	 * @return void
 	 */
-	public function sync($blnForce = false)
+	public function sync($blnForce = false, $arrSyncListener=array())
 	{	
 		// only sync after 10 minutes and make sure that not other clients are also syncing the database
 		if(!$blnForce && ((time() - $this->arrConfig['syncTstamp'] < 600) || $this->arrConfig['syncInProgress'] == '1'))
 		{
 			return;
+		}
+		
+		if(is_callable($arrSyncListener)) 
+		{
+			$this->arrSyncListener = $arrSyncListener;	
 		}
 		
 		$arrMounted = null;
@@ -219,7 +235,7 @@ abstract class CloudApi extends System
 			$arrMounted = unserialize($this->arrConfig['mountedFolders']);
 		}
 		
-		//$this->setSyncState(true);		
+		$this->setSyncState(true);		
 		$strCursor = $this->execSync($this->arrConfig['deltaCursor'], $arrMounted);		
 		$this->setSyncState(false, $strCursor);
 	}
@@ -231,5 +247,22 @@ abstract class CloudApi extends System
 	 * @param string cursor
 	 * @return string new cursor
 	 */	
-	abstract protected function execSync($strCursor, $arrMounted=null);	
+	abstract protected function execSync($strCursor, $arrMounted=null);
+	
+	
+	/**
+	 * log sync messages to registered sync listener
+	 * 
+	 * @param string message
+	 * @param string path
+	 * @param string type
+	 * @param bool create system log
+	 */
+	protected function syncLog($strMessage, $strPath=null, $strType='info', $blnLog=true)
+	{
+		if($this->arrSyncListener !== null)
+		{
+			call_user_func($this->arrSyncListener, $strMessage, $strPath, $strType, $blnLog);
+		}
+	}	
 }
