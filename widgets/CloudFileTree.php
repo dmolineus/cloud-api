@@ -45,10 +45,11 @@ class CloudFileTree extends FileTree
 	 */
 	public function __construct($arrAttributes=null)
 	{
-		parent::__construct($arrAttributes);					 
+		parent::__construct($arrAttributes);
+							 
 		if ($this->cloudApi == null && $this->cloudApiField != '')	
 		{
-			$this->cloudApi = $this->activeRecord->{$this->cloudApiField};
+			$this->cloudApi = $this->activeRecord->{$this->cloudApiField};	
 		}
 	}
 
@@ -59,8 +60,8 @@ class CloudFileTree extends FileTree
 	 */
 	public function generate()
 	{
-		
-		try {
+		try 
+		{
 			$this->objCloudApi = CloudApiManager::getApi($this->cloudApi);
 		}
 		catch(\Exception $e)

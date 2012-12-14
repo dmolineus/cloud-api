@@ -1,0 +1,19 @@
+
+<div id="tl_buttons">
+<a href="<?php echo $this->href; ?>" class="header_back" title="<?php echo $this->title; ?>"><?php echo $this->button; ?></a>
+</div>
+
+<h2 class="sub_headline"><?php echo $this->headline; ?></h2>
+<?php echo $this->message; ?>
+
+<div class="tl_message nobg" style="margin-bottom:2em">
+	
+<?php foreach ($this->messages as $strMessage): ?>
+<?php echo $strMessage; ?> 
+<?php endforeach; ?>
+
+</div>
+
+<div class="tl_submit_container">
+  <a href="<?php echo $this->href; ?>" class="tl_submit" style="display:inline-block"><?php echo $this->hrefLabel; ?></a>
+</div>

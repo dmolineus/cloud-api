@@ -29,14 +29,22 @@ if(TL_MODE == 'BE')
 
 
 /**
+ * register sync listener 
+ */
+$GLOBALS['cloudapiSyncListener']['__global__'][] = array('Netzmacht\Cloud\Api\CloudMountManager', 'syncCloudApiListener');
+
+
+/**
  * backend module
  */
-
 $GLOBALS['BE_MOD']['system']['cloudapi'] = array
 (
-	'callback' => 'Netzmacht\Cloud\Api\ModuleCloudApi',
-	'tables' => array('tl_cloud_api', 'tl_cloud_node'),
-	'icon'       => 'system/modules/cloud-api/assets/drive_web.gif' 
+	'tables' 		=> array('tl_cloud_api', 'tl_cloud_node', 'tl_cloud_mount'),
+	'icon'       	=> 'system/modules/cloud-api/assets/drive_web.gif',
+	'stylesheet' 	=> 'system/modules/cloud-api/assets/style.css',
+	'install' 		=> array('Netzmacht\Cloud\Api\ModuleCloudApi', 'generateInstallApi'),
+	'mount' 		=> array('Netzmacht\Cloud\Api\ModuleCloudApi', 'generateMountSync'),
+	'sync' 			=> array('Netzmacht\Cloud\Api\ModuleCloudApi', 'generateSync'),
 );
 
 
@@ -55,6 +63,13 @@ $GLOBALS['BE_FFL']['cloudApiSelect'] = 'Netzmacht\Cloud\Api\CloudApiSelectMenu';
 $GLOBALS['TL_HOOKS']['executePreActions'][] = array('Netzmacht\Cloud\Api\AjaxRequest', 'executePreActions');
 $GLOBALS['TL_HOOKS']['executePostActions'][] = array('Netzmacht\Cloud\Api\AjaxRequest', 'executePostActions');
 
+/**
+ * cloudapi config
+ */
+$GLOBALS['TL_CONFIG']['cloudapiFileManagerIntegration'] = true;
+$GLOBALS['TL_CONFIG']['cloudapiSyncDownloadTime'] = '10';
+$GLOBALS['TL_CONFIG']['cloudapiSyncDownloadLimit'] = 5;
+$GLOBALS['TL_CONFIG']['cloudapiSyncInterval'] = 600;
 
 /**
  * register purge jobs of maintenance 
@@ -70,3 +85,4 @@ $GLOBALS['TL_PURGE']['folders']['cloud-api'] = array (
  */
 $GLOBALS['ICON_REPLACER']['navigation']['styleIcons'][] = array('cloud', 'cloudapi');
 $GLOBALS['ICON_REPLACER']['context']['imageIcons'][] = array('refresh', 'sync.gif');
+$GLOBALS['ICON_REPLACER']['buttons']['styleIcons'][] = array('retweet', 'header_mount');

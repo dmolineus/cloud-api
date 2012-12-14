@@ -1864,7 +1864,8 @@ window.addEvent(\'domready\', function() {
 		$arrExempt = array();
 		$this->arrMessages = array();
 		
-		$this->objCloudApi->sync(true, array($this, 'syncListener'));
+		Netzmacht\Cloud\Api\CloudApiManager::registerSyncListener($this, 'syncListener');
+		$this->objCloudApi->sync(true);
 
 		$return = '
 <div id="tl_buttons">
@@ -1901,9 +1902,27 @@ window.addEvent(\'domready\', function() {
 	 * @param string type
 	 * @param bool create system log
 	 */
-	public function syncListener($strMessage, $strPath=null, $strType='info', $blnLog=true)
+	public function syncListener($strAction, $mixedNodeOrPath, $strMessage=null, $objApi=null)
 	{
-		$strClass = 'tl_' . $strType;
+		$strPath = ($mixedNodeOrPath instanceof CloudNodeModel) ? $mixedNodeOrPath->path : $mixedNodeOrPath;
+		
+		switch ($strAction) 
+		{
+			case 'create':
+				$strAction = 'new';
+				break;
+				
+			case 'update':
+				$strAction = 'info';
+				break;
+				
+			case 'delete':
+			case 'reset':
+				$strAction = 'error'; 			
+				break;
+		}
+
+		$strClass = 'tl_' . $strAction;
 		$this->arrMessages[] = sprintf('<p class="%s">%s</p>', $strClass, ($strPath === null ? $strMessage : sprintf($strMessage, $strPath)));
 	}
 

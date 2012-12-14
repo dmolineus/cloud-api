@@ -5,7 +5,7 @@
  * 
  * Copyright (C) 2005-2012 Leo Feyer
  * 
- * @package   cloud-dropbox 
+ * @package   cloud-api 
  * @author    David Molineus <http://www.netzmacht.de>
  * @license   GNU/LGPL 
  * @copyright Copyright 2012 David Molineus netzmacht creative 
@@ -17,6 +17,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 	'config' => array
 	(
 		'dataContainer' => 'Table',
+		'doNotCopyRecords' => true,
 		
 		'sql' => array
 		(
@@ -31,7 +32,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 		
 		'onload_callback' => array
 		(
-			array('tl_cloud_api', 'choosePalette'),
+			array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'choosePalette'),
 		)
 	),
 	
@@ -39,35 +40,62 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 	(
 		'sorting' => array
 		(
-			'mode'                    => 1,
-			'fields'                  => array('name'),
-			'flag'                    => 1,
+			'mode'						=> 1,
+			'fields'					=> array('title'),
+			'flag'						=> 1,
 		),
 		
 		'label' => array
 		(
-			'fields' => array('name', 'enabled', 'syncTstamp'),
+			'fields' => array('title', 'enabled', 'syncTstamp'),
 			'showColumns' => true,
-			'label_callback' => array('tl_cloud_api', 'getLabel'),
+			'label_callback' => array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateLabel'),
+			'utilsLabelRules' => array
+			(
+				array('yesNo', 1, 'enabled'),
+				array('parseDate', 2),
+			), 
+			
 		),
 		
 		'global_operations' => array
 		(
 			'install' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_cloud_api']['installService'],
-				'href'                => 'act=install',
-				'class'               => 'header_new',
-				'attributes'          => 'onclick="Backend.getScrollOffset()"',
-				'button_callback' => array('tl_cloud_api', 'generateInstallButton'),
+				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_api']['installService'],
+				'href'					=> 'key=install',
+				'class'					=> 'header_new',
+				'attributes'			=> 'onclick="Backend.getScrollOffset()"',
+				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateGlobalButton'),
+				'utilsButtonRules'		=> array('isAdmin', 'installApi', 'addtoUrl', 'generate'),
+			),
+			
+			'mount' => array
+			(
+				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_api']['mount'],
+				'href'					=> 'table=tl_cloud_mount',
+				'class'					=> 'header_mount',
+				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateGlobalButton'),
+				'utilsButtonRules'		=> array('isAdmin', 'addtoUrl', 'generate'),
+			),
+			
+			'sync' => array
+			(
+				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_api']['sync'],
+				'href'					=> 'key=sync',
+				'class'					=> 'header_sync',
+				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateGlobalButton'),
+				'utilsButtonRules'		=> array('addtoUrl', 'generate'),
 			),
 			
 			'all' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['MSC']['all'],
-				'href'                => 'act=select',
-				'class'               => 'header_edit_all',
-				'attributes'          => 'onclick="Backend.getScrollOffset()" accesskey="e"'
+				'label'					=> &$GLOBALS['TL_LANG']['MSC']['all'],
+				'href'					=> 'act=select',
+				'class'					=> 'header_edit_all',
+				'attributes'			=> 'onclick="Backend.getScrollOffset()" accesskey="e"',
+				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateGlobalButton'),
+				'utilsButtonRules'		=> array('isAdmin', 'addtoUrl', 'generate'),
 			),
 		),
 		
@@ -75,24 +103,21 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 		(
 			'edit' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_cloud_api']['edit'],
-				'href'                => 'act=edit',
-				'icon'                => 'edit.gif',
-			),
-			
-			'sync' => array
-			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_cloud_api']['sync'],
-				'href'                => 'act=sync&table=tl_cloud_node',
-				'icon'                => 'sync.gif',
+				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_api']['edit'],
+				'href'					=> 'act=edit',
+				'icon'					=> 'edit.gif',
+				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateButton'),
+				'utilsButtonRules'		=> array('isAdmin', 'addtoUrl', 'generate'),
 			),
 
 			'delete' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_cloud_api']['delete'],
-				'href'                => 'act=delete',
-				'icon'                => 'delete.gif',
-				'attributes'          => 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_api']['delete'],
+				'href'					=> 'act=delete',
+				'icon'					=> 'delete.gif',
+				'attributes'			=> 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateButton'),
+				'utilsButtonRules'		=> array('isAdmin', 'addtoUrl', 'generate'),
 			),
 			
 			'show' => array
@@ -111,7 +136,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 		(
 			'enabled',
 		),
-		'default' => '{connection_legend}, enabled;{folder_legend:hide},mountedFolders;',	
+		'default' => '{connection_legend},title,enabled;{folder_legend:hide},mountedFolders;',	
 	),
 	
 	'subpalettes' => array
@@ -136,11 +161,19 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 			'sql' => "varchar(255) NOT NULL default ''",
 		),
 		
+		'title' => array
+		(
+			'label'	=> &$GLOBALS['TL_LANG']['tl_cloud_api']['title'],
+			'inputType' => 'text',
+			'eval' => array('readonly' => true, 'disabled' => true, 'tl_class' => 'w50'),
+			'sql' => "varchar(255) NOT NULL default ''",
+		),
+		
 		'enabled' => array
 		(			
 			'label'	=> &$GLOBALS['TL_LANG']['tl_cloud_api']['enabled'],
 			'inputType'	=> 'checkbox',
-			'eval' => array('submitOnChange'=>true),
+			'eval' => array('submitOnChange'=>true, 'tl_class' => 'w50 m12'),
 			'sql' => "char(1) NOT NULL default ''",
 		),
 		
@@ -181,7 +214,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 		(
 			'label'	=> &$GLOBALS['TL_LANG']['tl_cloud_api']['appKey'],
 			'inputType'	=> 'text',
-			'eval' => array('mandatory'=>true, 'tl_class'=>'w50'),
+			'eval' => array('mandatory'=>true, 'tl_class'=>'w50', 'doNotShow' => true),
 			'sql' => "varchar(255) NOT NULL default ''",
 		),
 		
@@ -189,7 +222,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 		(
 			'label'	=> &$GLOBALS['TL_LANG']['tl_cloud_api']['appSecret'],
 			'inputType'	=> 'text',
-			'eval' => array('mandatory'=>true, 'tl_class'=>'w50'),
+			'eval' => array('mandatory'=>true, 'tl_class'=>'w50', 'doNotShow' => true),
 			'sql' => "varchar(255) NOT NULL default ''",
 		),
 		
@@ -221,92 +254,3 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 		),
 	),	
 );
-
-
-/**
- * data container class
- * 
- * @author David Molineus <http://netzmacht.de>
- */
-class tl_cloud_api extends Backend
-{
-	
-	/**
-	 * change values for the labels
-	 * 
-	 * @param array row
-	 * @param string
-	 * @param datacontainer
-	 * @param values
-	 */
-	public function getLabel($row, $field, $dc, $values)
-	{
-		if($row['enabled'] == '1')
-		{
-			$values[1] = $GLOBALS['TL_LANG']['MSC']['yes'];
-		}
-		else
-		{
-			$values[1] = $GLOBALS['TL_LANG']['MSC']['no'];
-		}
-		
-		$values[2] = $this->parseDate($GLOBALS['TL_CONFIG']['datimFormat'], $values[2]);
-		 
-		return $values;
-	}
-	
-	
-	/**
-	 * choose palette supports different palettes depending on cloud name
-	 * subpalettes are stores in customsubpalettes['cloudname'].
-	 * 
-	 * @return void  
-	 */
-	public function choosePalette()
-	{
-		$intId = \Input::get('id');
-				
-		$this->import('Database');
-		
-		$objStmt = $this->Database->prepare('SELECT * FROM tl_cloud_api WHERE id=?');
-		$objResult = $objStmt->execute($intId);
-		
-		if($objResult->numRows == 0) 
-		{
-			return;
-		}
-		
-		if(isset($GLOBALS['TL_DCA']['tl_cloud_api']['palettes'][$objResult->name]))
-		{
-			$GLOBALS['TL_DCA']['tl_cloud_api']['palettes']['default'] = $GLOBALS['TL_DCA']['tl_cloud_api']['palettes'][$objResult->name];
-		}
-		
-		if(isset($GLOBALS['TL_DCA']['tl_cloud_api']['customSubPalettes'][$objResult->name]))
-		{
-			$GLOBALS['TL_DCA']['tl_cloud_api']['subpalettes'] = $GLOBALS['TL_DCA']['tl_cloud_api']['customSubPalettes'][$objResult->name];
-			$GLOBALS['TL_DCA']['tl_cloud_api']['palettes']['__selector__'] = array_keys
-			(
-				$GLOBALS['TL_DCA']['tl_cloud_api']['customSubPalettes'][$objResult->name]
-			);
-		}
-	}
-	
-	
-	/**
-	 * hide install button if every cloud api is installed
-	 * 
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param string
-	 * @param array
-	 */
-	public function generateInstallButton($href, $label, $title, $icon, $attributes)
-	{
-		$arrApis = Netzmacht\Cloud\Api\CloudApiManager::getApis(0);
-		
-		if(count($arrApis) > 0) {
-			return sprintf('<a href="%s" class="%s" title="%s">%s</a>',$this->addToUrl($href), $icon, $title, $label);
-		}
-	}
-}

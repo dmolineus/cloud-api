@@ -159,11 +159,14 @@ class CloudFileSelector extends FileSelector
 			{
 				// fetch entrys in root directory
 				$objRoot = \CloudNodeModel::findOneByPath('/');
-				
 				$objNodes = $objRoot->getChildren();
-
+				
 				while($objNodes->next())				
 				{
+					if(!$GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['files'] && $objNodes->type == 'file')
+					{
+						continue;						
+					}
 					$tree .= $this->renderFiletree($objNodes->id, -20);
 				}
 			}
@@ -284,8 +287,7 @@ class CloudFileSelector extends FileSelector
 	protected function renderFiletree($id, $intMargin, $protectedPage=false, $blnNoRecursion=false)
 	{
 		static $session;
-		$session = $this->Session->getData();				
-
+		$session = $this->Session->getData();		
 		
 		$flag = substr($this->strField, 0, 2);
 		$node = 'tree_' . $this->strTable . '_' . $this->strField;
@@ -304,7 +306,12 @@ class CloudFileSelector extends FileSelector
 		if($objNode === null) 
 		{
 			return '';
-		}	
+		}
+		
+		if(!$GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['files'] && $objNode->type == 'file')
+		{
+			return '';						
+		}
 
 		$blnFilesOnly = ($GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['files'] || $GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['filesOnly']);		
 		$arrResult = $this->applyFilter($objNode, $blnFilesOnly);

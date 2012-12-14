@@ -203,6 +203,8 @@ abstract class CloudApi extends System
 		$objStatement= $this->Database->prepare('UPDATE tl_cloud_api %s WHERE name=?');
 		$objStatement->set($arrParams);
 		$objStatement->execute($this->name);
+		
+		CloudApiManager::callSyncListener($blnActive ? 'start' : 'stop');
 	}
 	
 	
@@ -214,17 +216,12 @@ abstract class CloudApi extends System
 	 * @param bool force syncing no matter when last sync was 
 	 * @return void
 	 */
-	public function sync($blnForce = false, $arrSyncListener=array())
+	public function sync($blnForce = false)
 	{	
 		// only sync after 10 minutes and make sure that not other clients are also syncing the database
 		if(!$blnForce && ((time() - $this->arrConfig['syncTstamp'] < 600) || $this->arrConfig['syncInProgress'] == '1'))
 		{
 			return;
-		}
-		
-		if(is_callable($arrSyncListener)) 
-		{
-			$this->arrSyncListener = $arrSyncListener;	
 		}
 		
 		$arrMounted = null;
@@ -247,20 +244,4 @@ abstract class CloudApi extends System
 	 */	
 	abstract protected function execSync($strCursor, $arrMounted=null);
 	
-	
-	/**
-	 * log sync messages to registered sync listener
-	 * 
-	 * @param string message
-	 * @param string path
-	 * @param string type
-	 * @param bool create system log
-	 */
-	protected function syncLog($strMessage, $strPath=null, $strType='info', $blnLog=true)
-	{
-		if($this->arrSyncListener !== null)
-		{
-			call_user_func($this->arrSyncListener, $strMessage, $strPath, $strType, $blnLog);
-		}
-	}	
 }

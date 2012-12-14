@@ -232,6 +232,12 @@ class CloudNodeModel extends FilesModel
 		}
 		
 		$this->objChildren = static::findByPid($this->id === null ? 0 : $this->id);
+
+		if($this->objChildren === null)
+		{
+			$this->objChildren = new CloudNodeModelCollection();
+		}
+		
 		return $this->objChildren;
 	}
 	
@@ -346,16 +352,32 @@ class CloudNodeModel extends FilesModel
 
 		$objResult = static::postFind($objResult);
 		
+		
+		// return collection
+		if(($arrOptions['return'] != 'Model'))
+		{
+			return new \Netzmacht\Cloud\Api\CloudNodeModelCollection($objResult, static::$strTable);
+		}
+		
 		if(static::$objApi !== null)
 		{
 			$strClass = static::$objApi->modelClass;
 		}
-		else 
+		else
 		{
-			$strClass = 'CloudNodeModel';
+			$objApi = Netzmacht\Cloud\Api\CloudApiManager::getApi($objResult->cloudapi);
+			
+			if($objApi !== null)
+			{
+				$strClass = static::$objApi->modelClass;
+			}
+			else
+			{
+				$strClass = 'CloudNodeModel';
+			}
 		}
 		
-		return ($arrOptions['return'] == 'Model') ? new $strClass($objResult, null, static::$objApi) : new \Netzmacht\Cloud\Api\CloudNodeModelCollection($objResult, static::$strTable);
+		return new $strClass($objResult, null, static::$objApi);
 	}	
 	
 	

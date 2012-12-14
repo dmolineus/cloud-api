@@ -29,17 +29,45 @@ class CloudNodeModelCollection extends Collection
 	
 	
 	/**
-	 * we modify class name so that we can provide different model classes for each cloud api
+	 * 
 	 * 
 	 */
-	public static function getModelClassFromTable($strTable)
+	public function getModelClass()
 	{
 		if(static::$objApi !== null)
 		{
 			return static::$objApi->modelClass;
 		}
 		
-		return parent::getModelClassFromTable($strTable);
+		$objApi = CloudApiManager::getApi($this->objResult->cloudapi);
+		
+		if($objApi !== null)
+		{
+			return $objApi->modelClass;
+		}
+		
+		return parent::getModelClassFromTable($this->strTable);
+	}
+	
+	
+	/**
+	 * Fetch the next result row and create the model
+	 * 
+	 * @return boolean True if there was another row
+	 */
+	protected function fetchNext()
+	{
+		if ($this->objResult->next() == false)
+		{
+			return false;
+		}
+
+		$strClass = $this->getModelClass();
+		//var_dump(CloudApiManager::getApi($this->objResult->cloudapi));
+		//\CloudNodeModel::setApi(CloudApiManager::getApi($this->objResult->cloudapi));
+		$this->arrModels[$this->intIndex + 1] = new $strClass($this->objResult);
+
+		return true;
 	}
 	
 	

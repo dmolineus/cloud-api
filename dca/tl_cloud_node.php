@@ -199,22 +199,34 @@ $GLOBALS['TL_DCA']['tl_cloud_node'] = array
 		),
 		'hasThumbnail' => array
 		(
-			'sql'                     => "varchar(1) NOT NULL default '0'"
+			'sql'                     => "varchar(1) NOT NULL default ''"
 		),
 		
 		'thumbnailVersion' => array
 		(
-			'sql'                     => "varchar(32) NOT NULL default '0'"
+			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
 		
-		'cachedFileVersion' => array
+		'cachedVersion' => array
 		(
-			'sql'                     => "varchar(32) NOT NULL default '0'"
+			'sql'                     => "varchar(32) NOT NULL default ''"
 		),
 		
 		'version' => array
 		(
 			'sql'                     => "varchar(32) NOT NULL default ''"
+		),
+		
+		'mountVersion' => array
+		(
+			'sql'                     => "varchar(32) NOT NULL default ''"
+		),
+		
+		'fid' => array
+		(
+			'foreignKey'              => 'tl_files.path',
+			'relation'                => array('type'=>'hasOne', 'load'=>'eager'), 
+			'sql'                     => "int(10) unsigned NULL"
 		),	
 	)
 );

@@ -31,9 +31,11 @@ ClassLoader::addClasses(array
 	'Netzmacht\Cloud\Api\CloudApiManager' => 'system/modules/cloud-api/classes/CloudApiManager.php',
 	'Netzmacht\Cloud\Api\CloudCache' => 'system/modules/cloud-api/classes/CloudCache.php',
 	'Netzmacht\Cloud\Api\CloudApi' => 'system/modules/cloud-api/classes/CloudApi.php',
+	'Netzmacht\Cloud\Api\CloudMountManager' => 'system/modules/cloud-api/classes/CloudMountManager.php',
 	
 	// Models
 	'CloudNodeModel' => 'system/modules/cloud-api/models/CloudNodeModel.php',
+	'CloudMountModel' => 'system/modules/cloud-api/models/CloudMountModel.php',
 	'Netzmacht\Cloud\Api\CloudNodeModelCollection' => 'system/modules/cloud-api/models/CloudNodeModelCollection.php',
 	
 	// modules
@@ -47,6 +49,13 @@ ClassLoader::addClasses(array
 	
 	// drivers
 	'DC_CloudNode' => 'system/modules/cloud-api/drivers/DC_CloudNode.php',
+	'DC_CloudMountedFolder' => 'system/modules/cloud-api/drivers/DC_CloudMountedFolder.php',
+	
+	// data containers 
+	'Netzmacht\Utils\DataContainer' => 'system/modules/cloud-api/classes/DataContainer.php',
+	'Netzmacht\Cloud\Api\DataContainer\Files' => 'system/modules/cloud-api/DataContainer/Files.php',
+	'Netzmacht\Cloud\Api\DataContainer\CloudApi' => 'system/modules/cloud-api/DataContainer/CloudApi.php',
+	'Netzmacht\Cloud\Api\DataContainer\CloudMount' => 'system/modules/cloud-api/DataContainer/CloudMount.php',
 ));
 
 
@@ -54,3 +63,5 @@ ClassLoader::addClasses(array
  * Register the templates
  */
 TemplateLoader::addFile('be_cloudapi_install', 'system/modules/cloud-api/templates');
+TemplateLoader::addFile('be_cloudapi_sync', 'system/modules/cloud-api/templates');
+TemplateLoader::addFile('be_cloudapi_mount', 'system/modules/cloud-api/templates');

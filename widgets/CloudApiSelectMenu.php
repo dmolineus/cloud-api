@@ -41,17 +41,24 @@ class CloudApiSelectMenu extends SelectMenu
 		parent::__construct($arrAttributes);
 		
 		// override options
-		$this->arrOptions = array(array('value' => '', 'label' => '-'));
+		//$this->arrOptions = array();
+		
+		if($this->includeBlankOption)
+		{
+			$this->arrOptions[] = array('value'=>'', 'label'=>'-');
+		}
+		
+		$intMode = ($this->cloudApiMode === null ? 2 : $this->cloudApiMode);
 
-		$arrApis = CloudApiManager::getApis();                
+		$arrApis = CloudApiManager::getApis($intMode);
 
 		foreach ($arrApis as $strKey => $arrValue) 
 		{
-			$this->arrOptions[] = array(
+			$this->arrOptions[$strKey] = $arrValue['title'] = array(
 				'value' => $strKey,
 				'label' => isset($GLOBALS['TL_LANG']['MOD']['cloudapi_' . $strKey][0]) 
 					? $GLOBALS['TL_LANG']['MOD']['cloudapi_' . $strKey][0]
-					: $strKey                    
+					: $arrValue['title']      
 			);
 		}
 	}

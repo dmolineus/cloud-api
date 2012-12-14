@@ -1,0 +1,32 @@
+<div id="tl_buttons">
+<a href="<?php echo $this->href; ?>" class="header_back" title="<?php echo $this->title; ?>"><?php echo $this->button; ?></a>
+</div>
+
+<h2 class="sub_headline"><?php echo $this->headline; ?></h2>
+<?php echo $this->message; ?>
+
+<div class="tl_listing_container cloudapi">
+<?php foreach ($this->groups as $arrRow): ?>
+<div class="tl_header" >
+<h3><?php echo $arrRow['headline']; ?></h3>
+<?php if(isset($arrRow['description'])): ?><p><?php echo $arrRow['description']; ?></p><?php endif; ?>	
+</div>
+
+<?php if(!empty($arrRow['data'])): ?>
+
+<?php foreach ($arrRow['data'] as $arrData): ?>
+<div class="tl_content" onmouseover="Theme.hoverDiv(this,1)" onmouseout="Theme.hoverDiv(this,0)">
+	<div class="tl_content_right">
+	<?php if($arrData['href'] === null):?>
+		<span class="button synced" title="<?php echo $arrData['description']; ?>"><?php echo $this->generateImage('system/modules/cloud-api/assets/approved.gif'); ?> <?php echo $this->syncedLabel; ?></span>
+	<?php else: ?>
+		<a href="<?php echo $arrData['href']; ?>" class="button sync" title="<?php echo $arrData['description']; ?>"><?php echo $this->generateImage('sync.gif'); ?>  <?php echo $this->syncLabel; ?></a>
+	<?php endif; ?>	 
+	</div>
+		
+	<h4><?php echo $arrData['title']; ?></h4>
+	<p><?php if($arrData['sync'] == ''): ?><?php echo $arrData['description']; ?><?php else: ?><?php echo $this->lastSyncLabel;?> <?php echo $arrData['sync']; ?><?php endif; ?></p>
+</div>
+<?php endforeach; ?>
+<?php endif; ?>
+<?php endforeach; ?>

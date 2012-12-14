@@ -14,10 +14,10 @@
  
 // sync
 $GLOBALS['TL_LANG']['tl_cloud_api']['sync'][0] = 'Synchronisieren';
-$GLOBALS['TL_LANG']['tl_cloud_api']['sync'][1] = 'Cloud Service und Datenbank synchronisieren';
+$GLOBALS['TL_LANG']['tl_cloud_api']['sync'][1] = 'Cloud Services und Dateisystem synchronisieren';
 $GLOBALS['TL_LANG']['tl_cloud_api']['syncStart'] = 'Synchronisation des Cloud-Services "%s" gestartet.';
 $GLOBALS['TL_LANG']['tl_cloud_api']['syncStop'] = 'Synchronisation des Cloud-Services "%s" beendet.';
-$GLOBALS['TL_LANG']['tl_cloud_api']['syncReset'] = 'Reset wurde ausgeführt und alle nicht mehr vorhandenen Dateien oder Ordner entfernt.';
+$GLOBALS['TL_LANG']['tl_cloud_api']['syncReset'] = 'Reset wurde ausgeführt und %s nicht mehr vorhandene Dateien oder Ordner entfernt.';
 $GLOBALS['TL_LANG']['tl_cloud_api']['syncFound'] = 'Die Originaldatei "%s" wurde als "%s" gefunden';
 $GLOBALS['TL_LANG']['tl_cloud_api']['syncRemoved'] = 'Die Datei oder der Ordner "%s" wurde entfernt';
 $GLOBALS['TL_LANG']['tl_cloud_api']['syncFolderC'] = 'Der Ordner "%s" wurde erstellt';
@@ -41,10 +41,13 @@ $GLOBALS['TL_LANG']['tl_cloud_api']['custom_legend'] = 'Cloud Service konfigurie
 // buttons
 $GLOBALS['TL_LANG']['tl_cloud_api']['delete'] = array('%s deinstallieren', 'Cloud Service %s deinstallieren');
 $GLOBALS['TL_LANG']['tl_cloud_api']['edit'] = array('%s bearbeiten', 'Einstellungen des Cloud Services %s bearbeiten');
+$GLOBALS['TL_LANG']['tl_cloud_api']['mount'] = array('Einhängepunkte verwalten', 'Einhängepunkte verwalten');
 
 // fields
 $GLOBALS['TL_LANG']['tl_cloud_api']['name'][0] = 'Cloud-Service';
 $GLOBALS['TL_LANG']['tl_cloud_api']['name'][1] = 'Name des Cloud-Services';
+$GLOBALS['TL_LANG']['tl_cloud_api']['title'][0] = 'Cloud-Service';
+$GLOBALS['TL_LANG']['tl_cloud_api']['title'][1] = 'Bezeichnung des Cloud-Services (nicht editierbar)';
 $GLOBALS['TL_LANG']['tl_cloud_api']['accessTokenLink'] = 'Token anfordern. Danach diese Seite neu laden.';
 $GLOBALS['TL_LANG']['tl_cloud_api']['accessTokenConnected'] = 'verbunden mit:';
 $GLOBALS['TL_LANG']['tl_cloud_api']['accessToken'][0] = 'Access Token';
