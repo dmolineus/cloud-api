@@ -26,6 +26,9 @@ ClassLoader::addNamespaces(array
  */
 ClassLoader::addClasses(array
 (
+	// interfaces
+	'Netzmacht\Cloud\Api\syncListenable' => 'system/modules/cloud-api/syncListenable.php',
+	
 	// Classes
 	'Netzmacht\Cloud\Api\AjaxRequest' => 'system/modules/cloud-api/classes/AjaxRequest.php',
 	'Netzmacht\Cloud\Api\CloudApiManager' => 'system/modules/cloud-api/classes/CloudApiManager.php',
@@ -48,20 +51,24 @@ ClassLoader::addClasses(array
 	'Netzmacht\Cloud\Api\RequestAccessToken' => 'system/modules/cloud-api/widgets/RequestAccessToken.php',
 	
 	// drivers
-	'DC_CloudNode' => 'system/modules/cloud-api/drivers/DC_CloudNode.php',
 	'DC_CloudMountedFolder' => 'system/modules/cloud-api/drivers/DC_CloudMountedFolder.php',
 	
 	// data containers 
 	'Netzmacht\Utils\DataContainer' => 'system/modules/cloud-api/classes/DataContainer.php',
-	'Netzmacht\Cloud\Api\DataContainer\Files' => 'system/modules/cloud-api/DataContainer/Files.php',
 	'Netzmacht\Cloud\Api\DataContainer\CloudApi' => 'system/modules/cloud-api/DataContainer/CloudApi.php',
 	'Netzmacht\Cloud\Api\DataContainer\CloudMount' => 'system/modules/cloud-api/DataContainer/CloudMount.php',
+	'Netzmacht\Cloud\Api\DataContainer\CloudNode' => 'system/modules/cloud-api/DataContainer/CloudNode.php',
+	'Netzmacht\Cloud\Api\DataContainer\Files' => 'system/modules/cloud-api/DataContainer/Files.php',
+	'Netzmacht\Cloud\Api\DataContainer\Settings' => 'system/modules/cloud-api/DataContainer/Settings.php',
 ));
 
 
 /**
  * Register the templates
  */
-TemplateLoader::addFile('be_cloudapi_install', 'system/modules/cloud-api/templates');
-TemplateLoader::addFile('be_cloudapi_sync', 'system/modules/cloud-api/templates');
-TemplateLoader::addFile('be_cloudapi_mount', 'system/modules/cloud-api/templates');
+TemplateLoader::addFiles(array
+(
+	'be_cloudapi_install' => 'system/modules/cloud-api/templates',
+	'be_cloudapi_overview' => 'system/modules/cloud-api/templates',
+	'be_cloudapi_sync' => 'system/modules/cloud-api/templates',
+));

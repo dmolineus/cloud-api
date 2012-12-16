@@ -32,8 +32,11 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 		
 		'onload_callback' => array
 		(
+			array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'checkPermission'),
 			array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'choosePalette'),
-		)
+		),
+		
+		'permission_rules' => array('isAdmin:act=[edit,delete,editAll,select]'),
 	),
 	
 	'list' => array
@@ -50,12 +53,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 			'fields' => array('title', 'enabled', 'syncTstamp'),
 			'showColumns' => true,
 			'label_callback' => array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateLabel'),
-			'utilsLabelRules' => array
-			(
-				array('yesNo', 1, 'enabled'),
-				array('parseDate', 2),
-			), 
-			
+			'label_rules' => array('yesNo:index=1:field=enabled,', 'parseDate:index=2'),			
 		),
 		
 		'global_operations' => array
@@ -67,7 +65,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 				'class'					=> 'header_new',
 				'attributes'			=> 'onclick="Backend.getScrollOffset()"',
 				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateGlobalButton'),
-				'utilsButtonRules'		=> array('isAdmin', 'installApi', 'addtoUrl', 'generate'),
+				'button_rules'			=> array('isAdmin', 'installApi', 'addtoUrl', 'generate'),
 			),
 			
 			'mount' => array
@@ -76,16 +74,16 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 				'href'					=> 'table=tl_cloud_mount',
 				'class'					=> 'header_mount',
 				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateGlobalButton'),
-				'utilsButtonRules'		=> array('isAdmin', 'addtoUrl', 'generate'),
+				'button_rules'			=> array('isAdmin', 'generate'),
 			),
 			
-			'sync' => array
+			'overview' => array
 			(
 				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_api']['sync'],
-				'href'					=> 'key=sync',
+				'href'					=> 'key=overview',
 				'class'					=> 'header_sync',
 				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateGlobalButton'),
-				'utilsButtonRules'		=> array('addtoUrl', 'generate'),
+				'button_rules'			=> array('generate'),
 			),
 			
 			'all' => array
@@ -95,7 +93,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 				'class'					=> 'header_edit_all',
 				'attributes'			=> 'onclick="Backend.getScrollOffset()" accesskey="e"',
 				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateGlobalButton'),
-				'utilsButtonRules'		=> array('isAdmin', 'addtoUrl', 'generate'),
+				'button_rules'			=> array('isAdmin', 'generate'),
 			),
 		),
 		
@@ -107,7 +105,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 				'href'					=> 'act=edit',
 				'icon'					=> 'edit.gif',
 				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateButton'),
-				'utilsButtonRules'		=> array('isAdmin', 'addtoUrl', 'generate'),
+				'button_rules'			=> array('isAdmin', 'generate:withTable'),
 			),
 
 			'delete' => array
@@ -117,14 +115,14 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 				'icon'					=> 'delete.gif',
 				'attributes'			=> 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['deleteConfirm'] . '\'))return false;Backend.getScrollOffset()"',
 				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateButton'),
-				'utilsButtonRules'		=> array('isAdmin', 'addtoUrl', 'generate'),
+				'button_rules'			=> array('isAdmin', 'generate:withTable'),
 			),
 			
 			'show' => array
 			(
-				'label'               => &$GLOBALS['TL_LANG']['tl_cloud_api']['show'],
-				'href'                => 'act=show',
-				'icon'                => 'show.gif',
+				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_api']['show'],
+				'href'					=> 'act=show',
+				'icon'					=> 'show.gif',
 				
 			),
 		)

@@ -22,6 +22,21 @@ class CloudMount extends DataContainer
 {
 	
 	/**
+	 * 
+	 */
+	public function clearTimestamp($objDc)
+	{
+		if(!$objDc->activeRecord->isModified)
+		{
+			return $strValue;
+		}
+		
+		$objStmt = $this->Database->prepare('UPDATE tl_cloud_mount %s WHERE id=?');
+		$objStmt->set(array('syncTstamp' => 0));
+		$objStmt->execute($objDc->activeRecord->id);
+	}
+	
+	/**
 	 * we have to create our own back button, because setting ptable does not work.
 	 * So we make sure that the back button is the left one by simulating a closed table
 	 */

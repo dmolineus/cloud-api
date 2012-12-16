@@ -69,7 +69,7 @@ class CloudApi extends DataContainer
 	 * @param string icon class
 	 * @param string added attributes
 	 */
-	protected function buttonRuleInstallApi($strButton, $strHref, $strLabel, $strTitle, $strIcon, $strAttributes)
+	protected function buttonRuleInstallApi(&$strButton, &$strHref, &$strLabel, &$strTitle, &$strIcon, &$strAttributes)
 	{
 		$arrApis = CloudApiManager::getApis(0);
 		

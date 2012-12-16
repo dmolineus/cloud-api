@@ -37,14 +37,6 @@ class CloudApiManager extends System
 	protected static $arrConfig = array();
 	
 	/**
-	 * listestener for CloudApi::sync() method
-	 * 
-	 * @var array
-	 */
-	protected static $arrSyncListener = array();
-	
-	
-	/**
 	 * 
 	 */
 	protected static $blnConfigImported = false;
@@ -246,68 +238,4 @@ class CloudApiManager extends System
 		static::$arrConfig[$strName]['title'] = ($strTitle === null ? $strName : $strTitle);
 	}
 	
-	
-	/**
-	 * register a sync listener
-	 * 
-	 * @param mixed variable which is callable by call_user_func
-	 * @param string namespace sync listener can be limit for a specific API by setting the name as namespace
-	 */
-	public static function registerSyncListener($mixedSource, $strMethod, $strNamespace='__global__', $blnCallStatic = false)
-	{
-		if(is_string($mixedSource) && !$blnCallStatic)
-		{
-			$mixedSource = new $mixedSource();
-		}
-		
-		static::$arrSyncListener[$strNamespace][] = array($mixedSource, $strMethod);
-	}
-	
-	
-	/**
-	 * call every registered sync listener
-	 * 
-	 * @param mixed string or CloudNodeModel current model or path
-	 * @param string action can be info,update,create,delete,error
-	 * @param string provided message
-	 * @param CloudApi passed cloud api object
-	 */
-	public static function callSyncListener($strAction, $mixedNodeOrPath=null, $strMessage=null, $objApi=null)
-	{
-		if(!static::$blnConfigImported)
-		{
-			foreach ($GLOBALS['cloudapiSyncListener'] as $strNamespace => $arrListeners) 
-			{
-				foreach ($arrListeners as $arrListener) 
-				{
-					static::registerSyncListener($arrListener[0], $arrListener[1], $strNamespace);					
-				}				
-			}
-			
-			static::$blnConfigImported = true;
-		}
-		
-		// global namespace
-		if(isset(static::$arrSyncListener['__global__']) && !empty(static::$arrSyncListener['__global__']))
-		{
-			foreach(static::$arrSyncListener['__global__'] as $mixedListener)
-			{
-				call_user_func($mixedListener, $strAction, $mixedNodeOrPath, $strMessage, $objApi);
-			}
-		}
-
-		if($objApi === null)
-		{
-			return;
-		}
-		
-		// cloud service specific namespace
-		if(isset(static::$arrSyncListener[$objApi->name]) && !empty(static::$arrSyncListener[$objApi->name]))
-		{
-			foreach(static::$arrSyncListener[$objApi->name] as $mixedListener)
-			{
-				call_user_func($mixedListener, $strAction, $mixedNodeOrPath, $strMessage, $objApi);
-			}
-		}
-	}
 }

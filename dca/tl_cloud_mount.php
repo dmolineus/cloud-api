@@ -27,10 +27,11 @@ $GLOBALS['TL_DCA']['tl_cloud_mount'] = array
 		//'label' => 'Pusteblume',
 		'onload_callback' => array
 		(
-			//array('tl_cloud_node', 'checkPermission'),
-			//array('tl_cloud_node', 'addBreadcrumb'),
+			array('Netzmacht\Cloud\Api\DataContainer\CloudMount', 'checkPermission'),
 			array('Netzmacht\Cloud\Api\DataContainer\CloudMount', 'hideStandardCreateButton'),
-		),		
+		),
+		'onsubmit_callback'					=> array(array('Netzmacht\Cloud\Api\DataContainer\CloudMount', 'clearTimestamp')),
+		'permission_rules' => array('isAdmin'),
 		'sql' => array
 		(
 			'keys' => array
@@ -68,7 +69,7 @@ $GLOBALS['TL_DCA']['tl_cloud_mount'] = array
 				'class'					=> 'header_back',
 				'attributes'			=> 'onclick="Backend.getScrollOffset()" accesskey="b"',
 				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudMount', 'generateGlobalButton'),
-				'utilsButtonRules' 		=> array('generateReferer'),
+				'button_rules' 		=> array('generateReferer'),
 			),
 			
 			'create' => array
@@ -124,8 +125,8 @@ $GLOBALS['TL_DCA']['tl_cloud_mount'] = array
 	// Palettes
 	'palettes' => array
 	(
-		'__selector__'	=> array('pid'),
-		'default'                     => '{general_legend},name,description,enabled;{mounts_legend},pid;{options_legend},mode,options'
+		'__selector__'					=> array('pid'),
+		'default'						=> '{general_legend},name,description,enabled;{mounts_legend},pid;{options_legend},mode,options',
 	),
 	
 	'metasubselectpalettes' => array
@@ -225,7 +226,7 @@ $GLOBALS['TL_DCA']['tl_cloud_mount'] = array
 		
 		'syncTstamp' => array
 		(
-			'sql'                     => "int(10) unsigned NOT NULL default '0'"
+			'sql'							=> "int(10) unsigned NOT NULL default '0'",
 		),
 	)
 );

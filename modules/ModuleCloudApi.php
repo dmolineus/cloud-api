@@ -21,6 +21,7 @@ use BackendModule;
  */
 class ModuleCloudApi extends BackendModule
 {
+	
 	/**
 	 * 
 	 */
@@ -34,6 +35,7 @@ class ModuleCloudApi extends BackendModule
 		parent::__construct($objDc);
 		
 		$this->loadLanguageFile('cloudapi');
+		$this->import('BackendUser', 'User');
 	}
 	
 	
@@ -61,6 +63,13 @@ class ModuleCloudApi extends BackendModule
 	 */
 	public function generateInstallApi()
 	{
+		if(!$this->User->isAdmin)
+		{
+			$this->log('User "%s" tried to access ModuleCloudApi generateCloudSync()', $this->User->id, TL_ERROR);
+			$this->redirect('contao/main.php?act=error');
+			return '';
+		}
+		
 		$this->Template = new \BackendTemplate('be_cloudapi_install');
 		
 		$strApi = \Input::post('cloudapi');
@@ -91,12 +100,48 @@ class ModuleCloudApi extends BackendModule
 	
 	
 	/**
+	 * generate the view for cloud api syncing
+	 * 
+	 * @return string
+	 */
+	public function generateCloudSync()
+	{		
+		try 
+		{
+			$intId = \Input::get('id');
+			$objCloudApi = CloudApiManager::getApi($intId, 'id');			
+		}
+		catch(\Exception $e)
+		{
+			$this->log('Could not initiate CloudAPI for "' . $strTable . '"', 'DC_CloudNode __construct()', TL_ERROR);
+			trigger_error('Could not initiate CloudAPI', E_USER_ERROR);			
+		}
+		
+		// use mount manager as listener to changes will be directly passed
+		$objMountManager = new CloudMountManager();
+		$objMountManager->registerSyncListener($this, 'syncListener');
+		
+		$objCloudApi->registerSyncListener($this, 'syncListener');
+		$objCloudApi->registerSyncListener($objMountManager, 'syncListener');
+		$objCloudApi->sync();
+				
+		$this->Template = new \BackendTemplate('be_cloudapi_sync');
+		$this->Template->headline = sprintf($GLOBALS['TL_LANG']['cloudapi']['cloudSyncHeadline'], $objCloudApi->title);
+		$this->Template->messages = $this->arrMessages;
+		$this->Template->href = $this->getReferer(true);
+		$this->Template->hrefLabel = $GLOBALS['TL_LANG']['MSC']['continue'];
+		
+		return $this->generate();		
+	}
+	
+	
+	/**
 	 * generate the mount view
 	 * 
 	 * @return string
 	 */
 	public function generateMountSync()
-	{
+	{		
 		$intId = \Input::get('id'); 
 		$intStep = \Input::get('step', 0);
 		
@@ -120,7 +165,7 @@ class ModuleCloudApi extends BackendModule
 			return;
 		}
 				
-		$this->Template = new \BackendTemplate('be_cloudapi_mount');
+		$this->Template = new \BackendTemplate('be_cloudapi_sync');
 		$this->Template->headline = sprintf($GLOBALS['TL_LANG']['cloudapi']['mountSyncHeadline'], $intId);
 		$this->Template->messages = $this->arrMessages;
 		$this->Template->href = $this->getReferer(true);
@@ -135,8 +180,8 @@ class ModuleCloudApi extends BackendModule
 	 * 
 	 * @return string
 	 */
-	public function generateSync()
-	{
+	public function generateSyncOverview()
+	{	
 		// set session data
 		$this->import('Session');
 		$session = $this->Session->get('referer');
@@ -193,7 +238,7 @@ class ModuleCloudApi extends BackendModule
 					'title' 		=> $arrData['title'],
 					'description'	=> sprintf($GLOBALS['TL_LANG']['cloudapi']['syncCloudApis'][2], $arrData['title']),
 					'sync' 			=> $this->generateLastSyncLabel($arrData['syncTstamp']),
-					'href'			=> $blnSync ? 'contao/main.php?do=cloudapi&act=sync&table=tl_cloud_node&id=' . $arrData['id'] . '&rt=' . REQUEST_TOKEN : null,
+					'href'			=> $blnSync ? 'contao/main.php?do=cloudapi&key=sync&id=' . $arrData['id'] . '&rt=' . REQUEST_TOKEN : null,
 				);
 			}
 			
@@ -217,13 +262,6 @@ class ModuleCloudApi extends BackendModule
 				$arrOptions = unserialize($objMount->options);
 				
 				$blnSync = (time() - $objMount->syncTstamp) > $GLOBALS['TL_CONFIG']['cloudapiSyncInterval'];
-				
-				// every file operation is used so we can count all child records for checking the sync state
-				if(!$blnSync && in_array('create', $arrOptions) && in_array('update', $arrOptions) && in_array('delete', $arrOptions))
-				{
-					$objResult = $this->Database->query("SELECT count(n.id) AS total FROM tl_cloud_node n WHERE fid != '' AND (SELECT count(f.id) FROM tl_files f WHERE id=fid) = 0");					
-					$blnSync = (($objResult->total == 0) ? false : true);	
-				}
 
 				$arrGroup['data'][] = array
 				(
@@ -237,7 +275,7 @@ class ModuleCloudApi extends BackendModule
 			$arrGroups[] = $arrGroup;
 		}
 		
-		$this->Template = new \BackendTemplate('be_cloudapi_sync');
+		$this->Template = new \BackendTemplate('be_cloudapi_overview');
 		$this->Template->headline = $GLOBALS['TL_LANG']['tl_cloud_api']['sync'][1];
 		$this->Template->groups = $arrGroups;
 		$this->Template->syncedLabel = $GLOBALS['TL_LANG']['cloudapi']['syncedLabel'];
@@ -341,7 +379,7 @@ class ModuleCloudApi extends BackendModule
 		}
 
 		// last year
-		elseif($intTimestamp < 946080000)
+		elseif($intTimestamp < 31536000)
 		{
 			$intValue = floor($intTimestamp / 2592000);
 			$strLabel = $GLOBALS['TL_LANG']['cloudapi']['timeLabel']['month' . (($intValue > 1)  ? 's' : '')]; 
@@ -349,7 +387,7 @@ class ModuleCloudApi extends BackendModule
 		
 		else
 		{
-			$intValue = floor($intTimestamp / 946080000);
+			$intValue = floor($intTimestamp / 31536000);
 			$strLabel = $GLOBALS['TL_LANG']['cloudapi']['timeLabel']['year' . (($intValue > 1)  ? 's' : '')]; 
 		}
 		

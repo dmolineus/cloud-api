@@ -18,7 +18,7 @@ use System;
  * Abstract class for defining the API for CloudApi classes
  * 
  */
-abstract class CloudApi extends System
+abstract class CloudApi extends System implements syncListenable
 {
 	
 	/**
@@ -37,9 +37,11 @@ abstract class CloudApi extends System
 	
 	
 	/**
-	 * called at the sync process
+	 * sync listeners
+	 * 
+	 * @var array
 	 */
-	protected $arrSyncListener = null;
+	protected $arrSyncListeners = array(); 
 	
 	
 	/**
@@ -80,6 +82,7 @@ abstract class CloudApi extends System
 			case 'id':
 			case 'class':
 			case 'enabled':
+			case 'title':
 			{
 				return $this->arrConfig[$strKey];
 				break;
@@ -111,11 +114,52 @@ abstract class CloudApi extends System
 	
 	
 	/**
+	 * call every registered sync listener
+	 * 
+	 * @param mixed string or CloudNodeModel current model or path
+	 * @param string action can be info,update,create,delete,error
+	 * @param string provided message
+	 * @param CloudApi passed cloud api object
+	 */
+	public function callSyncListener($strAction, $mixedNodeOrPath=null, $strMessage=null, $objApi=null)
+	{	
+		if(empty($this->arrSyncListeners))
+		{
+			return;
+		}
+		
+		//foreach($this->arrSyncListeners as $mixedListener)
+		for($i = 0; $i < count($this->arrSyncListeners); $i++)
+		{
+			call_user_func($this->arrSyncListeners[$i], $strAction, $mixedNodeOrPath, $strMessage, $objApi);
+		}
+	}
+	
+	
+	/**
 	 * get account info
 	 * 
 	 * @return array
 	 */	
 	abstract public function getAccountInfo();
+	
+	
+	/**
+	 * register a sync listener
+	 * 
+	 * @param mixed variable which is callable by call_user_func
+	 * @param string method name
+	 * @param bool true if its a static call 
+	 */
+	public function registerSyncListener($mixedSource, $strMethod, $blnCallStatic = false)
+	{
+		if(is_string($mixedSource) && !$blnCallStatic)
+		{
+			$mixedSource = new $mixedSource();
+		}
+		
+		$this->arrSyncListeners[] = array($mixedSource, $strMethod);
+	}
 	
 	
 	/**
@@ -204,7 +248,7 @@ abstract class CloudApi extends System
 		$objStatement->set($arrParams);
 		$objStatement->execute($this->name);
 		
-		CloudApiManager::callSyncListener($blnActive ? 'start' : 'stop');
+		$this->callSyncListener($blnActive ? 'start' : 'stop');
 	}
 	
 	

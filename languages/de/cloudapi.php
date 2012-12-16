@@ -2,6 +2,7 @@
 
 // headline
 $GLOBALS['TL_LANG']['cloudapi']['mountSyncHeadline'] = 'Einhängepunkt der ID "%s" synchronisieren';
+$GLOBALS['TL_LANG']['cloudapi']['cloudSyncHeadline'] = 'Cloud Service "%s" synchronisieren';
 
 $GLOBALS['TL_LANG']['cloudapi']['syncMounts'][0]		= 'Einhängepunkte';
 $GLOBALS['TL_LANG']['cloudapi']['syncMounts'][1]	 	= 'Bei der Synchronisation der Einhängepunkte werden die Dateien aus der Cloud lokal gespeichert.';
@@ -37,6 +38,7 @@ $GLOBALS['TL_LANG']['cloudapi']['timeLabel']['years'] = 'vor %s Monaten';
 $GLOBALS['TL_LANG']['cloudapi']['syncLocalDeleted'] = 'Lokale Dateien, die nicht mehr im Cloud Service existieren, wurden gelöscht.';
 $GLOBALS['TL_LANG']['cloudapi']['syncLocalFolderC'] = 'Der lokale Ordner "%s" wurde erstellt';
 $GLOBALS['TL_LANG']['cloudapi']['syncLocalFolderD'] = 'Der lokale Ordner "%s" wurde gelöscht';
+$GLOBALS['TL_LANG']['cloudapi']['syncLocalFileD'] = 'Die lokale Datei "%s" wurde gelöscht';
 $GLOBALS['TL_LANG']['cloudapi']['syncLocalFileC'] = 'Die lokale Datei "%s" wurde erstellt';
 $GLOBALS['TL_LANG']['cloudapi']['syncLocalFileU'] = 'Die lokale Datei "%s" wurde aktualisiert';
 $GLOBALS['TL_LANG']['cloudapi']['syncLocalHash'] = 'Der Hash von "%s" wurde aktualisiert';

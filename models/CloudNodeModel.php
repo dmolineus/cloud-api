@@ -144,7 +144,7 @@ class CloudNodeModel extends FilesModel
 				break;
 				
 			case 'isCached':
-				$this->arrCache[$strKey] = CloudCache::isCached($this->cacheKey);
+				$this->arrCache[$strKey] = Netzmacht\Cloud\Api\CloudCache::isCached($this->cacheKey) && ($this->version == $this->cachedVersion);
 				break;
 				
 			case 'isGdImage':

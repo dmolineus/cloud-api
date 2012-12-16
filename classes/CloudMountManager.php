@@ -20,7 +20,7 @@ use System;
  * 
  * 
  */
-class CloudMountManager extends System
+class CloudMountManager extends System implements syncListenable
 {
 	
 	/**
@@ -44,13 +44,12 @@ class CloudMountManager extends System
 	 */
 	protected $arrMount = array();
 	
-	
 	/**
 	 * ids of all found files
 	 * 
 	 * @var array
 	 */
-	protected $arrPids = array();
+	protected $arrIds = array();
 	
 	/**
 	 * sync listeners
@@ -137,8 +136,9 @@ class CloudMountManager extends System
 	 * @param string message
 	 * @param CloudApi
 	 */
-	public function syncCloudApiListener($strAction, $mixedNodeOrPath, $strMessage=null, $objApi=null)
+	public function syncListener($strAction, $mixedNodeOrPath, $strMessage=null, $objApi=null)
 	{
+		
 		// initialize the cloud mounts
 		if($strAction == 'start')
 		{
@@ -251,30 +251,49 @@ class CloudMountManager extends System
 		{
 			return array();
 		}
-				
+		
+		$this->import('Files');
+			
 		for($i = count($arrFolders)-1; $i >= 0; $i--)
-		//foreach($arrFolders as $strFolder)
 		{
 			$strFolder = $arrFolders[$i];
+			$blnNewFolder = false;
+			
+			if(!is_dir(TL_ROOT . '/' . $strFolder))
+			{
+				$blnNewFolder = true;
+				$this->Files->mkdir($strFolder);
+			}
+			
 			$objFolder = new \Folder($strFolder);
-			$objModel = \FilesModel::findByPath($strFolder);
+			
+			$objModel = \FilesModel::findOneByPath($strFolder);
 
 			// Create the entry if it does not yet exist
 			if ($objModel !== null)
 			{
+				$this->arrIds[$strParent] = $objModel->id;
+				$this->arrFound[] = $objModel->id;
+				
+				if($blnNewFolder)
+				{
+					$objModel->hash = $objFolder->hash;
+					$objModel->save();
+				}
+				
 				continue;
 			}
 			
-			$this->arrPids[$strFolder] = $objModel->id;			
+			$this->arrIds[$strFolder] = $objModel->id;			
 			$strParent = dirname($strFolder);
 			
-			if(isset($this->arrPids[$strParent]))
+			if(isset($this->arrIds[$strParent]))
 			{
-				$intPid = $this->arrPids[$strParent];
+				$intPid = $this->arrIds[$strParent];
 			}
 			else 
 			{
-				$objParent = \FilesModel::findOneByPath($this->arrPids[$strParent]);
+				$objParent = \FilesModel::findOneByPath($this->arrIds[$strParent]);
 				
 				if($objParent === null)
 				{
@@ -282,6 +301,8 @@ class CloudMountManager extends System
 				}
 				
 				$intPid = $objParent->pid;
+				$this->arrFound[] = $objParent->id;
+				$this->arrIds[$strFolder] = $objParent->id;
 			}
 			
 			$objModel = new \FilesModel();
@@ -294,11 +315,12 @@ class CloudMountManager extends System
 			$objModel->found  = 1;
 			$objModel->save();
 			
+			$this->arrFound[] = $objModel->id;
+			$this->arrIds[$strFolder] = $objModel->id;
 			$this->callSyncListener('create', $objModel, $GLOBALS['TL_LANG']['cloudapi']['syncLocalFolderC']);
 		}
 		
 		$this->updateFolderHash($strRoot);
-		
 	}
 	
 
@@ -321,13 +343,13 @@ class CloudMountManager extends System
 		
 		if($objNode->type == 'folder')
 		{
-			$this->createFolderPath($strNewPath, $objLocalRoot->path, $this->arrPids);		
+			$this->createFolderPath($strNewPath, $objLocalRoot->path, $this->arrIds);		
 		}
 		
 		// check the limits
 		elseif($this->intDownloaded < $GLOBALS['TL_CONFIG']['cloudapiSyncDownloadLimit'] && $this->intDownloadedTime < $GLOBALS['TL_CONFIG']['cloudapiSyncDownloadTime'])
 		{
-			if(!CloudCache::isCached($objNode->cacheKey))
+			if(!$objNode->isCached)
 			{
 				$this->intDownloaded++;
 			}
@@ -336,7 +358,7 @@ class CloudMountManager extends System
 			$strContent = $objNode->downloadFile();
 			$this->intDownloadedTime = time() - $intStart;
 			
-			$objFile = new \File($strNewPath);
+			$objFile = new \File(dirname($strNewPath) . '/' . utf8_romanize(basename($strNewPath)));
 			$objFile->write($strContent);
 			$objFile->close();
 			
@@ -353,7 +375,8 @@ class CloudMountManager extends System
 				}
 				else
 				{
-					$this->arrPids[$strParent] = $objParent->id;
+					$this->arrIds[$strParent] = $objParent->id;
+					$this->arrFound[] = $objParent->id;
 				}
 			}
 			
@@ -369,7 +392,7 @@ class CloudMountManager extends System
 			}
 			
 			$strParent = dirname($strFolder);
-			$objModel->pid       = isset($this->arrPids[$strParent]) ? $this->arrPids[$strParent] : $objLocalRoot->id;
+			$objModel->pid       = isset($this->arrIds[$strParent]) ? $this->arrIds[$strParent] : $objLocalRoot->id;
 			$objModel->tstamp    = time();
 			$objModel->name      = basename($strNewPath);
 			$objModel->type      = 'file';
@@ -484,17 +507,23 @@ class CloudMountManager extends System
 			
 			if(!empty($arrDelete))
 			{
-				$objResult = $this->Database->query('SELECT * FROM tl_files WHERE id IN (' . implode(',', $arrDelete) . ')');
+				$objResult = $this->Database->query('SELECT * FROM tl_files WHERE id IN (' . implode(',', $arrDelete) . ') ORDER BY type, path DESC');
 				$arrPaths = $objResult->fetchEach('path');
+				$arrTypes = $objResult->fetchEach('type');
 				
-				foreach($arrPaths as $strPath)
+				$this->import('Files');
+				
+				foreach($arrPaths as $intIndex => $strPath)
 				{
-					if(is_dir(TL_ROOT . '/'))
+					if($arrTypes[$intIndex] == 'folder' && is_dir(TL_ROOT . '/' . $strPath))
 					{
-						$objFile = new \File($strPath);
-						$objFile->delete();			
-						
-						$this->callSyncListener('delete', $objFile, $GLOBALS['TL_LANG']['cloudapi']['syncLocalFolderD']);			
+						$this->Files->rmdir($strPath);						
+						$this->callSyncListener('delete', $strPath, $GLOBALS['TL_LANG']['cloudapi']['syncLocalFileD']);
+					}
+					elseif($arrTypes[$intIndex] == 'file' && file_exists(TL_ROOT . '/' . $strPath))
+					{
+						$this->Files->delete($strPath);						
+						$this->callSyncListener('delete', $strPath, $GLOBALS['TL_LANG']['cloudapi']['syncLocalFolderD']);			
 					}
 				}
 				
@@ -505,8 +534,12 @@ class CloudMountManager extends System
 				
 				if(!empty($arrLocalChildIds))
 				{
-					$this->Database->query('DELETE FROM tl_files WHERE found=0 AND id IN (' . implode(',', $arrLocalChildIds) . ')');
-					$this->callSyncListener('delete', '', $GLOBALS['TL_LANG']['cloudapi']['syncLocalDeleted']);
+					$objResult = $this->Database->query('DELETE FROM tl_files WHERE found=0 AND id IN (' . implode(',', $arrLocalChildIds) . ')');
+					
+					if($objResult->affectedRows > 0)
+					{
+						//$this->callSyncListener('delete', '', $GLOBALS['TL_LANG']['cloudapi']['syncLocalDeleted']);						
+					}
 				}
 			}
 		}
@@ -514,13 +547,9 @@ class CloudMountManager extends System
 		// clean database
 		$this->Database->query("UPDATE tl_cloud_node SET mountVersion='', fid=NULL WHERE fid != '' AND (SELECT count(id) FROM tl_files WHERE id=fid) = 0");
 		
-		$objModel = \FilesModel::findOneById($objMount->localId);
-		
-		if($objModel !== null)
-		{
-			$this->updateFolderHash($objModel);			
-		}
+		$this->updateFolderHash($objMount->localId);			
 	}
+
 
 	/**
 	 * update the hash of a folder
@@ -529,7 +558,12 @@ class CloudMountManager extends System
 	 */
 	protected function updateFolderHash($strFolder)
 	{
-		if(is_string($strFolder))
+		if(is_numeric($strFolder))
+		{
+			$objModel = \FilesModel::findById($strFolder);
+			$strFolder = $objModel->path;
+		}
+		elseif(is_string($strFolder))
 		{
 			$objModel = \FilesModel::findByPath($strFolder);
 		}

@@ -16,6 +16,7 @@ namespace Netzmacht\Cloud\Api;
 use File;
 use Folder;
 
+
 /**
  * CloudCache handles caching for the cloud api. 
  * Use this class as a static class
@@ -33,12 +34,20 @@ class CloudCache
 	 */
 	const CACHE_DIR = 'system/cache/cloud-api/';
 	
+	
 	/**
 	 * cache file paths
 	 * 
 	 * @var array
 	 */
 	protected static $arrFilePaths = array();
+	
+	/**
+	 * is iscached
+	 * 
+	 * @var array
+	 */
+	protected static $arrIsCached = array();
 	
 	
 	/**
@@ -53,6 +62,8 @@ class CloudCache
 		$strFileName = self::getPath($strKey);
 		$objFile = new File($strFileName);
 		$objFile->write($strContent);
+		
+		static::$arrIsCached[$strKey] = true;
 		
 		return true;
 	}
@@ -72,6 +83,8 @@ class CloudCache
 		
 		$objFile = new File(self::getPath($strKey));
 		$objFile->delete();
+		
+		static::$arrIsCached[$strKey] = false;
 		
 		return true;
 	}
@@ -103,8 +116,9 @@ class CloudCache
 	 */
 	public static function getPath($strKey)
 	{
-		if(!isset(self::$arrFilePaths[$strKey])) {			
-			self::$arrFilePaths[$strKey] = self::CACHE_DIR . $strKey;
+		if(!isset(self::$arrFilePaths[$strKey])) 
+		{			
+			self::$arrFilePaths[$strKey] = self::CACHE_DIR . dirname($strKey) . '/' . utf8_romanize(basename($strKey));
 		}
 		
 		return self::$arrFilePaths[$strKey];
@@ -119,7 +133,12 @@ class CloudCache
 	 */
 	public static function isCached($strKey)
 	{
-		return file_exists(TL_ROOT . '/' . self::getPath($strKey));		
+		if(!isset(static::$arrIsCached[$strKey]))
+		{
+			static::$arrIsCached[$strKey] = file_exists(TL_ROOT . '/' . self::getPath($strKey)); 
+		}
+		
+		return static::$arrIsCached[$strKey];	
 	}
 	
 	
@@ -132,7 +151,9 @@ class CloudCache
 	public function purgeCache()
 	{
 		$objFolder = new Folder(self::CACHE_DIR);
-		$objFolder->purge();		
+		$objFolder->purge();
+		
+		static::$arrIsCached = array();		
 	}
 	
 }
