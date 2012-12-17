@@ -36,6 +36,11 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 			array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'choosePalette'),
 		),
 		
+		'palettes_callback' => array
+		(
+			array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'chooseSubpalettes'),			
+		),
+		
 		'permission_rules' => array('isAdmin:act=[delete,edit,editAll,select]'),
 	),
 	
@@ -65,7 +70,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 				'class'					=> 'header_new',
 				'attributes'			=> 'onclick="Backend.getScrollOffset()"',
 				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateGlobalButton'),
-				'button_rules'			=> array('isAdmin', 'installApi', 'addtoUrl', 'generate'),
+				'button_rules'			=> array('isAdmin', 'installApi', 'generate'),
 			),
 			
 			'mount' => array
@@ -137,13 +142,16 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 		)
 	),
 	
-	'palettes' => array
+	'metapalettes' => array
 	(
-		'__selector__' => array
+		'_base_' => array
 		(
-			'enabled',
+			'connection' 				=> array('title', 'enabled'),
+			'folder'					=> array(':hide,', 'mountedFolders')
+			
 		),
-		'default' 						=> '{connection_legend},title,enabled;{folder_legend:hide},mountedFolders;',	
+		
+		'default extends _base_' 		=> array(), 	
 	),
 	
 	'subpalettes' => array

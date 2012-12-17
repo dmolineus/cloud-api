@@ -24,38 +24,71 @@ class CloudApi extends DataContainer
 {
 	
 	/**
+	 * @var Netzmacht\Cloud\Api\DataContainer\CloudApi
+	 */
+	protected static $objInstance = null;
+	
+	
+	/**
+	 * define a singleton because the class is used for datacontainer callbacks and meta palettes callbacks as well
+	 * 
+	 * @return Netzmacht\Cloud\Api\DataContainer\CloudApi
+	 */
+	public static function getInstance()
+	{
+		if(static::$objInstance === null)
+		{
+			static::$objInstance = new static();
+		}
+		
+		return static::$objInstance;		
+	}
+	
+	
+	/**
 	 * choose palette supports different palettes depending on cloud name
-	 * subpalettes are stores in customsubpalettes['cloudname'].
 	 * 
 	 * @return void  
 	 */
 	public function choosePalette()
 	{
-		$intId = \Input::get('id');
-				
-		$this->import('Database');
-		
-		$objStmt = $this->Database->prepare('SELECT * FROM tl_cloud_api WHERE id=?');
-		$objResult = $objStmt->execute($intId);
-		
-		if($objResult->numRows == 0) 
+		try
+		{
+			$objApi = CloudApiManager::getApi(\Input::get('id'));			
+		}
+		catch(\Exception $e)
 		{
 			return;
 		}
 		
-		if(isset($GLOBALS['TL_DCA']['tl_cloud_api']['palettes'][$objResult->name]))
+		if(isset($GLOBALS['TL_DCA']['tl_cloud_api']['palettes'][$objApi->name]))
 		{
-			$GLOBALS['TL_DCA']['tl_cloud_api']['palettes']['default'] = $GLOBALS['TL_DCA']['tl_cloud_api']['palettes'][$objResult->name];
+			$GLOBALS['TL_DCA']['tl_cloud_api']['palettes']['default'] = $GLOBALS['TL_DCA']['tl_cloud_api']['palettes'][$objApi->name];
+		}
+	}
+	
+	
+	/**
+	 * choose subpaletttes using the palettes__callback because we have to do it before meta palettes renders the palettes
+	 * subpalettes are stores in cloudapi_metasubselectpalettes['cloudname'].
+	 * 
+	 * @return void
+	 */
+	public function chooseSubpalettes()
+	{
+		try
+		{
+			$objApi = CloudApiManager::getApi(\Input::get('id'));			
+		}
+		catch(\Exception $e)
+		{
+			return;
 		}
 		
-		if(isset($GLOBALS['TL_DCA']['tl_cloud_api']['customSubPalettes'][$objResult->name]))
+		if(isset($GLOBALS['TL_DCA']['tl_cloud_api']['cloudapi_metasubselectpalettes'][$objApi->name]))
 		{
-			$GLOBALS['TL_DCA']['tl_cloud_api']['subpalettes'] = $GLOBALS['TL_DCA']['tl_cloud_api']['customSubPalettes'][$objResult->name];
-			$GLOBALS['TL_DCA']['tl_cloud_api']['palettes']['__selector__'] = array_keys
-			(
-				$GLOBALS['TL_DCA']['tl_cloud_api']['customSubPalettes'][$objResult->name]
-			);
-		}
+			$GLOBALS['TL_DCA']['tl_cloud_api']['metasubpalettes'] = $GLOBALS['TL_DCA']['tl_cloud_api']['cloudapi_metasubselectpalettes'][$objApi->name];
+		}		
 	}
 
 

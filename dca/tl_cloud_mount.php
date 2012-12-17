@@ -138,10 +138,14 @@ $GLOBALS['TL_DCA']['tl_cloud_mount'] = array
 	),
 
 	// Palettes
-	'palettes' => array
+	'metapalettes' => array
 	(
-		'__selector__'					=> array('pid'),
-		'default'						=> '{general_legend},name,description,enabled;{mounts_legend},pid;{options_legend},mode,options',
+		'default'						=> array
+		(
+			'general' => array('name', 'description', 'enabled'),
+			'mounts' => array('pid'),
+			'options' => array('mode', 'options'),
+		),
 	),
 	
 	'metasubselectpalettes' => array
