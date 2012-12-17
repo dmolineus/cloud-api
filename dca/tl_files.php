@@ -22,7 +22,7 @@ if($GLOBALS['TL_CONFIG']['cloudapiFileManagerIntegration'])
 	
 	$GLOBALS['TL_DCA']['tl_files']['list']['global_operations']['sync']['href'] = 'do=cloudapi&key=overview'; 
 	$GLOBALS['TL_DCA']['tl_files']['list']['global_operations']['sync']['button_callback'] = array('Netzmacht\Cloud\Api\DataContainer\Files', 'generateGlobalButton');
-	$GLOBALS['TL_DCA']['tl_files']['list']['global_operations']['sync']['button_rules'] = array('hasAccess:modules=cloudapi', 'generate');		
+	$GLOBALS['TL_DCA']['tl_files']['list']['global_operations']['sync']['button_rules'] = array('hasAccess:module=cloudapi', 'generate');		
 	
 	if($GLOBALS['TL_CONFIG']['cloudapiFileManagerManageMounts'])
 	{

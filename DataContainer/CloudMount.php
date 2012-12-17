@@ -73,14 +73,13 @@ class CloudMount extends DataContainer
 	/**
 	 * 
 	 */
-	public function generateGoToButton($arrRow, $strHref, $strLabel, $strTitle, $strIcon, $strAttributes)
+	public function buttonRuleFileManager(&$strButton, &$strHref, &$strLabel, &$strTitle, &$strIcon, &$strAttributes, &$arrAttributes, $arrRow=null)
 	{
 		$objResult = \FilesModel::findOneById($arrRow['localId']);
+		
+		$arrAttributes['plain'] = true;
+		$strHref = 'contao/main.php?do=files&node=' . urlencode($objResult->path);
 
-		return sprintf
-		(
-			'<a href="%s" title="%s" %s onclick="Backend.getScrollOffset()">%s</a> ',
-			'contao/main.php?'.$strHref.urlencode($objResult->path), specialchars($strTitle), $strAttributes, $this->generateImage($strIcon, $strLabel)
-		);
+		return true;
 	}
 }

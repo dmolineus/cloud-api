@@ -27,6 +27,7 @@ $GLOBALS['TL_LANG']['tl_cloud_mount']['delete'] = array('Einhängepunkt "%s" ent
 $GLOBALS['TL_LANG']['tl_cloud_mount']['edit'] = array('Einhängepunkt "%s" bearbeiten', 'Einhängepunkt der ID "%s" bearbeiten');
 $GLOBALS['TL_LANG']['tl_cloud_mount']['copy'] = array('Einhängepunkt "%"s duplizieren', 'Einhängepunkt der ID "%s" duplizieren');
 $GLOBALS['TL_LANG']['tl_cloud_mount']['goto'] = array('Zur Dateiverwaltung gehen', 'Zur Dateiverwaltung gehen');
+$GLOBALS['TL_LANG']['tl_cloud_mount']['enable'] = array('Einhängepunkt aktivieren/deaktivieren', 'Einhängepunkt aktivieren/deaktivieren');
 
 // fields
 $GLOBALS['TL_LANG']['tl_cloud_mount']['name'][0] = 'Name';

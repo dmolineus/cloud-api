@@ -20,5 +20,23 @@ use Netzmacht\Utils\DataContainer;
  */
 class Files extends DataContainer
 {
-	// we have to create it so DataContainer can create table name automatically from class name
+	
+	/**
+	 * rule checks adds line break before output
+	 *
+	 * @param string the button name 
+	 * @param string href
+	 * @param string label
+	 * @param string title
+	 * @param string icon class
+	 * @param string added attributes
+	 * @param array option data row of operation buttons
+	 */
+	protected function buttonRuleLineBreak(&$strButton, &$strHref, &$strLabel, &$strTitle, &$strIcon, &$strAttributes, &$arrAttributes, $arrRow=null)
+	{
+		$this->strGenerated =  '<br style="line-height: 18px;">' . $this->strGenerated;
+		
+		return true;	
+	}
+	
 }

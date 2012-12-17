@@ -39,8 +39,9 @@ $GLOBALS['TL_LANG']['tl_cloud_api']['folder_legend'] = 'Ordner mounten';
 $GLOBALS['TL_LANG']['tl_cloud_api']['custom_legend'] = 'Cloud Service konfigurieren';
 
 // buttons
-$GLOBALS['TL_LANG']['tl_cloud_api']['delete'] = array('%s deinstallieren', 'Cloud Service %s deinstallieren');
-$GLOBALS['TL_LANG']['tl_cloud_api']['edit'] = array('%s bearbeiten', 'Einstellungen des Cloud Services %s bearbeiten');
+$GLOBALS['TL_LANG']['tl_cloud_api']['delete'] = array('Cloud Service deinstallieren', 'Cloud Service %s deinstallieren');
+$GLOBALS['TL_LANG']['tl_cloud_api']['edit'] = array('Cloud Service bearbeiten', 'Einstellungen des Cloud Services %s bearbeiten');
+$GLOBALS['TL_LANG']['tl_cloud_api']['enable'] = array('Cloud Service aktivieren/deaktivieren', 'Cloud Service aktivieren/deaktivieren');
 $GLOBALS['TL_LANG']['tl_cloud_api']['mount'] = array('Einhängepunkte verwalten', 'Einhängepunkte verwalten');
 
 // fields

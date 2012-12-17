@@ -54,7 +54,7 @@ ClassLoader::addClasses(array
 	'DC_CloudMountedFolder' => 'system/modules/cloud-api/drivers/DC_CloudMountedFolder.php',
 	
 	// data containers 
-	'Netzmacht\Utils\DataContainer' => 'system/modules/cloud-api/classes/DataContainer.php',
+	//'Netzmacht\Utils\DataContainer' => 'system/modules/cloud-api/classes/DataContainer.php',
 	'Netzmacht\Cloud\Api\DataContainer\CloudApi' => 'system/modules/cloud-api/DataContainer/CloudApi.php',
 	'Netzmacht\Cloud\Api\DataContainer\CloudMount' => 'system/modules/cloud-api/DataContainer/CloudMount.php',
 	'Netzmacht\Cloud\Api\DataContainer\CloudNode' => 'system/modules/cloud-api/DataContainer/CloudNode.php',
