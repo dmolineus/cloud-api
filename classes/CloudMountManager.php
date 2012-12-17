@@ -151,7 +151,11 @@ class CloudMountManager extends System implements syncListenable
 			
 			while ($objResult->next()) 
 			{
-				$this->arrMount[] = $objResult->current();				
+				// ignore incorrect settings
+				if($objResult->localId > 1 && $objResult->cloudId > 1)
+				{
+					$this->arrMount[] = $objResult->current();					
+				}				
 			}
 		}
 		
@@ -216,6 +220,11 @@ class CloudMountManager extends System implements syncListenable
 			return false;
 		}
 		
+		// ignore incorrect settings
+		if($mixedMount->localId < 1 && $mixedMount->cloudId < 1)
+		{
+			return false;
+		}
 		
 		if(!$blnForce && ((time() - $mixedMount->syncTstamp) < $GLOBALS['TL_CONFIG']['cloudapiSyncInterval']))
 		{
@@ -246,9 +255,9 @@ class CloudMountManager extends System implements syncListenable
 	{
 		// create parent folders
 		$arrFolders = array();
-		$strFolderWalk = dirname($strPath);
+		//$strFolderWalk = ;
 		
-		for($strFolderWalk = $strPath; $strFolderWalk != $strRoot; $strFolderWalk = dirname($strPath))
+		for($strFolderWalk = dirname($strPath); $strFolderWalk != $strRoot; $strFolderWalk = dirname($strPath))
 		{
 			if($strFolderWalk == '' || $strFolderWalk == '.' || $strFolderWalk == '\\' || $strFolderWalk == '/')
 			{
