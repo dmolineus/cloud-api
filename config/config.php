@@ -46,9 +46,9 @@ array_insert($GLOBALS['BE_MOD']['system'], $GLOBALS['TL_CONFIG']['cloudapiNaviga
  * Back end form fields
  */
 $GLOBALS['BE_FFL']['accessToken'] = 'Netzmacht\Cloud\Api\Widget\RequestAccessToken';
-$GLOBALS['BE_FFL']['cloudFileTree'] = 'Netzmacht\Cloud\Api\Widget\CloudFileTree';
-$GLOBALS['BE_FFL']['cloudFileSelector'] = 'Netzmacht\Cloud\Widget\Api\CloudFileSelector';
-$GLOBALS['BE_FFL']['cloudApiSelect'] = 'Netzmacht\Cloud\Api\Widget\CloudApiSelectMenu';
+$GLOBALS['BE_FFL']['cloudFileTree'] = 'Netzmacht\Cloud\Api\Widget\FileTree';
+$GLOBALS['BE_FFL']['cloudFileSelector'] = 'Netzmacht\Cloud\Api\Widget\FileSelector';
+$GLOBALS['BE_FFL']['cloudApiSelect'] = 'Netzmacht\Cloud\Api\Widget\ApiSelectMenu';
 
 
 /**

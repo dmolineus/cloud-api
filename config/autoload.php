@@ -45,9 +45,9 @@ ClassLoader::addClasses(array
 	'Netzmacht\Cloud\Api\Module\CloudApi' => 'system/modules/cloud-api/modules/CloudApi.php',
 	
 	// widgets
-	'Netzmacht\Cloud\Api\Widget\CloudApiSelectMenu' => 'system/modules/cloud-api/widgets/CloudApiSelectMenu.php',	
-	'Netzmacht\Cloud\Api\Widget\CloudFileTree' => 'system/modules/cloud-api/widgets/CloudFileTree.php',
-	'Netzmacht\Cloud\Api\Widget\CloudFileSelector' => 'system/modules/cloud-api/widgets/CloudFileSelector.php',
+	'Netzmacht\Cloud\Api\Widget\ApiSelectMenu' => 'system/modules/cloud-api/widgets/ApiSelectMenu.php',	
+	'Netzmacht\Cloud\Api\Widget\FileTree' => 'system/modules/cloud-api/widgets/FileTree.php',
+	'Netzmacht\Cloud\Api\Widget\FileSelector' => 'system/modules/cloud-api/widgets/FileSelector.php',
 	'Netzmacht\Cloud\Api\Widget\RequestAccessToken' => 'system/modules/cloud-api/widgets/RequestAccessToken.php',
 	
 	// drivers

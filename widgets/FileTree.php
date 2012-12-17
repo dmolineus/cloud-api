@@ -18,7 +18,6 @@
  */
 namespace Netzmacht\Cloud\Api\Widget;
 use Netzmacht\Cloud\Api\CloudApiManager;
-use FileTree;
 
 
 /**
@@ -29,7 +28,7 @@ use FileTree;
  * @author	 Leo Feyer <http://contao.org>
  * @package	Core
  */
-class CloudFileTree extends FileTree
+class FileTree extends \FileTree
 {
 	/**
 	 * reference to cloud api object
@@ -79,21 +78,12 @@ class CloudFileTree extends FileTree
 			$arrFindValues = (array)$this->varValue;			
 						
 			$allowedDownload = trimsplit(',', strtolower($GLOBALS['TL_CONFIG']['allowedDownload']));
+			
+			$objNode = \CloudNodeModel::findMultipleByIds($arrFindValues);
 				
-			foreach ($arrFindValues as $intId)
+			while (($objNode !== null) && $objNode->next())
 			{
-				try 
-				{
-					$objNode = \CloudNodeModel::findOneById($intId);
-				}
 				
-				// something went wrong. file does not exists anymore or connection failed
-				catch(\Exception $e) 
-				{				
-					continue;
-				}
-
-
 				// Show files and folders
 				if (!$this->blnIsGallery && !$this->blnIsDownloads)
 				{

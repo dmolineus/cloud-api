@@ -16,9 +16,8 @@
 /**
  * Run in a custom namespace, so the class can be replacedchanges
  */
-namespace Netzmacht\Cloud\Widget\Api;
+namespace Netzmacht\Cloud\Api\Widget;
 use Netzmacht\Cloud\Api\CloudApiManager;
-use FileSelector;
 
 
 /**
@@ -32,7 +31,7 @@ use FileSelector;
  * @author		David Molineus <http://www.netzmacht.de>
  * @package		cloud-api
  */
-class CloudFileSelector extends FileSelector
+class FileSelector extends \FileSelector
 {
 	
 	/**

@@ -28,7 +28,7 @@ use SelectMenu;
  * @author     Leo Feyer <http://contao.org>
  * @package    Core
  */
-class CloudApiSelectMenu extends SelectMenu
+class ApiSelectMenu extends SelectMenu
 {
 	
 	/**
