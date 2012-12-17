@@ -12,7 +12,8 @@
  *  
  **/
 
-namespace Netzmacht\Cloud\Api;
+namespace Netzmacht\Cloud\Api\Widget;
+use Netzmacht\Cloud\Api\CloudApiManager;
 use Widget;
 
 /**
