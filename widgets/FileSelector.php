@@ -161,7 +161,7 @@ class FileSelector extends \FileSelector
 				$objRoot = \CloudNodeModel::findOneByPath('/');
 				$objNodes = $objRoot->getChildren();
 				
-				while($objNodes->next())				
+				while(($objNodes !== null) && $objNodes->next())				
 				{
 					if(!$GLOBALS['TL_DCA'][$this->strTable]['fields'][$this->strField]['eval']['files'] && $objNodes->type == 'file')
 					{
@@ -267,7 +267,7 @@ class FileSelector extends \FileSelector
 				
 		$objChildren = $objNode->getChildren();		
 
-		while($objChildren->next())
+		while(($objNodes !== null) && $objChildren->next())
 		{
 			$tree .= $this->renderFiletree($objChildren->id, $level);
 		}
@@ -407,7 +407,7 @@ class FileSelector extends \FileSelector
 			$return .= '<li class="parent" id="'.$node.'_'.$id.'"><ul class="level_'.$level.'">';
 			$objChildren = $objNode->getChildren();
 
-			while($objChildren->next())
+			while(($objNodes !== null) && $objChildren->next())
 			{
 				// cloudApi: we do not have an protected option
 				$return .= $this->renderFiletree($objChildren->id, ($intMargin + $intSpacing) /*, $objNode->protected*/);
