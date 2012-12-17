@@ -232,11 +232,6 @@ class CloudNodeModel extends FilesModel
 		}
 		
 		$this->objChildren = static::findByPid($this->id === null ? 0 : $this->id);
-
-		if($this->objChildren === null)
-		{
-			$this->objChildren = new Netzmacht\Cloud\Api\CloudNodeModelCollection();
-		}
 		
 		return $this->objChildren;
 	}
