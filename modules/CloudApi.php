@@ -78,7 +78,7 @@ class CloudApi extends BackendModule
 		
 		if($strApi != '')
 		{
-			CloudApiManager::installApi($strApi);
+			Api\CloudApiManager::installApi($strApi);
 			$this->redirect('contao/main.php?do=cloudapi');
 			return;
 		}
@@ -90,7 +90,7 @@ class CloudApi extends BackendModule
 			'label' => $GLOBALS['TL_LANG']['tl_cloud_api']['label'],
 		);
 		
-		$objSelectMenu = new Api\CloudApiSelectMenu($arrAttributes);
+		$objSelectMenu = new Api\Widget\ApiSelectMenu($arrAttributes);
 		
 		$this->Template->headline = $GLOBALS['TL_LANG']['tl_cloud_api']['headline'];
 		$this->Template->explain = $GLOBALS['TL_LANG']['tl_cloud_api']['explain'];
