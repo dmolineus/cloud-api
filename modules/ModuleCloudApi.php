@@ -158,7 +158,7 @@ class ModuleCloudApi extends BackendModule
 		$objManager->registerSyncListener($this, 'syncListener');
 		
 		// has more
-		if($objManager->syncMountedFolders($intId))
+		if($objManager->sync($intId))
 		{
 			$this->Session->set('syncMessages', $this->arrMessages);
 			$this->redirect($this->addToUrl('step=' . ($intStep+1)));

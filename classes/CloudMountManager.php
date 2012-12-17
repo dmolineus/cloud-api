@@ -196,28 +196,37 @@ class CloudMountManager extends System implements syncListenable
 		}
 	}
 
-
+	
 	/**
 	 * sync a mounted folder
 	 * 
-	 * @param int id of mount 
+	 * @param mixed int or CloudCountModel 
+	 * @param bool force syncing and ignore sync interval
 	 */
-	public function syncMountedFolders($intId)
+	public function sync($mixedMount, $blnForce=false)
 	{
-		$objResult = \CloudMountModel::findOneById($intId);		 
+		if(is_int($mixedMount))
+		{
+			$mixedMount = \CloudMountModel::findOneById($mixedMount);		
+		}		 
 		
-		if($objResult === null || $objResult->enabled == '')
+		if($mixedMount === null || $mixedMount->enabled == '')
+		{
+			return false;
+		}
+		
+		if(!$blnForce && ((time() - $mixedMount->syncTstamp) < $GLOBALS['TL_CONFIG']['cloudapiSyncInterval']))
 		{
 			return false;
 		}
 		
 		// TODO: implement other implement other sync methods
-		$this->syncCloud2Local($objResult);
+		$this->syncCloud2Local($mixedMount);
 
 		if(!$this->blnHasMore)
 		{
-			$objResult->syncTstamp = time();
-			$objResult->save();			
+			$mixedMount->syncTstamp = time();
+			$mixedMount->save();			
 		}
 		
 		return $this->blnHasMore;
