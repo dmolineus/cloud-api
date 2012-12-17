@@ -127,10 +127,11 @@ class CloudApiManager extends System
 		if($intState > 0)
 		{
 			$strWhere = ' WHERE enabled=' . ($intState == 2 ? '1' : '""');
+			$arrReturn = array();
 		}
 		else
 		{
-			return $arrReturn = static::$arrConfig;
+			$arrReturn = static::$arrConfig;
 		}
 		
 		$objInstance = static::getInstance();
@@ -141,7 +142,14 @@ class CloudApiManager extends System
 		
 		while($objResult->next())
 		{
-			$arrReturn[$objResult->name] = array_merge(static::$arrConfig[$objResult->name], $objResult->row());	
+			if($intState == 0)
+			{
+				unset($arrReturn[$objResult->name]);
+			}
+			else 
+			{
+				$arrReturn[$objResult->name] = array_merge(static::$arrConfig[$objResult->name], $objResult->row());				
+			}	
 		}
 		
 		return $arrReturn;
