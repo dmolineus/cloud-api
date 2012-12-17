@@ -382,6 +382,30 @@ class CloudNodeModel extends FilesModel
 	
 	
 	/**
+	 * 
+	 */
+	public static function findMultipleByIds($arrIds)
+	{
+		if (!is_array($arrIds) || empty($arrIds))
+		{
+			return null;
+		}
+		
+		$arrIds = implode(',', array_map('intval', $arrIds));
+		
+		$t = static::$strTable;
+		$db = \Database::getInstance();
+		
+		return static::findBy
+		(
+			array( "$t.id IN(" . $arrIds . ")"),
+			null,
+			array('order' => $db->findInSet("$t.id", $arrIds) )
+		);
+	}
+	
+	
+	/**
 	 * find model by path. if it does not exists in the database we try to fetch it from the cloud service by calling the getMetaData
 	 * 
 	 * @param string path
