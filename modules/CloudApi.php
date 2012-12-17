@@ -25,7 +25,7 @@ class CloudApi extends BackendModule
 {
 	
 	/**
-	 * 
+	 * @var array
 	 */
 	protected $arrMessages = array();
 	
@@ -149,7 +149,7 @@ class CloudApi extends BackendModule
 		
 		$this->import('Session');
 		
-		$this->arrMessages = $this->Session->get('syncMessages');
+		$this->arrMessages = $this->Session->get('cloudSyncMessages');
 		
 		if($intStep == 0)
 		{
@@ -162,9 +162,13 @@ class CloudApi extends BackendModule
 		// has more
 		if($objManager->sync($intId))
 		{
-			$this->Session->set('syncMessages', $this->arrMessages);
+			$this->Session->set('cloudSyncMessages', $this->arrMessages);
 			$this->redirect($this->addToUrl('step=' . ($intStep+1)));
 			return;
+		}
+		else
+		{
+			$this->Session->remove('cloudSyncMessages');
 		}
 				
 		$this->Template = new BackendTemplate('be_cloudapi_sync');

@@ -42,6 +42,18 @@ $GLOBALS['TL_LANG']['cloudapi']['syncLocalFileD'] 		= 'Local file "%s" deleted';
 $GLOBALS['TL_LANG']['cloudapi']['syncLocalFileC'] 		= 'Local file "%s" created';
 $GLOBALS['TL_LANG']['cloudapi']['syncLocalFileU'] 		= 'Local file "%s" updated';
 $GLOBALS['TL_LANG']['cloudapi']['syncLocalHash'] 		= 'Hash of "%s" updated';
+$GLOBALS['TL_LANG']['cloudapi']['sync'][0] = 'Sync';
+$GLOBALS['TL_LANG']['cloudapi']['sync'][1] = 'Sync cloud service and database';
+$GLOBALS['TL_LANG']['cloudapi']['syncStart'] = 'Sync of cloud service "%s" started.';
+$GLOBALS['TL_LANG']['cloudapi']['syncStop'] = 'Sync of cloud service "%s" finished.';
+$GLOBALS['TL_LANG']['cloudapi']['syncReset'] = 'Reset forced. Deleted files of the cloud service were removed from the database as well.';
+$GLOBALS['TL_LANG']['cloudapi']['syncFound'] = 'Found the original file "%s" at "%s"';
+$GLOBALS['TL_LANG']['cloudapi']['syncRemoved'] = 'Removed the file or folder "%s"';
+$GLOBALS['TL_LANG']['cloudapi']['syncFolderC'] = 'Created the folder "%s"';
+$GLOBALS['TL_LANG']['cloudapi']['syncFolderF'] = 'Found the folder "%s"';
+$GLOBALS['TL_LANG']['cloudapi']['syncFileC'] = 'Created the file "%s"';
+$GLOBALS['TL_LANG']['cloudapi']['syncFileF'] = 'Found the file "%s"';
+$GLOBALS['TL_LANG']['cloudapi']['syncHash'] = 'Updated the hash of the file "%s"';
 
 // install
 $GLOBALS['TL_LANG']['cloudapi']['headline'] 			= 'Install cloud service';

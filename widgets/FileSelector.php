@@ -267,7 +267,7 @@ class FileSelector extends \FileSelector
 				
 		$objChildren = $objNode->getChildren();		
 
-		while(($objNodes !== null) && $objChildren->next())
+		while(($objChildren !== null) && $objChildren->next())
 		{
 			$tree .= $this->renderFiletree($objChildren->id, $level);
 		}
@@ -407,7 +407,7 @@ class FileSelector extends \FileSelector
 			$return .= '<li class="parent" id="'.$node.'_'.$id.'"><ul class="level_'.$level.'">';
 			$objChildren = $objNode->getChildren();
 
-			while(($objNodes !== null) && $objChildren->next())
+			while(($objChildren !== null) && $objChildren->next())
 			{
 				// cloudApi: we do not have an protected option
 				$return .= $this->renderFiletree($objChildren->id, ($intMargin + $intSpacing) /*, $objNode->protected*/);

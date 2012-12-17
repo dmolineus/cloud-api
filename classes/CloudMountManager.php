@@ -205,15 +205,17 @@ class CloudMountManager extends System implements syncListenable
 	 */
 	public function sync($mixedMount, $blnForce=false)
 	{
-		if(is_int($mixedMount))
+		
+		if(is_numeric($mixedMount))
 		{
-			$mixedMount = \CloudMountModel::findOneById($mixedMount);		
+			$mixedMount = \CloudMountModel::findOneById(intval($mixedMount));		
 		}		 
 		
 		if($mixedMount === null || $mixedMount->enabled == '')
 		{
 			return false;
 		}
+		
 		
 		if(!$blnForce && ((time() - $mixedMount->syncTstamp) < $GLOBALS['TL_CONFIG']['cloudapiSyncInterval']))
 		{

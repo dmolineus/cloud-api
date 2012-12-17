@@ -262,7 +262,7 @@ abstract class CloudApi extends System implements syncListenable
 	public function sync($blnForce = false)
 	{	
 		// only sync after 10 minutes and make sure that not other clients are also syncing the database
-		if(!$blnForce && ((time() - $this->arrConfig['syncTstamp'] < $GLOBALS['TL_CONFIG']['cloudapiSyncInterval']) || $this->arrConfig['syncInProgress'] == '1'))
+		if(!$blnForce && (((time() - $this->arrConfig['syncTstamp']) < $GLOBALS['TL_CONFIG']['cloudapiSyncInterval']) || $this->arrConfig['syncInProgress'] == '1'))
 		{
 			return;
 		}
