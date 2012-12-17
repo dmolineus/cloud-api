@@ -169,7 +169,6 @@ abstract class CloudApi extends System implements syncListenable
 	 */
 	public function sendFileToBrowser($objNode)
 	{
-		var_dump($objNode->downloadUrl);
 		// Make sure there are no attempts to hack the file system
 		if ($objNode === null || $objNode->downloadUrl == null)
 		{
