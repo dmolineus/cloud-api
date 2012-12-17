@@ -55,17 +55,17 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 		
 		'label' => array
 		(
-			'fields' => array('title', /*'enabled', */ 'syncTstamp'),
-			'showColumns' => true,
-			'label_callback' => array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateLabel'),
-			'label_rules' => array(/*'yesNo:index=1:field=enabled', */ 'parseDate:index=1'),			
+			'fields' 					=> array('title', 'syncTstamp'),
+			'showColumns' 				=> true,
+			'label_callback' 			=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateLabel'),
+			'label_rules' 				=> array('parseDate:index=1'),			
 		),
 		
 		'global_operations' => array
 		(
 			'install' => array
 			(
-				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_api']['installService'],
+				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_api']['install'],
 				'href'					=> 'key=install',
 				'class'					=> 'header_new',
 				'attributes'			=> 'onclick="Backend.getScrollOffset()"',
@@ -84,7 +84,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 			
 			'overview' => array
 			(
-				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_api']['sync'],
+				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_api']['overview'],
 				'href'					=> 'key=overview',
 				'class'					=> 'header_sync',
 			),

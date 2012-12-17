@@ -126,25 +126,22 @@ class CloudApiManager extends System
 		
 		if($intState > 0)
 		{
-			$strWhere = ' WHERE enabled=' . ($intState == 1 ? 0 : 1);
+			$strWhere = ' WHERE enabled=' . ($intState == 2 ? '1' : '""');
+		}
+		else
+		{
+			return $arrReturn = static::$arrConfig;
 		}
 		
 		$objInstance = static::getInstance();
 		$objInstance->import('Database');
 		
 		$objResult = $objInstance->Database->query('SELECT * FROM tl_cloud_api' . $strWhere);
-		$arrReturn = static::$arrConfig;
+		
 		
 		while($objResult->next())
 		{
-			if($intState == 0)
-			{
-				unset($arrReturn[$objResult->name]);
-			}
-			else
-			{
-				$arrReturn[$objResult->name] = array_merge(static::$arrConfig[$objResult->name], $objResult->row());	
-			}
+			$arrReturn[$objResult->name] = array_merge(static::$arrConfig[$objResult->name], $objResult->row());	
 		}
 		
 		return $arrReturn;

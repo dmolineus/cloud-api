@@ -11,40 +11,27 @@
  * @copyright Copyright 2012 David Molineus netzmacht creative 
  *  
  **/
+
  
-// sync
-$GLOBALS['TL_LANG']['tl_cloud_api']['sync'][0] = 'Sync';
-$GLOBALS['TL_LANG']['tl_cloud_api']['sync'][1] = 'Sync cloud service and database';
-$GLOBALS['TL_LANG']['tl_cloud_api']['syncStart'] = 'Sync of cloud service "%s" started.';
-$GLOBALS['TL_LANG']['tl_cloud_api']['syncStop'] = 'Sync of cloud service "%s" finished.';
-$GLOBALS['TL_LANG']['tl_cloud_api']['syncReset'] = 'Reset forced. Deleted files of the cloud service were removed from the database as well.';
-$GLOBALS['TL_LANG']['tl_cloud_api']['syncFound'] = 'Found the original file "%s" at "%s"';
-$GLOBALS['TL_LANG']['tl_cloud_api']['syncRemoved'] = 'Removed the file or folder "%s"';
-$GLOBALS['TL_LANG']['tl_cloud_api']['syncFolderC'] = 'Created the folder "%s"';
-$GLOBALS['TL_LANG']['tl_cloud_api']['syncFolderF'] = 'Found the folder "%s"';
-$GLOBALS['TL_LANG']['tl_cloud_api']['syncFileC'] = 'Created the file "%s"';
-$GLOBALS['TL_LANG']['tl_cloud_api']['syncFileF'] = 'Found the file "%s"';
-$GLOBALS['TL_LANG']['tl_cloud_api']['syncHash'] = 'Updated the hash of the file "%s"';
-
-// install
-$GLOBALS['TL_LANG']['tl_cloud_api']['headline'] = 'Install cloud service';
-$GLOBALS['TL_LANG']['tl_cloud_api']['label'] = 'Choose cloud service';
-$GLOBALS['TL_LANG']['tl_cloud_api']['explain'] = 'Please choose the cloud service you want to install';
-$GLOBALS['TL_LANG']['tl_cloud_api']['install'] = 'install';
-$GLOBALS['TL_LANG']['tl_cloud_api']['installService'] = $GLOBALS['TL_LANG']['tl_cloud_api']['headline'];
-
 // legends
 $GLOBALS['TL_LANG']['tl_cloud_api']['connection_legend'] = 'General Settings';
 $GLOBALS['TL_LANG']['tl_cloud_api']['folder_legend'] = 'Mount folders';
 $GLOBALS['TL_LANG']['tl_cloud_api']['custom_legend'] = 'Chang cloud service settings';
-
+ 
 // buttons
 $GLOBALS['TL_LANG']['tl_cloud_api']['delete'] = array('deinstall %s', 'deinstall cloud service %s');
 $GLOBALS['TL_LANG']['tl_cloud_api']['edit'] = array('edit %s', 'Edit settings of cloud service');
+$GLOBALS['TL_LANG']['tl_cloud_api']['enable'] = array('Activate/deactivate cloud service', 'Activate/deactivate cloud service');
+$GLOBALS['TL_LANG']['tl_cloud_api']['mount'] = array('Manage mount points', 'Manage mount points');
+$GLOBALS['TL_LANG']['tl_cloud_api']['install'] = array('Install a cloud service', 'Install a cloud service');
+$GLOBALS['TL_LANG']['tl_cloud_api']['overview'] = array('Sync', 'Sync file system and cloud services');
+$GLOBALS['TL_LANG']['tl_cloud_api']['sync'] = array('Sync cloud ervice', 'Sync cloud service ID "%s"');
 
 // fields
 $GLOBALS['TL_LANG']['tl_cloud_api']['name'][0] = 'Cloud service';
 $GLOBALS['TL_LANG']['tl_cloud_api']['name'][1] = 'Name of the cloud service';
+$GLOBALS['TL_LANG']['tl_cloud_api']['title'][0] = 'Title';
+$GLOBALS['TL_LANG']['tl_cloud_api']['title'][1] = 'Title of the Cloud Service';
 $GLOBALS['TL_LANG']['tl_cloud_api']['accessTokenLink'] = 'Request token. Pleas reload after that.';
 $GLOBALS['TL_LANG']['tl_cloud_api']['accessTokenConnected'] = 'connected with:';
 $GLOBALS['TL_LANG']['tl_cloud_api']['accessToken'][0] = 'Access token';

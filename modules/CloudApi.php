@@ -87,15 +87,15 @@ class CloudApi extends BackendModule
 		(
 			'cloudApiMode' => 0,
 			'name' => 'cloudapi',
-			'label' => $GLOBALS['TL_LANG']['tl_cloud_api']['label'],
+			'label' => $GLOBALS['TL_LANG']['cloudapi']['label'],
 		);
 		
 		$objSelectMenu = new Api\Widget\ApiSelectMenu($arrAttributes);
 		
-		$this->Template->headline = $GLOBALS['TL_LANG']['tl_cloud_api']['headline'];
-		$this->Template->explain = $GLOBALS['TL_LANG']['tl_cloud_api']['explain'];
+		$this->Template->headline = $GLOBALS['TL_LANG']['cloudapi']['headline'];
+		$this->Template->explain = $GLOBALS['TL_LANG']['cloudapi']['explain'];
 		$this->Template->selectMenu = $objSelectMenu;
-		$this->Template->submit = $GLOBALS['TL_LANG']['tl_cloud_api']['install'];
+		$this->Template->submit = $GLOBALS['TL_LANG']['tl_cloud_api']['install'][1];
 		
 		return $this->generate();
 	}
@@ -278,7 +278,7 @@ class CloudApi extends BackendModule
 		}
 		
 		$this->Template = new BackendTemplate('be_cloudapi_overview');
-		$this->Template->headline = $GLOBALS['TL_LANG']['tl_cloud_api']['sync'][1];
+		$this->Template->headline = $GLOBALS['TL_LANG']['tl_cloud_api']['overview'][1];
 		$this->Template->groups = $arrGroups;
 		$this->Template->syncedLabel = $GLOBALS['TL_LANG']['cloudapi']['syncedLabel'];
 		$this->Template->syncLabel = $GLOBALS['TL_LANG']['cloudapi']['syncLabel'];

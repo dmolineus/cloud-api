@@ -63,7 +63,7 @@ abstract class CloudApi extends System implements syncListenable
 		CloudNodeModelCollection::setApi($this);
 		
 		$this->import('Database');
-		$this->loadLanguageFile('tl_cloud_api');
+		$this->loadLanguageFile('cloudapi');
 	}
 	
 	
