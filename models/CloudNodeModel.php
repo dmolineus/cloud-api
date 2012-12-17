@@ -226,7 +226,7 @@ class CloudNodeModel extends FilesModel
 	 */
 	public function getChildren()
 	{
-		if($this->objChildren instanceof \Netzmacht\Cloud\Api\CloudNodeModelCollection) 
+		if($this->objChildren instanceof Netzmacht\Cloud\Api\CloudNodeModelCollection) 
 		{
 			return $this->objChildren;
 		}
@@ -235,7 +235,7 @@ class CloudNodeModel extends FilesModel
 
 		if($this->objChildren === null)
 		{
-			$this->objChildren = new CloudNodeModelCollection();
+			$this->objChildren = new Netzmacht\Cloud\Api\CloudNodeModelCollection();
 		}
 		
 		return $this->objChildren;
