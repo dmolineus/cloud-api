@@ -87,8 +87,6 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_api']['sync'],
 				'href'					=> 'key=overview',
 				'class'					=> 'header_sync',
-				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateGlobalButton'),
-				'button_rules'			=> array('generate'),
 			),
 			
 			'all' => array
@@ -110,7 +108,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 				'href'					=> 'act=edit',
 				'icon'					=> 'edit.gif',
 				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateButton'),
-				'button_rules'			=> array('isAdmin', 'generate:haus=2:attr=[true,2,hallo,1.2,$hello]:goto=false:say=$hello'),
+				'button_rules'			=> array('isAdmin', 'generate'),
 			),
 			
 			'enable' => array
@@ -152,10 +150,6 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 		),
 		
 		'default extends _base_' 		=> array(), 	
-	),
-	
-	'subpalettes' => array
-	(
 	),
 	
 	'fields' => array
