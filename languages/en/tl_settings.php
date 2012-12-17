@@ -12,26 +12,24 @@
  *  
  **/
  
-$GLOBALS['TL_LANG']['tl_settings']['cloudapi_legend'] = 'Cloud API';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncInterval'][0] = 'Synchronisationsinterval';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncInterval'][1] = 'Geben Sie an, in welchen Abständen die Synchronisation ausgeführt werden kann.';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncIntervalOptions']['600'] = '10 Minuten';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncIntervalOptions']['1800'] = '30 Minuten';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncIntervalOptions']['3600'] = '1 Stunde';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncIntervalOptions']['7200'] = '2 Stunden';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncIntervalOptions']['86400'] = '1 Tag';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncIntervalOptions']['604800'] = '1 Woche';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncDownloadTime'][0] = 'Downloadzeit beschränken';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncDownloadTime'][1] = 'Dauer des Downloads ins Sekunden. Beim Download von Dateien der Cloud-Services wird'
-																	. ' überprüft, wie viel Zeit vergeht. Wird diese Zeit überschritten, wird eine'
-																	. ' Weiterleitung durchgeführt. Ändern sie diese Zeit, falls es zu einem Timeout bei'
-																	. ' der Synchronisation kommt';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapi_legend'] 						= 'Cloud API';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncInterval'][0] 				= 'Sync interval';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncInterval'][1]				= 'Please decide which sync interval is used';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncIntervalOptions']['600'] 	= '10 minutes';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncIntervalOptions']['1800'] 	= '30 minutes';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncIntervalOptions']['3600'] 	= '1 hour';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncIntervalOptions']['7200'] 	= '2 hours';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncIntervalOptions']['86400'] 	= '1 day';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncIntervalOptions']['604800'] = '1 week';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncDownloadTime'][0] 			= 'Limit download time';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncDownloadTime'][1] 			= 'Duration of downloads in seconds. During the mount syncing the duration will be checked'
+																			. ' to avoid php execution limits. There will be a redirect an the sync goes on.';
 																	
-$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncDownloadLimit'][0] = 'Anzahl der Dateidownloads beschränken';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncDownloadLimit'][1] = 'Viele Dateien sollen heruntergeladen werden, bevor eine Weiterleitung stattfindet';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapiFileManagerIntegration'][0] = 'Integration in den Dateimanager';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapiFileManagerIntegration'][1] = 'Die Einhängepfade werden im Dateimanager angezeigt. Außerdem wird eine allgemeine'
-																		. ' Synchronisationsübersicht verwendet.';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncDownloadLimit'][0] 			= 'Number of downloaded files';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiSyncDownloadLimit'][1] 			= 'Please decide how many files can be downloaded to avoid php execution limit';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiFileManagerIntegration'][0] 	= 'Integrates into the file system';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiFileManagerIntegration'][1] 	= 'You can use a file system view where you can see which folders are mounted.'
+																			. ' Besides the search overview will used as well.';
 
-																		$GLOBALS['TL_LANG']['tl_settings']['cloudapiFileManagerManageMounts'][0] = 'Einhängepunkte im Dateimanager verwalten';
-$GLOBALS['TL_LANG']['tl_settings']['cloudapiFileManagerManageMounts'][1] = 'Sie können die Schaltfläche zur Verwaltung der Einhängepunkte auch im Dateimanager anzeigen.';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiFileManagerManageMounts'][0] 	= 'Manage mount points in the file manager';
+$GLOBALS['TL_LANG']['tl_settings']['cloudapiFileManagerManageMounts'][1] 	= 'You can enable/disable the manage mount points button in the file system view.';
