@@ -42,13 +42,13 @@ ClassLoader::addClasses(array
 	'Netzmacht\Cloud\Api\CloudNodeModelCollection' => 'system/modules/cloud-api/models/CloudNodeModelCollection.php',
 	
 	// modules
-	'Netzmacht\Cloud\Api\ModuleCloudApi' => 'system/modules/cloud-api/modules/ModuleCloudApi.php',
+	'Netzmacht\Cloud\Api\Module\CloudApi' => 'system/modules/cloud-api/modules/CloudApi.php',
 	
 	// widgets
-	'Netzmacht\Cloud\Api\CloudApiSelectMenu' => 'system/modules/cloud-api/widgets/CloudApiSelectMenu.php',	
-	'Netzmacht\Cloud\Api\CloudFileTree' => 'system/modules/cloud-api/widgets/CloudFileTree.php',
-	'Netzmacht\Cloud\Api\CloudFileSelector' => 'system/modules/cloud-api/widgets/CloudFileSelector.php',
-	'Netzmacht\Cloud\Api\RequestAccessToken' => 'system/modules/cloud-api/widgets/RequestAccessToken.php',
+	'Netzmacht\Cloud\Api\Widget\CloudApiSelectMenu' => 'system/modules/cloud-api/widgets/CloudApiSelectMenu.php',	
+	'Netzmacht\Cloud\Api\Widget\CloudFileTree' => 'system/modules/cloud-api/widgets/CloudFileTree.php',
+	'Netzmacht\Cloud\Api\Widget\CloudFileSelector' => 'system/modules/cloud-api/widgets/CloudFileSelector.php',
+	'Netzmacht\Cloud\Api\Widget\RequestAccessToken' => 'system/modules/cloud-api/widgets/RequestAccessToken.php',
 	
 	// drivers
 	'DC_CloudMountedFolder' => 'system/modules/cloud-api/drivers/DC_CloudMountedFolder.php',

@@ -12,14 +12,16 @@
  *  
  **/
  
-namespace Netzmacht\Cloud\Api;
+namespace Netzmacht\Cloud\Api\Module;
+use Netzmacht\Cloud\Api;
 use BackendModule;
+use BackendTemplate;
 
 
 /**
  * cloud api module for handling cloud api specific views
  */
-class ModuleCloudApi extends BackendModule
+class CloudApi extends BackendModule
 {
 	
 	/**
@@ -47,7 +49,7 @@ class ModuleCloudApi extends BackendModule
 	{
 		if($this->Template === null)
 		{
-			$this->Template = new \BackendTemplate($this->strTemplate);
+			$this->Template = new BackendTemplate($this->strTemplate);
 		}
 		
 		$this->compile();
@@ -70,7 +72,7 @@ class ModuleCloudApi extends BackendModule
 			return '';
 		}
 		
-		$this->Template = new \BackendTemplate('be_cloudapi_install');
+		$this->Template = new BackendTemplate('be_cloudapi_install');
 		
 		$strApi = \Input::post('cloudapi');
 		
@@ -88,7 +90,7 @@ class ModuleCloudApi extends BackendModule
 			'label' => $GLOBALS['TL_LANG']['tl_cloud_api']['label'],
 		);
 		
-		$objSelectMenu = new CloudApiSelectMenu($arrAttributes);
+		$objSelectMenu = new Api\CloudApiSelectMenu($arrAttributes);
 		
 		$this->Template->headline = $GLOBALS['TL_LANG']['tl_cloud_api']['headline'];
 		$this->Template->explain = $GLOBALS['TL_LANG']['tl_cloud_api']['explain'];
@@ -109,7 +111,7 @@ class ModuleCloudApi extends BackendModule
 		try 
 		{
 			$intId = \Input::get('id');
-			$objCloudApi = CloudApiManager::getApi($intId, 'id');			
+			$objCloudApi = Api\CloudApiManager::getApi($intId, 'id');			
 		}
 		catch(\Exception $e)
 		{
@@ -118,14 +120,14 @@ class ModuleCloudApi extends BackendModule
 		}
 		
 		// use mount manager as listener to changes will be directly passed
-		$objMountManager = new CloudMountManager();
+		$objMountManager = new Api\CloudMountManager();
 		$objMountManager->registerSyncListener($this, 'syncListener');
 		
 		$objCloudApi->registerSyncListener($this, 'syncListener');
 		$objCloudApi->registerSyncListener($objMountManager, 'syncListener');
 		$objCloudApi->sync();
 				
-		$this->Template = new \BackendTemplate('be_cloudapi_sync');
+		$this->Template = new BackendTemplate('be_cloudapi_sync');
 		$this->Template->headline = sprintf($GLOBALS['TL_LANG']['cloudapi']['cloudSyncHeadline'], $objCloudApi->title);
 		$this->Template->messages = $this->arrMessages;
 		$this->Template->href = $this->getReferer(true);
@@ -154,7 +156,7 @@ class ModuleCloudApi extends BackendModule
 			$this->arrMessages = array();
 		}
 		
-		$objManager = new CloudMountManager();
+		$objManager = new Api\CloudMountManager();
 		$objManager->registerSyncListener($this, 'syncListener');
 		
 		// has more
@@ -165,7 +167,7 @@ class ModuleCloudApi extends BackendModule
 			return;
 		}
 				
-		$this->Template = new \BackendTemplate('be_cloudapi_sync');
+		$this->Template = new BackendTemplate('be_cloudapi_sync');
 		$this->Template->headline = sprintf($GLOBALS['TL_LANG']['cloudapi']['mountSyncHeadline'], $intId);
 		$this->Template->messages = $this->arrMessages;
 		$this->Template->href = $this->getReferer(true);
@@ -219,7 +221,7 @@ class ModuleCloudApi extends BackendModule
 		}
 		
 		// get all enabled cloud apis
-		$arrApis = CloudApiManager::getApis(2);
+		$arrApis = Api\CloudApiManager::getApis();
 		
 		if($arrApis !== null)
 		{
@@ -275,7 +277,7 @@ class ModuleCloudApi extends BackendModule
 			$arrGroups[] = $arrGroup;
 		}
 		
-		$this->Template = new \BackendTemplate('be_cloudapi_overview');
+		$this->Template = new BackendTemplate('be_cloudapi_overview');
 		$this->Template->headline = $GLOBALS['TL_LANG']['tl_cloud_api']['sync'][1];
 		$this->Template->groups = $arrGroups;
 		$this->Template->syncedLabel = $GLOBALS['TL_LANG']['cloudapi']['syncedLabel'];

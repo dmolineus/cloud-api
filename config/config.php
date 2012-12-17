@@ -34,10 +34,10 @@ array_insert($GLOBALS['BE_MOD']['system'], $GLOBALS['TL_CONFIG']['cloudapiNaviga
 		'tables' 		=> array('tl_cloud_api', 'tl_cloud_node', 'tl_cloud_mount'),
 		'icon'       	=> 'system/modules/cloud-api/assets/drive_web.gif',
 		'stylesheet' 	=> 'system/modules/cloud-api/assets/style.css',
-		'install' 		=> array('Netzmacht\Cloud\Api\ModuleCloudApi', 'generateInstallApi'),
-		'mount' 		=> array('Netzmacht\Cloud\Api\ModuleCloudApi', 'generateMountSync'),
-		'sync' 			=> array('Netzmacht\Cloud\Api\ModuleCloudApi', 'generateCloudSync'),
-		'overview'		=> array('Netzmacht\Cloud\Api\ModuleCloudApi', 'generateSyncOverview'),
+		'install' 		=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateInstallApi'),
+		'mount' 		=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateMountSync'),
+		'sync' 			=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateCloudSync'),
+		'overview'		=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateSyncOverview'),
 	)
 ));
 
@@ -45,10 +45,10 @@ array_insert($GLOBALS['BE_MOD']['system'], $GLOBALS['TL_CONFIG']['cloudapiNaviga
 /**
  * Back end form fields
  */
-$GLOBALS['BE_FFL']['accessToken'] = 'Netzmacht\Cloud\Api\RequestAccessToken';
-$GLOBALS['BE_FFL']['cloudFileTree'] = 'Netzmacht\Cloud\Api\CloudFileTree';
-$GLOBALS['BE_FFL']['cloudFileSelector'] = 'Netzmacht\Cloud\Api\CloudFileSelector';
-$GLOBALS['BE_FFL']['cloudApiSelect'] = 'Netzmacht\Cloud\Api\CloudApiSelectMenu';
+$GLOBALS['BE_FFL']['accessToken'] = 'Netzmacht\Cloud\Api\Widget\RequestAccessToken';
+$GLOBALS['BE_FFL']['cloudFileTree'] = 'Netzmacht\Cloud\Api\Widget\CloudFileTree';
+$GLOBALS['BE_FFL']['cloudFileSelector'] = 'Netzmacht\Cloud\Widget\Api\CloudFileSelector';
+$GLOBALS['BE_FFL']['cloudApiSelect'] = 'Netzmacht\Cloud\Api\Widget\CloudApiSelectMenu';
 
 
 /**

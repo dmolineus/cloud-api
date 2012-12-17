@@ -16,7 +16,8 @@
 /**
  * Run in a custom namespace, so the class can be replaced
  */
-namespace Netzmacht\Cloud\Api;
+namespace Netzmacht\Cloud\Api\Widget;
+use Netzmacht\Cloud\Api\CloudApiManager;
 use FileTree;
 
 

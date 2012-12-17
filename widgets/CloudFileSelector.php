@@ -16,7 +16,8 @@
 /**
  * Run in a custom namespace, so the class can be replacedchanges
  */
-namespace Netzmacht\Cloud\Api;
+namespace Netzmacht\Cloud\Widget\Api;
+use Netzmacht\Cloud\Api\CloudApiManager;
 use FileSelector;
 
 
