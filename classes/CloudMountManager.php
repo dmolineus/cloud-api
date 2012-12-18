@@ -486,7 +486,10 @@ class CloudMountManager extends System implements syncListenable
 		$arrOptions = unserialize($objMount->options);
 		
 		// clean database
-		$this->Database->query("UPDATE tl_cloud_node SET mountVersion='', fid=NULL WHERE fid != '' AND (SELECT count(id) FROM tl_files WHERE id=fid) = 0");
+		if(in_array('update', $arrOptions))
+		{
+			$this->Database->query("UPDATE tl_cloud_node SET mountVersion='', fid=NULL WHERE fid != '' AND (SELECT count(id) FROM tl_files WHERE id=fid) = 0");
+		}
 		
 		// prepare delete action
 		if(in_array('delete', $arrOptions))
@@ -565,7 +568,10 @@ class CloudMountManager extends System implements syncListenable
 		}
 		
 		// clean database
-		$this->Database->query("UPDATE tl_cloud_node SET mountVersion='', fid=NULL WHERE fid != '' AND (SELECT count(id) FROM tl_files WHERE id=fid) = 0");
+		if(in_array('update', $arrOptions))
+		{
+			$this->Database->query("UPDATE tl_cloud_node SET mountVersion='', fid=NULL WHERE fid != '' AND (SELECT count(id) FROM tl_files WHERE id=fid) = 0");
+		}
 		
 		$this->updateFolderHash($objMount->localId);			
 	}
