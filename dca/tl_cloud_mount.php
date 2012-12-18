@@ -83,6 +83,13 @@ $GLOBALS['TL_DCA']['tl_cloud_mount'] = array
 				'attributes'			=> 'onclick="Backend.getScrollOffset()" accesskey="e"'
 			),
 			
+			'overview' => array
+			(
+				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_mount']['overview'],
+				'href'					=> 'key=overview',
+				'class'					=> 'header_sync',
+			),
+			
 			'all' => array
 			(
 				'label'					=> &$GLOBALS['TL_LANG']['MSC']['all'],

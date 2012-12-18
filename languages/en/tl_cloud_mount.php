@@ -28,6 +28,7 @@ $GLOBALS['TL_LANG']['tl_cloud_mount']['edit']					= array('Edit mount point', 'E
 $GLOBALS['TL_LANG']['tl_cloud_mount']['copy'] 					= array('Copy mount point', 'Copy mount point with ID "%s"');
 $GLOBALS['TL_LANG']['tl_cloud_mount']['goto'] 					= array('Go to file manager', 'Go to the linked file manager folder');
 $GLOBALS['TL_LANG']['tl_cloud_mount']['enable'] 				= array('Activate/deactivate mount pount', 'Activate/deactivate mount pount');
+$GLOBALS['TL_LANG']['tl_cloud_mount']['overview']				= array('Sync', 'Sync file system and cloud services');
 
 // fields
 $GLOBALS['TL_LANG']['tl_cloud_mount']['name'][0]				= 'Name';
