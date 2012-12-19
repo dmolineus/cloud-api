@@ -20,26 +20,22 @@ $GLOBALS['TL_CONFIG']['cloudapiFileManagerIntegration'] = true;
 $GLOBALS['TL_CONFIG']['cloudapiSyncDownloadTime'] = 15;
 $GLOBALS['TL_CONFIG']['cloudapiSyncDownloadLimit'] = 5;
 $GLOBALS['TL_CONFIG']['cloudapiSyncInterval'] = 600;
-$GLOBALS['TL_CONFIG']['cloudapiNavigationPosition'] = 1;
 $GLOBALS['TL_CONFIG']['cloudapiFileManagerManageMounts'] = false;
 
  
 /**
  * backend module
  */
-array_insert($GLOBALS['BE_MOD']['system'], $GLOBALS['TL_CONFIG']['cloudapiNavigationPosition'], array
+$GLOBALS['BE_MOD']['system']['cloudapi'] = array
 (
-	'cloudapi' =>array 
-	(
-		'tables' 		=> array('tl_cloud_api', 'tl_cloud_node', 'tl_cloud_mount'),
-		'icon'       	=> 'system/modules/cloud-api/assets/drive_web.gif',
-		'stylesheet' 	=> 'system/modules/cloud-api/assets/style.css',
-		'install' 		=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateInstallApi'),
-		'mount' 		=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateMountSync'),
-		'sync' 			=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateCloudSync'),
-		'overview'		=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateSyncOverview'),
-	)
-));
+	'tables' 		=> array('tl_cloud_api', 'tl_cloud_node', 'tl_cloud_mount'),
+	'icon'       	=> 'system/modules/cloud-api/assets/drive_web.gif',
+	'stylesheet' 	=> 'system/modules/cloud-api/assets/style.css',
+	'install' 		=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateInstallApi'),
+	'mount' 		=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateMountSync'),
+	'sync' 			=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateCloudSync'),
+	'overview'		=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateSyncOverview'),
+);
 
 
 /**
