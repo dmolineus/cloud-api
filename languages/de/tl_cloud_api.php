@@ -27,6 +27,8 @@ $GLOBALS['TL_LANG']['tl_cloud_api']['overview'] = array('Synchronisieren', 'Date
 $GLOBALS['TL_LANG']['tl_cloud_api']['sync'] = array('Cloud Service synchronisieren', 'Cloud Service ID "%s" synchronisieren');
 
 // fields
+$GLOBALS['TL_LANG']['tl_cloud_api']['synced'][0] = 'Cloud Service';
+$GLOBALS['TL_LANG']['tl_cloud_api']['synced'][1] = 'Name des Cloud Services';
 $GLOBALS['TL_LANG']['tl_cloud_api']['name'][0] = 'Cloud Service';
 $GLOBALS['TL_LANG']['tl_cloud_api']['name'][1] = 'Name des Cloud Services';
 $GLOBALS['TL_LANG']['tl_cloud_api']['title'][0] = 'Cloud Service';
