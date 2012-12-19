@@ -21,7 +21,7 @@ if($GLOBALS['TL_CONFIG']['cloudapiFileManagerIntegration'])
 	$GLOBALS['TL_DCA']['tl_files']['config']['dataContainer'] = 'CloudMountedFolder';
 	
 	$GLOBALS['TL_DCA']['tl_files']['list']['global_operations']['sync']['href'] = 'do=cloudapi&key=overview'; 
-	$GLOBALS['TL_DCA']['tl_files']['list']['global_operations']['sync']['button_callback'] = array('Netzmacht\Cloud\Api\DataContainer\Files', 'generateGlobalButton');
+	$GLOBALS['TL_DCA']['tl_files']['list']['global_operations']['sync']['button_callback'] = array('Netzmacht\Cloud\Api\DataContainer\Files', 'generateGlobalButtonSync');
 	$GLOBALS['TL_DCA']['tl_files']['list']['global_operations']['sync']['button_rules'] = array('hasAccess:module=cloudapi', 'generate');		
 	
 	if($GLOBALS['TL_CONFIG']['cloudapiFileManagerManageMounts'])
@@ -31,7 +31,7 @@ if($GLOBALS['TL_CONFIG']['cloudapiFileManagerIntegration'])
 			'label'               => &$GLOBALS['TL_LANG']['tl_files']['cloudapiMount'],
 			'href'                => 'do=cloudapi&table=tl_cloud_mount',
 			'class'               => 'header_mount',
-			'button_callback'     => array('Netzmacht\Cloud\Api\DataContainer\Files', 'generateGlobalButton'),
+			'button_callback'     => array('Netzmacht\Cloud\Api\DataContainer\Files', 'generateGlobalButtonCloudapiMount'),
 			'button_rules'	  => array('isAdmin', 'lineBreak', 'generate'),
 		);
 	}

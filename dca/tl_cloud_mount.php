@@ -71,7 +71,7 @@ $GLOBALS['TL_DCA']['tl_cloud_mount'] = array
 				'href'					=> '',
 				'class'					=> 'header_back',
 				'attributes'			=> 'onclick="Backend.getScrollOffset()" accesskey="b"',
-				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudMount', 'generateGlobalButton'),
+				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudMount', 'generateGlobalButtonBack'),
 				'button_rules' 			=> array('referer', 'generate'),
 			),
 			
@@ -113,7 +113,7 @@ $GLOBALS['TL_DCA']['tl_cloud_mount'] = array
 				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_mount']['goto'],
 				'href'               	=> 'do=files&node=',
 				'icon'					=> 'system/modules/cloud-api/assets/mount.png',
-				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudMount', 'generateButton'),
+				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudMount', 'generateButtonGoto'),
 				'button_rules'			=> array('fileManager', 'generate'),
 			),
 			
@@ -130,7 +130,7 @@ $GLOBALS['TL_DCA']['tl_cloud_mount'] = array
 				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_mount']['enable'],
 				'icon'					=> 'visible.gif',
 				'attributes'			=> 'onclick="Backend.getScrollOffset();return AjaxRequest.toggleVisibility(this,%s)"',
-				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudMount', 'generateButton'),
+				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudMount', 'generateButtonEnable'),
 				'button_rules'			=> array('toggleIcon:field=enabled', 'generate'),
 			),
 			
