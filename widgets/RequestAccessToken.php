@@ -89,6 +89,11 @@ class RequestAccessToken extends Widget
                 $GLOBALS['TL_LANG'][$this->strTable]['accessTokenLink']
             );    
         }
+		
+		if($this->activeRecord->{$this->strField} == '')
+		{
+			$this->activeRecord->{$this->strField} = $objApi->accessToken;			
+		}
 
         return sprintf(
             '<div class="tl_confirm" style="margin-bottom: 7px;"><input name="%s" type="hidden" value="%s"><b>%s</b> %s (%s)</div>',
