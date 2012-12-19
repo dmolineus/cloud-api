@@ -86,7 +86,7 @@ $GLOBALS['TL_DCA']['tl_cloud_mount'] = array
 			'overview' => array
 			(
 				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_mount']['overview'],
-				'href'					=> 'key=overview',
+				'href'					=> 'key=overview&table=tl_cloud_api',
 				'class'					=> 'header_sync',
 			),
 			
