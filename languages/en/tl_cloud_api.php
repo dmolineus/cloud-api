@@ -26,6 +26,7 @@ $GLOBALS['TL_LANG']['tl_cloud_api']['mount'] = array('Manage mount points', 'Man
 $GLOBALS['TL_LANG']['tl_cloud_api']['install'] = array('Install a cloud service', 'Install a cloud service');
 $GLOBALS['TL_LANG']['tl_cloud_api']['overview'] = array('Sync', 'Sync file system and cloud services');
 $GLOBALS['TL_LANG']['tl_cloud_api']['sync'] = array('Sync cloud ervice', 'Sync cloud service ID "%s"');
+$GLOBALS['TL_LANG']['tl_cloud_api']['reset'] = array('Reset sync state', 'Reset sync state');
 
 // fields
 $GLOBALS['TL_LANG']['tl_cloud_api']['name'][0] = 'Cloud service';

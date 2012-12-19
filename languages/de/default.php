@@ -15,6 +15,7 @@
 /**
  * Miscellaneous
  */
-$GLOBALS['TL_LANG']['MSC']['cloudapi_title'] = 'Cloud API';
-$GLOBALS['TL_LANG']['MSC']['cloudapi_apiselect'] = array('Cloud-Service', 'Wählen Sie den gewünschten Cloud-Service aus');
-$GLOBALS['TL_LANG']['MSC']['cloudapi_filetree'] = array('Quelldatei (Cloud API)', 'Wählen Sie die Datei(en) aus');
+$GLOBALS['TL_LANG']['MSC']['cloudapi_title'] 		= 'Cloud API';
+$GLOBALS['TL_LANG']['MSC']['cloudapi_apiselect']	= array('Cloud-Service', 'Wählen Sie den gewünschten Cloud-Service aus');
+$GLOBALS['TL_LANG']['MSC']['cloudapi_filetree'] 	= array('Quelldatei (Cloud API)', 'Wählen Sie die Datei(en) aus');
+$GLOBALS['TL_LANG']['MSC']['cloudResetConfirm'] 	= 'Möchten Sie die Synchronisation wirklich zurücksetzen? Dabei wird erneut der gesamte Datenbestand abgeglichen.';

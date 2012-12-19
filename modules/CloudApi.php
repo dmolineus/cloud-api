@@ -95,6 +95,33 @@ class CloudApi extends BackendModule
 	
 	
 	/**
+	 * generate the view for the cloud reset action
+	 * 
+	 * @return 
+	 */
+	public function generateCloudReset()
+	{
+		try 
+		{
+			$objCloudApi = Api\CloudApiManager::getApi(\Input::get('id'));			
+		}
+		catch(\Exception $e)
+		{
+			throw $e;
+			$this->log('Could not initiate Cloud API for "' . $strTable . '"', 'DC_CloudNode __construct()', TL_ERROR);
+			trigger_error('Could not initiate Cloud API', E_USER_ERROR);			
+		}
+		
+		
+		$arrData = array('syncTstamp' => 0, 'deltaCursor' => null, 'syncInProgress' => null);
+		$this->import('Database');
+		$this->Database->prepare('UPDATE tl_cloud_api %s WHERE id=?')->set($arrData)->execute(\Input::get('id'));
+		
+		$this->redirect($this->getReferer());
+	}
+	
+	
+	/**
 	 * generate the view for cloud api syncing
 	 * 
 	 * @return string

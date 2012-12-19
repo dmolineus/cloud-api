@@ -33,6 +33,7 @@ $GLOBALS['BE_MOD']['system']['cloudapi'] = array
 	'stylesheet' 	=> 'system/modules/cloud-api/assets/style.css',
 	'install' 		=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateInstallApi'),
 	'mount' 		=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateMountSync'),
+	'reset' 			=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateCloudReset'),
 	'sync' 			=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateCloudSync'),
 	'overview'		=> array('Netzmacht\Cloud\Api\Module\CloudApi', 'generateSyncOverview'),
 );

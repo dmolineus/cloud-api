@@ -124,6 +124,16 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateButtonEnable'),
 				'button_rules'			=> array('isAdmin', 'toggleIcon:field=enabled', 'generate'),
 			),
+			
+			'reset' => array
+			(
+				'label'					=> &$GLOBALS['TL_LANG']['tl_cloud_api']['reset'],
+				'href'					=> 'key=reset',
+				'icon'					=> 'system/modules/cloud-api/assets/reset.png',
+				'attributes'			=> 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['cloudResetConfirm'] . '\'))return false;Backend.getScrollOffset()"',
+				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateButtonReset'),
+				'button_rules'			=> array('isAdmin', 'generate'),
+			),
 
 			'delete' => array
 			(

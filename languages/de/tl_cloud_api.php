@@ -25,6 +25,7 @@ $GLOBALS['TL_LANG']['tl_cloud_api']['mount'] = array('Einhängepunkte verwalten'
 $GLOBALS['TL_LANG']['tl_cloud_api']['install'] = array('Cloud Service installieren', 'Cloud Service installieren');
 $GLOBALS['TL_LANG']['tl_cloud_api']['overview'] = array('Synchronisieren', 'Dateisystem und Cloud Services synchronisieren');
 $GLOBALS['TL_LANG']['tl_cloud_api']['sync'] = array('Cloud Service synchronisieren', 'Cloud Service ID "%s" synchronisieren');
+$GLOBALS['TL_LANG']['tl_cloud_api']['reset'] = array('Status der Synchronisation zurücksetzen', 'Status der Synchronisation zurücksetzen');
 
 // fields
 $GLOBALS['TL_LANG']['tl_cloud_api']['synced'][0] = 'Cloud Service';
