@@ -24,6 +24,11 @@ class CloudApi extends DataContainer
 {
 	
 	/**
+	 * @var bool
+	 */
+	protected $blnReset = false;
+	
+	/**
 	 * @var Netzmacht\Cloud\Api\DataContainer\CloudApi
 	 */
 	protected static $objInstance = null;
@@ -88,7 +93,7 @@ class CloudApi extends DataContainer
 		if(isset($GLOBALS['TL_DCA']['tl_cloud_api']['cloudapi_metasubselectpalettes'][$objApi->name]))
 		{
 			$GLOBALS['TL_DCA']['tl_cloud_api']['metasubpalettes'] = $GLOBALS['TL_DCA']['tl_cloud_api']['cloudapi_metasubselectpalettes'][$objApi->name];
-		}		
+		}
 	}
 	
 	
@@ -107,7 +112,61 @@ class CloudApi extends DataContainer
 		$this->Database->prepare('DELETE FROM tl_cloud_node WHERE cloudapi=?')->execute($objDc->id);
 		$this->Database->prepare('DELETE FROM tl_cloud_mount WHERE pid=?')->execute($objDc->id);		
 	}
+	
+	
+	/**
+	 * check if mounted folders has changed so we need to reset the sync state
+	 *  
+	 */
+	public function resetOnUpdate($mixedValue, $objDc)
+	{
+		$this->blnReset = ($mixedValue != $objDc->activeRecord->mountedFolders);		
+		return $mixedValue;
+	}
+	
+	
+	/**
+	 * reset sync state if blnReset was set to true
+	 * 
+	 */
+	public function updateSyncState($objDc)
+	{
+		// Return if there is no active record (override all)
+		if (!$objDc->activeRecord)
+		{
+			return;
+		}
+		
+		if($this->blnReset)
+		{
+			$arrSet = array
+			(
+				'syncTstamp' => 0,
+				'syncInProgress' => '',
+				'deltaCursor' => null,
+			);
+			
+			$this->import('Database');
+			$this->Database->prepare('UPDATE tl_cloud_api %s WHERE id=?')->set($arrSet)->execute($objDc->id);
+		}
+	}
 
+
+	/**
+	 * hide reset button if sync state is already reset
+	 * 
+	 * @param string the button name 
+	 * @param string href
+	 * @param string label
+	 * @param string title
+	 * @param string icon class
+	 * @param string added attributes
+	 */
+	protected function buttonRuleCanReset(&$strButton, &$strHref, &$strLabel, &$strTitle, &$strIcon, &$strAttributes, &$arrAttributes, $arrRow=null)
+	{
+		return ($arrRow['deltaCursor'] != null || $arrRow['syncTstamp'] != 0 || $arrRow['syncInProgress'] != '');
+	}
+	
 
 	/**
 	 * hide install button if every cloud api is installed
@@ -119,10 +178,11 @@ class CloudApi extends DataContainer
 	 * @param string icon class
 	 * @param string added attributes
 	 */
-	protected function buttonRuleInstallApi(&$strButton, &$strHref, &$strLabel, &$strTitle, &$strIcon, &$strAttributes, $arrAttributes, $arrRow=null)
+	protected function buttonRuleInstallApi(&$strButton, &$strHref, &$strLabel, &$strTitle, &$strIcon, &$strAttributes, &$arrAttributes, $arrRow=null)
 	{
 		$arrApis = CloudApiManager::getApis(0);
 		
 		return (count($arrApis) > 0);
 	}
+	
 }

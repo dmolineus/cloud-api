@@ -36,6 +36,11 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 			array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'choosePalette'),
 		),
 		
+		'onsubmit_callback' => array
+		(
+			array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'updateSyncState')
+		),
+		
 		'ondelete_callback' => array
 		(
 			array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'deleteNodesAndMounts'),
@@ -132,7 +137,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 				'icon'					=> 'system/modules/cloud-api/assets/reset.png',
 				'attributes'			=> 'onclick="if(!confirm(\'' . $GLOBALS['TL_LANG']['MSC']['cloudResetConfirm'] . '\'))return false;Backend.getScrollOffset()"',
 				'button_callback'		=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateButtonReset'),
-				'button_rules'			=> array('isAdmin', 'generate'),
+				'button_rules'			=> array('isAdmin', 'disableIcon:rule=canReset', 'generate'),
 			),
 
 			'delete' => array
@@ -230,6 +235,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 			'exclude' 					=> true,
 			'eval' 						=> array('nospace'=>'true', 'tl_class' => 'clr'),
 			'sql' 						=> "blob NULL",
+			'save_callback' 			=> array(array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'resetOnUpdate')),
 		),
 		
 		'useCustomApp' => array
@@ -278,7 +284,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 		'syncInProgress' => array
 		(
 			'label' 					=> &$GLOBALS['TL_LANG']['tl_cloud_api']['syncInProgress'],
-			'sql' 						=> "char(1) NOT NULL default '0'",
+			'sql' 						=> "char(1) NOT NULL default ''",
 		),
 		
 		'deltaCursor' => array
