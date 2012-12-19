@@ -64,14 +64,7 @@ class CloudApi extends BackendModule
 	 * @return string
 	 */
 	public function generateInstallApi()
-	{
-		if(!$this->User->isAdmin)
-		{
-			$this->log('User "%s" tried to access ModuleCloudApi generateCloudSync()', $this->User->id, TL_ERROR);
-			$this->redirect('contao/main.php?act=error');
-			return '';
-		}
-		
+	{		
 		$this->Template = new BackendTemplate('be_cloudapi_install');
 		
 		$strApi = \Input::post('cloudapi');

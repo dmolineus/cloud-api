@@ -36,12 +36,17 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 			array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'choosePalette'),
 		),
 		
+		'ondelete_callback' => array
+		(
+			array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'deleteNodesAndMounts'),
+		),
+		
 		'palettes_callback' => array
 		(
 			array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'chooseSubpalettes'),			
 		),
 		
-		'permission_rules' => array('isAdmin:act=[delete,edit,editAll,select]'),
+		'permission_rules' => array('isAdmin:act=[delete,edit,editAll,select]:key=install'),
 	),
 	
 	'list' => array

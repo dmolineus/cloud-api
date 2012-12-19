@@ -90,6 +90,23 @@ class CloudApi extends DataContainer
 			$GLOBALS['TL_DCA']['tl_cloud_api']['metasubpalettes'] = $GLOBALS['TL_DCA']['tl_cloud_api']['cloudapi_metasubselectpalettes'][$objApi->name];
 		}		
 	}
+	
+	
+	/**
+	 * lets delete all corresponding nodes and mounts
+	 * we did not set up ptable, ctable relations because
+	 * we want to display ALL mounts on one page => dont know any way how to do it with setting ptable 
+	 * and we use pid in tl_cloud_node as parent node id like tl_files does
+	 * 
+	 * @param $objDc
+	 */
+	public function deleteNodesAndMounts($objDc)
+	{
+		$this->import('Database');
+		
+		$this->Database->prepare('DELETE FROM tl_cloud_node WHERE cloudapi=?')->execute($objDc->id);
+		$this->Database->prepare('DELETE FROM tl_cloud_mount WHERE pid=?')->execute($objDc->id);		
+	}
 
 
 	/**
@@ -108,5 +125,4 @@ class CloudApi extends DataContainer
 		
 		return (count($arrApis) > 0);
 	}
-	
 }
