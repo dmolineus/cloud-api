@@ -51,7 +51,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 			array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'chooseSubpalettes'),			
 		),
 		
-		'permission_rules' => array('isAdmin:act=[delete,edit,editAll,select]:key=install'),
+		'permission_rules' => array('isAdmin:act=[delete,edit,editAll,select]:key=install', 'forbidden:key=mount'),
 	),
 	
 	'list' => array

@@ -22,9 +22,7 @@ $GLOBALS['TL_DCA']['tl_cloud_mount'] = array
 	'config' => array
 	(
 		'dataContainer' => 'Table',
-		//'ptable' => 'tl_cloud_api',
 		'switchToEdit' => true,
-		//'label' => 'Pusteblume',
 		'onload_callback' => array
 		(
 			array('Netzmacht\Cloud\Api\DataContainer\CloudMount', 'checkPermission'),
@@ -34,7 +32,7 @@ $GLOBALS['TL_DCA']['tl_cloud_mount'] = array
 		(
 			array('Netzmacht\Cloud\Api\DataContainer\CloudMount', 'clearTimestamp')
 		),
-		'permission_rules' => array('isAdmin'),
+		'permission_rules' => array('isAdmin', 'forbidden:key=[sync,overview,reset,install]'),
 		'sql' => array
 		(
 			'keys' => array
