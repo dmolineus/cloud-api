@@ -103,20 +103,14 @@ class CloudApi extends BackendModule
 	{
 		try 
 		{
-			$objCloudApi = Api\CloudApiManager::getApi(\Input::get('id'));			
+			$objCloudApi = Api\CloudApiManager::getApi(\Input::get('id'));
+			$objCloudApi->resetSyncState();		
 		}
 		catch(\Exception $e)
 		{
-			throw $e;
-			$this->log('Could not initiate Cloud API for "' . $strTable . '"', 'DC_CloudNode __construct()', TL_ERROR);
-			trigger_error('Could not initiate Cloud API', E_USER_ERROR);			
+			$this->log('Could not initiate Cloud API for "' . $strTable . '"', 'Module\CloudApi __generateCloudReset()', TL_ERROR);			
 		}
-		
-		
-		$arrData = array('syncTstamp' => 0, 'deltaCursor' => null, 'syncInProgress' => null);
-		$this->import('Database');
-		$this->Database->prepare('UPDATE tl_cloud_api %s WHERE id=?')->set($arrData)->execute(\Input::get('id'));
-		
+
 		$this->redirect($this->getReferer());
 	}
 	
@@ -294,7 +288,7 @@ class CloudApi extends BackendModule
 					'title' 		=> $objMount->name,
 					'description'	=> $objMount->description,
 					'sync' 			=> $this->generateLastSyncLabel($objMount->syncTstamp),
-					'href'			=> $blnSync ? 'contao/main.php?do=cloudapi&key=mount&id=' . $objMount->id . '&rt=' . REQUEST_TOKEN : null,
+					'href'			=> $blnSync ? 'contao/main.php?do=cloudapi&key=mount&table=tl_cloud_mount&id=' . $objMount->id . '&rt=' . REQUEST_TOKEN : null,
 				);				
 			}
 			
