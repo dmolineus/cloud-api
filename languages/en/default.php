@@ -19,4 +19,4 @@
 $GLOBALS['TL_LANG']['MSC']['cloudapi_title'] 		= 'Cloud API';
 $GLOBALS['TL_LANG']['MSC']['cloudapi_apiselect'] 	= array('Cloud service', 'Please choose a cloud service');
 $GLOBALS['TL_LANG']['MSC']['cloudapi_filetree'] 	= array('Source file (Cloud API)', 'Please choose a file');
-$GLOBALS['TL_LANG']['MSC']['cloudResetConfirm'] 	= 'Do you really want to reset the sync state? The whole data from the cloud service will be checked again.';
+$GLOBALS['TL_LANG']['MSC']['cloudResetConfirm'] 	= 'Do you really want to reset the sync state? The whole data of the cloud service has to be synced again.';
