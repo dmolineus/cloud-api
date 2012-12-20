@@ -128,27 +128,29 @@ class CloudApi extends DataContainer
 	/**
 	 * reset sync state if blnReset was set to true
 	 * 
+	 * @param $objDc
 	 */
 	public function updateSyncState($objDc)
 	{
 		// Return if there is no active record (override all)
-		if (!$objDc->activeRecord)
+		if (!$objDc->activeRecord || !$this->blnReset)
 		{
 			return;
 		}
 		
-		if($this->blnReset)
+		try
 		{
-			$arrSet = array
-			(
-				'syncTstamp' => 0,
-				'syncInProgress' => '',
-				'deltaCursor' => null,
-			);
-			
-			$this->import('Database');
-			$this->Database->prepare('UPDATE tl_cloud_api %s WHERE id=?')->set($arrSet)->execute($objDc->id);
+			$objCloudApi = Api\CloudApiManager::getApi($objDc->id);			
 		}
+		catch(\Exception $e)
+		{
+			$this->log('Could not initiate Cloud API for "' . $strTable . '"', 'DataContainer\CloudApi __updateSyncState()', TL_ERROR);
+			trigger_error('Could not initiate Cloud API', E_USER_ERROR);
+			return false;
+		}
+		
+		$objCloudApi->resetSyncState();
+		return true;
 	}
 
 
