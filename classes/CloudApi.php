@@ -163,6 +163,11 @@ abstract class CloudApi extends System implements syncListenable
 	
 	
 	/**
+	 * reset sync state so that the whole cloud service has to sync again
+	 */
+	abstract public function resetSyncState();
+	
+	/**
 	 * Send a file to the browser so the "save as …" dialogue opens
 	 * 
 	 * @param Netzmacht\Cloud\Api\CloudNode
