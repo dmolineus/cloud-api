@@ -78,6 +78,7 @@ class CloudMount extends DataContainer
 		$objResult = \FilesModel::findOneById($arrRow['localId']);
 		
 		$arrAttributes['plain'] = true;
+		$arrAttributes['__set__'][] = 'plain';
 		$strHref = 'contao/main.php?do=files&node=' . urlencode($objResult->path);
 
 		return true;
