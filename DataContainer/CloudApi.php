@@ -140,7 +140,7 @@ class CloudApi extends DataContainer
 		
 		try
 		{
-			$objCloudApi = Api\CloudApiManager::getApi($objDc->id);			
+			$objCloudApi = CloudApiManager::getApi($objDc->id);			
 		}
 		catch(\Exception $e)
 		{
