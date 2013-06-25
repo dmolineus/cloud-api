@@ -1,0 +1,3 @@
+[submodule "vendor/filicious"]
+	path = vendor/filicious
+	url = https://github.com/Filicious/FiliciousCore.git
