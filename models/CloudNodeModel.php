@@ -379,7 +379,7 @@ class CloudNodeModel extends FilesModel
 	/**
 	 * 
 	 */
-	public static function findMultipleByIds($arrIds)
+	public static function findMultipleByIds($arrIds, array $arrOptions=array())
 	{
 		if (!is_array($arrIds) || empty($arrIds))
 		{
@@ -407,9 +407,9 @@ class CloudNodeModel extends FilesModel
 	 * @param search in cloud service if node was not found in database
 	 * @return \CloudNodeModel
 	 */
-	public static function findOneByPath($strPath, $blnSearchCloudService=true)
+	public static function findOneByPath($strPath, $blnSearchCloudService=true, $arrOptions=array())
 	{
-		$objNode = parent::findOneByPath($strPath);
+		$objNode = parent::findOneByPath($strPath, $arrOptions);
 		
 		if($objNode !== null)
 		{
