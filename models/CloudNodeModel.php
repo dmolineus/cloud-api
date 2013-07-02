@@ -390,12 +390,14 @@ class CloudNodeModel extends FilesModel
 		
 		$t = static::$strTable;
 		$db = \Database::getInstance();
+
+		$arrOptions['order'] = $db->findInSet("$t.id", $arrIds);
 		
 		return static::findBy
 		(
 			array( "$t.id IN(" . $arrIds . ")"),
 			null,
-			array('order' => $db->findInSet("$t.id", $arrIds) )
+			$arrOptions
 		);
 	}
 	
