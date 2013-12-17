@@ -32,7 +32,7 @@ $GLOBALS['TL_DCA']['tl_cloud_mount'] = array
 		(
 			array('Netzmacht\Cloud\Api\DataContainer\CloudMount', 'clearTimestamp')
 		),
-		'permission_rules' => array('isAdmin', 'forbidden:key=[sync,overview,reset,install]'),
+		'permission_rules' => array('isAdmin:act=*', 'forbidden:key=[sync,overview,reset,install]'),
 		'sql' => array
 		(
 			'keys' => array

@@ -68,7 +68,7 @@ $GLOBALS['TL_DCA']['tl_cloud_api'] = array
 			'fields' 					=> array('title', 'syncTstamp'),
 			'showColumns' 				=> true,
 			'label_callback' 			=> array('Netzmacht\Cloud\Api\DataContainer\CloudApi', 'generateLabel'),
-			'label_rules' 				=> array('parseDate:index=1'),			
+			'label_rules' 				=> array('parseDate:index=1', 'addLink:index=0'),			
 		),
 		
 		'global_operations' => array

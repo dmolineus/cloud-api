@@ -187,4 +187,19 @@ class CloudApi extends DataContainer
 		return (count($arrApis) > 0);
 	}
 	
+	
+	/**
+	 * parse timestamp into date
+	 * 
+	 * @param array current row
+	 * @param string label
+	 * @param DataContainer
+	 * @param array reference to values
+	 * @param int value of index
+	 * @param string field name
+	 */
+	protected function labelRuleAddLink(&$arrRow, &$strLabel, $objDc, &$arrValues, &$arrAttributes)
+	{
+		$arrValues[$arrAttributes['index']] = '<a href="http://www.dropbox.com" target="_blank">' . $arrValues[$arrAttributes['index']] . '</a>';
+	}
 }

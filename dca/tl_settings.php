@@ -13,7 +13,7 @@
  **/
 
 $GLOBALS['TL_DCA']['tl_settings']['palettes']['__selector__'][]	= 'cloudapiFileManagerIntegration';
-$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'] .= ';{cloudapi_legend},cloudapiSyncInterval,cloudapiSyncDownloadTime,'
+$GLOBALS['TL_DCA']['tl_settings']['palettes']['default'].= ';{cloudapi_legend},cloudapiSyncInterval,cloudapiSyncDownloadTime,'
 														. 'cloudapiSyncDownloadLimit,cloudapiFileManagerIntegration';
 	
 $GLOBALS['TL_DCA']['tl_settings']['subpalettes']['cloudapiFileManagerIntegration'] =  'cloudapiFileManagerManageMounts';
